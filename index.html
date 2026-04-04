@@ -85,6 +85,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .btn:active{transform:scale(.96)}
 .btn-p{background:var(--acc);color:#0a0c14;font-weight:700}
 .btn-sm{padding:8px 12px;font-size:.76rem;min-height:36px}
+.imp-tab.sel{border-color:var(--acc);background:linear-gradient(135deg,var(--accG),rgba(162,155,254,.08));color:var(--acc);box-shadow:0 0 8px var(--accG)}
 .btn-o{border:1px solid var(--s3);color:var(--t2)}
 .btn-o:active{background:var(--s3)}
 .btn-s{background:var(--grn);color:#0a0c14;font-weight:700}
@@ -521,6 +522,30 @@ input,textarea{-webkit-user-select:text;user-select:text}
       </div>
       <p style="font-size:.6rem;color:var(--t3);margin-top:4px">Sync auto toutes les 60s quand connecte</p>
     </div>
+  </div>
+  <div class="ss"><h3><span class="sd" style="background:var(--cyan)"></span>Import donnees</h3>
+    <div style="display:flex;gap:6px;margin-bottom:8px">
+      <button class="btn btn-o btn-sm imp-tab sel" type="button" data-imp="weight" id="impTabW">Poids</button>
+      <button class="btn btn-o btn-sm imp-tab" type="button" data-imp="cal" id="impTabC">Calories</button>
+      <button class="btn btn-o btn-sm imp-tab" type="button" data-imp="json" id="impTabJ">JSON complet</button>
+    </div>
+    <div id="impWrap">
+      <div id="impWeight">
+        <p style="font-size:.68rem;color:var(--t3);margin-bottom:6px">Format: <code>date,poids</code> (une ligne par jour)</p>
+        <textarea class="import-a" id="impWT" rows="5" placeholder="2026-03-15,74.5&#10;2026-03-16,74.3&#10;2026-03-17,73.9" style="width:100%;font-family:var(--mono);font-size:.72rem;padding:8px;border-radius:8px;border:1px solid var(--s3);background:var(--s1);color:var(--t1);resize:vertical"></textarea>
+      </div>
+      <div id="impCal" style="display:none">
+        <p style="font-size:.68rem;color:var(--t3);margin-bottom:6px">Format: <code>date,calories,prot,gluc,lip</code> (fibres optionnel)</p>
+        <textarea class="import-a" id="impCT" rows="5" placeholder="2026-03-15,2200,150,250,75&#10;2026-03-16,1950,140,220,70" style="width:100%;font-family:var(--mono);font-size:.72rem;padding:8px;border-radius:8px;border:1px solid var(--s3);background:var(--s1);color:var(--t1);resize:vertical"></textarea>
+      </div>
+      <div id="impJson" style="display:none">
+        <p style="font-size:.68rem;color:var(--t3);margin-bottom:6px">Colle un fichier JSON exporte (<code>mysf_*.json</code>) ou selectionne un fichier</p>
+        <input type="file" accept=".json" id="impFile" style="font-size:.7rem;margin-bottom:6px;width:100%">
+        <textarea class="import-a" id="impJT" rows="5" placeholder='{"weights":[...],"log":{...},...}' style="width:100%;font-family:var(--mono);font-size:.72rem;padding:8px;border-radius:8px;border:1px solid var(--s3);background:var(--s1);color:var(--t1);resize:vertical"></textarea>
+      </div>
+    </div>
+    <button class="btn btn-p" type="button" id="impB" style="width:100%;margin-top:6px">Importer</button>
+    <div id="impF" style="font-size:.72rem;margin-top:6px"></div>
   </div>
   <div class="ss"><h3><span class="sd" style="background:var(--red)"></span>Donnees</h3>
     <button class="btn btn-o" type="button" id="sExp" style="width:100%;margin-bottom:6px">Exporter JSON</button>
@@ -988,6 +1013,47 @@ function wire(){
   $('applyPct').addEventListener('click',applyPct);
   $('sExp').addEventListener('click',()=>{const d={log:getLog(),weights:getW(),workouts:getWk(),steps:getSteps(),water:getWater(),recipes:getRecipes(),savedmeals:getSavedMeals(),phase:getPh(),targets:getTg()};const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mysf_'+curDate+'.json';a.click()});
   $('sRst').addEventListener('click',()=>{if(confirm('Tout supprimer?')){localStorage.clear();location.reload()}});
+  // Import tabs
+  let curImpTab='weight';
+  document.querySelectorAll('.imp-tab').forEach(b=>b.addEventListener('click',()=>{curImpTab=b.dataset.imp;document.querySelectorAll('.imp-tab').forEach(t=>t.classList.remove('sel'));b.classList.add('sel');$('impWeight').style.display=curImpTab==='weight'?'':'none';$('impCal').style.display=curImpTab==='cal'?'':'none';$('impJson').style.display=curImpTab==='json'?'':'none';$('impF').innerHTML=''}));
+  // JSON file picker
+  $('impFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('impJT').value=ev.target.result};r.readAsText(f)});
+  // Import button
+  $('impB').addEventListener('click',()=>{
+    $('impF').innerHTML='';
+    if(curImpTab==='weight'){
+      const t=$('impWT').value.trim();if(!t){$('impF').innerHTML='<span style="color:var(--red)">Colle tes donnees</span>';return}
+      const lines=t.split(/\r?\n/).filter(l=>l.trim());let imp=0,err=0;const ws=getW();
+      lines.forEach(l=>{const p=l.split(/[,;\t]/);if(p.length<2){err++;return}let ds=p[0].trim().replace(/\//g,'-');if(!/^\d{4}-\d{2}-\d{2}$/.test(ds)){err++;return}const v=parseFloat(p[1].trim().replace(',','.'));if(v>=20&&v<=300){const i=ws.findIndex(e=>e.date===ds);if(i>=0)ws[i].w=v;else ws.push({date:ds,w:v});imp++}else err++});
+      ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);
+      $('impF').innerHTML='<span style="color:var(--grn)">'+imp+' pesees importees</span>'+(err?' <span style="color:var(--red)">'+err+' erreurs</span>':'');$('impWT').value='';
+    }else if(curImpTab==='cal'){
+      const t=$('impCT').value.trim();if(!t){$('impF').innerHTML='<span style="color:var(--red)">Colle tes donnees</span>';return}
+      const lines=t.split(/\r?\n/).filter(l=>l.trim());let imp=0,err=0;const log=getLog();
+      lines.forEach(l=>{const p=l.split(/[,;\t]/);if(p.length<2){err++;return}let ds=p[0].trim().replace(/\//g,'-');if(!/^\d{4}-\d{2}-\d{2}$/.test(ds)){err++;return}
+        const kcal=parseFloat(p[1])||0,prot=parseFloat(p[2])||0,gluc=parseFloat(p[3])||0,lip=parseFloat(p[4])||0,fib=parseFloat(p[5])||0;
+        if(kcal<=0){err++;return}
+        if(!log[ds])log[ds]=[];
+        log[ds].push({id:Date.now()+Math.random(),food:'Import '+ds,meal:1,qty:0,kcal:kcal,p:prot,g:gluc,l:lip,f:fib});imp++});
+      sv("nt_log",log);
+      $('impF').innerHTML='<span style="color:var(--grn)">'+imp+' jours importes</span>'+(err?' <span style="color:var(--red)">'+err+' erreurs</span>':'');$('impCT').value='';
+    }else if(curImpTab==='json'){
+      const t=$('impJT').value.trim();if(!t){$('impF').innerHTML='<span style="color:var(--red)">Colle ou charge un fichier JSON</span>';return}
+      try{
+        const d=JSON.parse(t);let imp=[];
+        if(d.weights&&Array.isArray(d.weights)){const ws=getW();d.weights.forEach(e=>{if(e.date&&e.w){const i=ws.findIndex(x=>x.date===e.date);if(i>=0)ws[i].w=e.w;else ws.push(e)}});ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);imp.push(d.weights.length+' pesees')}
+        if(d.log&&typeof d.log==='object'){const log=getLog();Object.keys(d.log).forEach(dt=>{if(!log[dt])log[dt]=[];log[dt]=log[dt].concat(d.log[dt])});sv("nt_log",log);imp.push(Object.keys(d.log).length+' jours repas')}
+        if(d.workouts&&Array.isArray(d.workouts)){const wk=getWk();d.workouts.forEach(e=>{if(!wk.find(x=>x.id===e.id))wk.push(e)});sv("nt_workouts",wk);imp.push(d.workouts.length+' seances')}
+        if(d.steps&&typeof d.steps==='object'){const s=getSteps();Object.assign(s,d.steps);sv("nt_steps",s);imp.push(Object.keys(d.steps).length+' jours pas')}
+        if(d.water&&typeof d.water==='object'){const w=getWater();Object.assign(w,d.water);sv("nt_water",w);imp.push(Object.keys(d.water).length+' jours eau')}
+        if(d.recipes&&typeof d.recipes==='object'){const r=getRecipes();Object.assign(r,d.recipes);sv("nt_recipes",r);imp.push(Object.keys(d.recipes).length+' recettes')}
+        if(d.savedmeals&&Array.isArray(d.savedmeals)){const sm=getSavedMeals();d.savedmeals.forEach(e=>{if(!sm.find(x=>x.name===e.name))sm.push(e)});sv("nt_savedmeals",sm);imp.push(d.savedmeals.length+' repas sauv.')}
+        if(d.phase)sv("nt_phase",d.phase);
+        if(d.targets)sv("nt_targets",d.targets);
+        $('impF').innerHTML='<span style="color:var(--grn)">Importe: '+imp.join(', ')+'</span>';$('impJT').value='';$('impFile').value='';
+      }catch(e){$('impF').innerHTML='<span style="color:var(--red)">JSON invalide: '+e.message+'</span>'}
+    }
+  });
   document.addEventListener('click',e=>{if(!e.target.closest('.sw'))$('fRs').classList.remove('show')});
   // Theme
   $('themeBtn').addEventListener('click',()=>{setTheme(getTheme()==='dark'?'light':'dark');if($('tab-settings').classList.contains('active'))renderSettings()});
