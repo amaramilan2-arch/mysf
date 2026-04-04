@@ -416,7 +416,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="dn"><button type="button" id="dP">&#x276E;</button><span class="dd" id="cDt">Aujourd'hui</span><button type="button" id="dN">&#x276F;</button></div>
   <div style="display:flex;gap:6px;align-items:stretch">
     <div class="sw" style="flex:1"><span class="si">&#x1F50D;</span><input type="text" id="fSr" placeholder="Rechercher un aliment..." autocomplete="off"><div class="sr" id="fRs"></div></div>
-    <button type="button" class="btn btn-o btn-sm" id="smBtn" style="white-space:nowrap;font-size:.68rem;padding:8px 10px;border-radius:var(--r)">&#x2B50; Repas</button>
+    <button type="button" class="btn btn-p btn-sm" id="manualBtn" style="font-size:.9rem;padding:8px 12px;border-radius:var(--r);min-width:44px" title="Saisie manuelle">+</button>
+    <button type="button" class="btn btn-o btn-sm" id="smBtn" style="white-space:nowrap;font-size:.68rem;padding:8px 10px;border-radius:var(--r)">&#x2B50;</button>
   </div>
   <div class="fav-s" id="favS"></div>
   <div class="msum" id="mSm"></div>
@@ -553,6 +554,20 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div style="font-size:.7rem;color:var(--t3);margin-bottom:8px" id="wEditDate"></div>
   <input type="text" inputmode="decimal" class="inp" id="wEditIn" placeholder="Poids (kg)" style="width:100%;margin-bottom:8px">
   <div class="acts"><button class="btn btn-d btn-sm" type="button" id="wEditDel">Supprimer</button><button class="btn btn-o" type="button" id="wEditNo">Annuler</button><button class="btn btn-p" type="button" id="wEditOk">Valider</button></div>
+</div></div>
+
+<div class="mo" id="manMo"><div class="modal">
+  <h3>&#x270F;&#xFE0F; Saisie manuelle</h3>
+  <div style="font-size:.7rem;color:var(--t3);margin-bottom:10px">Entre directement les calories et macros</div>
+  <input type="text" class="inp" id="manName" placeholder="Nom (ex: Burger, Resto...)" style="width:100%;margin-bottom:8px">
+  <div class="sg" style="margin-bottom:8px">
+    <div><label>Calories</label><input type="number" inputmode="numeric" class="inp" id="manKcal" placeholder="0"></div>
+    <div><label>Prot (g)</label><input type="number" inputmode="decimal" class="inp" id="manP" placeholder="0"></div>
+    <div><label>Gluc (g)</label><input type="number" inputmode="decimal" class="inp" id="manG" placeholder="0"></div>
+    <div><label>Lip (g)</label><input type="number" inputmode="decimal" class="inp" id="manL" placeholder="0"></div>
+    <div class="full"><label>Fibres (g)</label><input type="number" inputmode="decimal" class="inp" id="manF" placeholder="0"></div>
+  </div>
+  <div class="acts"><button class="btn btn-o" type="button" id="manNo">Annuler</button><button class="btn btn-p" type="button" id="manOk">Ajouter</button></div>
 </div></div>
 
 <div class="mo" id="smMo"><div class="modal" style="max-height:80vh;overflow-y:auto">
@@ -749,7 +764,7 @@ function renderMealTabs(){const c=$('mT');c.innerHTML='';MEALS.forEach((m,i)=>{c
 function renderMealsList(){
   const items=dayLog(),c=$('mC'),foods=getAllFoods();
   c.innerHTML=MEALS.map((name,idx)=>{const mi=items.filter(i=>i.meal===idx),mk=mi.reduce((s,i)=>s+i.kcal,0);
-    return '<div class="m-section card"><div class="m-header"><h3>'+name+'</h3><span class="mk mono">'+Math.round(mk)+'</span></div>'+(mi.length?mi.map(i=>'<div class="mi"><span class="mn" data-eid="'+i.id+'" style="cursor:pointer">'+i.food+'</span><span class="mf mono">'+i.qty+'g\u00B7'+Math.round(i.kcal)+'</span><span class="md" data-id="'+i.id+'">\u00D7</span></div>').join(''):'<div class="empty">Vide</div>')+'</div>'}).join('');
+    return '<div class="m-section card"><div class="m-header"><h3>'+name+'</h3><span class="mk mono">'+Math.round(mk)+'</span></div>'+(mi.length?mi.map(i=>'<div class="mi"><span class="mn" data-eid="'+i.id+'" style="cursor:pointer">'+i.food+'</span><span class="mf mono">'+(i.qty?i.qty+'g\u00B7':'')+Math.round(i.kcal)+'</span><span class="md" data-id="'+i.id+'">\u00D7</span></div>').join(''):'<div class="empty">Vide</div>')+'</div>'}).join('');
   c.querySelectorAll('.md').forEach(el=>el.addEventListener('click',function(){rmFood(+this.dataset.id)}));
   c.querySelectorAll('.mn[data-eid]').forEach(el=>el.addEventListener('click',function(){editFoodQty(+this.dataset.eid)}));
 }
@@ -761,6 +776,15 @@ function selectFood(name){const foods=getAllFoods();if(!foods[name])return;selFo
 function closeQty(){$('qMo').classList.remove('show');selFood=null}
 function confirmFood(){if(!selFood)return;const foods=getAllFoods();const qty=parseFloat($('qIn').value);if(!qty||qty<=0)return;const d=foods[selFood],m=qty/100;const item={food:selFood,qty:Math.round(qty),kcal:Math.round(d[0]*m*10)/10,p:Math.round(d[1]*m*10)/10,g:Math.round(d[2]*m*10)/10,l:Math.round(d[3]*m*10)/10,f:Math.round((d[4]||0)*m*10)/10,meal:curMeal,id:Date.now()};const log=getLog();if(!log[curDate])log[curDate]=[];log[curDate].push(item);sv("nt_log",log);const rec=getRecent().filter(f=>f!==selFood);rec.unshift(selFood);sv("nt_recent",rec.slice(0,10));closeQty();renderMealsTab();if($('tab-home').classList.contains('active'))renderHome()}
 function rmFood(id){const log=getLog();if(log[curDate]){log[curDate]=log[curDate].filter(i=>i.id!==id);sv("nt_log",log);renderMealsTab();if($('tab-home').classList.contains('active'))renderHome()}}
+function addManualEntry(){
+  const name=$('manName').value.trim()||'Saisie manuelle';
+  const kcal=+$('manKcal').value||0,p=+$('manP').value||0,g=+$('manG').value||0,l=+$('manL').value||0,f=+$('manF').value||0;
+  if(!kcal&&!p&&!g&&!l){$('manKcal').style.borderColor='var(--red)';setTimeout(()=>$('manKcal').style.borderColor='',600);return}
+  const item={food:name,qty:0,kcal,p,g,l,f,meal:curMeal,id:Date.now()};
+  const log=getLog();if(!log[curDate])log[curDate]=[];log[curDate].push(item);sv("nt_log",log);
+  $('manMo').classList.remove('show');$('manName').value='';$('manKcal').value='';$('manP').value='';$('manG').value='';$('manL').value='';$('manF').value='';
+  renderMealsTab();if($('tab-home').classList.contains('active'))renderHome();
+}
 function editFoodQty(id){
   const log=getLog(),items=log[curDate];if(!items)return;
   const item=items.find(i=>i.id===id);if(!item)return;
@@ -948,6 +972,11 @@ function wire(){
   $('wEditNo').addEventListener('click',closeWeightEdit);
   $('wEditOk').addEventListener('click',saveWeightEdit);
   $('wEditDel').addEventListener('click',()=>{if(confirm('Supprimer cette pesee ?'))deleteWeight()});
+  // Manual entry
+  $('manualBtn').addEventListener('click',()=>$('manMo').classList.add('show'));
+  $('manMo').addEventListener('click',e=>{if(e.target===$('manMo'))$('manMo').classList.remove('show')});
+  $('manNo').addEventListener('click',()=>$('manMo').classList.remove('show'));
+  $('manOk').addEventListener('click',addManualEntry);
   // Saved meals
   $('smBtn').addEventListener('click',openSavedMeals);
   $('smMo').addEventListener('click',e=>{if(e.target===$('smMo'))$('smMo').classList.remove('show')});
