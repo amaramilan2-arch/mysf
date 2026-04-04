@@ -541,6 +541,13 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
   <button class="btn btn-o" type="button" id="phMC" style="width:100%;margin-top:8px">Fermer</button>
 </div></div>
 
+<div class="mo" id="wEditMo"><div class="modal">
+  <h3>&#x270E; Modifier pesee</h3>
+  <div style="font-size:.7rem;color:var(--t3);margin-bottom:8px" id="wEditDate"></div>
+  <input type="text" inputmode="decimal" class="inp" id="wEditIn" placeholder="Poids (kg)" style="width:100%;margin-bottom:8px">
+  <div class="acts"><button class="btn btn-d btn-sm" type="button" id="wEditDel">Supprimer</button><button class="btn btn-o" type="button" id="wEditNo">Annuler</button><button class="btn btn-p" type="button" id="wEditOk">Valider</button></div>
+</div></div>
+
 <div class="mo" id="smMo"><div class="modal" style="max-height:80vh;overflow-y:auto">
   <h3>&#x2B50; Repas sauvegardes</h3>
   <div id="smList"></div>
@@ -701,9 +708,9 @@ function renderHome(){
 
 // ===== CHARTS =====
 function renderCharts(){
-  const ws=getW(),se=$('wSt');
-  if(!ws.length)se.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:8px"><span class="wl">Aucune pesee</span></div>';
-  else{const c=ws[ws.length-1].w,mn=Math.min(...ws.map(w=>w.w)),df=(c-ws[0].w).toFixed(1),hm=getH()/100,bmi=hm>0?(c/(hm*hm)).toFixed(1):'--';se.style.gridTemplateColumns='1fr 1fr 1fr 1fr';se.innerHTML='<div><div class="wl">Actuel</div><div class="wv">'+c+'</div></div><div><div class="wl">Min</div><div class="wv">'+mn+'</div></div><div><div class="wl">Evol</div><div class="wv" style="color:'+(df<0?'var(--grn)':df>0?'var(--red)':'var(--acc)')+'">'+(df>0?'+':'')+df+'</div></div><div><div class="wl">IMC</div><div class="wv" style="color:'+(bmi<18.5?'var(--org)':bmi>25?'var(--red)':'var(--grn)')+'">'+bmi+'</div></div>'}
+  const ws=getW(),se=$('wSt'),st=weightStats();
+  if(!st)se.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:8px"><span class="wl">Aucune pesee</span></div>';
+  else{se.style.gridTemplateColumns='1fr 1fr 1fr 1fr';se.innerHTML='<div><div class="wl">Actuel</div><div class="wv">'+st.cur+'</div></div><div><div class="wl">Min / Max</div><div class="wv">'+st.mn+' / '+st.mx+'</div></div><div><div class="wl">Evol</div><div class="wv" style="color:'+(st.total<0?'var(--grn)':st.total>0?'var(--red)':'var(--acc)')+'">'+(st.total>0?'+':'')+st.total+'</div></div><div><div class="wl">IMC</div><div class="wv" style="color:'+(st.bmi<18.5?'var(--org)':st.bmi>25?'var(--red)':'var(--grn)')+'">'+st.bmi+'</div></div>'}
   if(chartW)chartW.destroy();const l=ws.slice(-30);
   if(l.length)chartW=new Chart($('wCh').getContext('2d'),{type:'line',data:{labels:l.map(w=>fmtD(w.date)),datasets:[{data:l.map(w=>w.w),borderColor:'#7B9BFF',backgroundColor:'rgba(123,155,255,.04)',fill:true,tension:.35,pointRadius:2,pointBackgroundColor:'#7B9BFF',borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#444C68',font:{size:8},maxTicksLimit:7},grid:{color:'rgba(26,30,44,.5)'}},y:{ticks:{color:'#444C68',font:{size:8}},grid:{color:'rgba(26,30,44,.5)'}}},plugins:{legend:{display:false}}}});
   const tg=getTg(),dates=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);dates.push(d.toISOString().slice(0,10))}
@@ -712,13 +719,18 @@ function renderCharts(){
   if(chartM)chartM.destroy();const ap=dt.reduce((s,t)=>s+t.p,0)/7,ag=dt.reduce((s,t)=>s+t.g,0)/7,al=dt.reduce((s,t)=>s+t.l,0)/7;
   chartM=new Chart($('mCh').getContext('2d'),{type:'doughnut',data:{labels:['Prot','Gluc','Lip'],datasets:[{data:[Math.round(ap),Math.round(ag),Math.round(al)],backgroundColor:['#7B9BFF','#4AE8A0','#FF96C1'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{color:'#8690AE',font:{size:9},padding:10,usePointStyle:true}}}}});
   if(chartP)chartP.destroy();chartP=new Chart($('pCh').getContext('2d'),{type:'bar',data:{labels:lbls,datasets:[{data:dt.map(t=>Math.round(t.p)),backgroundColor:'rgba(123,155,255,.4)',borderRadius:6,borderSkipped:false},{data:dates.map(()=>tg.prot),type:'line',borderColor:'rgba(74,232,160,.4)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#444C68',font:{size:8}},grid:{display:false}},y:{ticks:{color:'#444C68',font:{size:8}},grid:{color:'rgba(26,30,44,.5)'}}},plugins:{legend:{display:false}}}});
-  const rv=[...ws].reverse().slice(0,12);$('wHi').innerHTML=rv.map((w,i)=>{let ch='';const idx=ws.length-1-i;if(idx>=2){const a=((ws[idx].w-ws[idx-1].w)+(ws[idx-1].w-ws[idx-2].w))/2;ch=a<-0.05?'<span class="chip dn">\u2193</span>':a>0.05?'<span class="chip up">\u2191</span>':'<span class="chip st">\u2192</span>'}return '<div class="hi"><span class="hd">'+fmtD(w.date)+'</span>'+ch+'<span class="hw mono">'+w.w+' kg</span></div>'}).join('');
+  const rv=[...ws].reverse().slice(0,20);$('wHi').innerHTML=rv.map((w,i)=>{let ch='';const idx=ws.length-1-i;if(idx>=2){const a=((ws[idx].w-ws[idx-1].w)+(ws[idx-1].w-ws[idx-2].w))/2;ch=a<-0.05?'<span class="chip dn">\u2193</span>':a>0.05?'<span class="chip up">\u2191</span>':'<span class="chip st">\u2192</span>'}return '<div class="hi" data-wd="'+w.date+'" data-ww="'+w.w+'" style="cursor:pointer"><span class="hd">'+fmtD(w.date)+'</span>'+ch+'<span class="hw mono">'+w.w+' kg</span><span style="font-size:.55rem;color:var(--t3);margin-left:4px">&#x270E;</span></div>'}).join('');
+  $('wHi').querySelectorAll('.hi[data-wd]').forEach(el=>el.addEventListener('click',function(){openWeightEdit(this.dataset.wd,this.dataset.ww)}));
 }
 
 // ===== MEALS =====
-function changeDate(dir){const d=new Date(curDate);d.setDate(d.getDate()+dir);if(d.toISOString().slice(0,10)>new Date().toISOString().slice(0,10))return;curDate=d.toISOString().slice(0,10);renderMealsTab()}
+function changeDate(dir){const d=new Date(curDate);d.setDate(d.getDate()+dir);const max=new Date();max.setDate(max.getDate()+7);if(d>max)return;curDate=d.toISOString().slice(0,10);renderMealsTab()}
 function renderMealsTab(){
-  const today=new Date().toISOString().slice(0,10);$('cDt').textContent=curDate===today?"Aujourd'hui":fmtD(curDate);
+  const today=new Date().toISOString().slice(0,10);const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);const tmrStr=tomorrow.toISOString().slice(0,10);
+  let lbl=curDate===today?"Aujourd'hui":curDate===tmrStr?'Demain':fmtD(curDate);
+  if(curDate>today)lbl+=' (prep)';
+  if(curDate<today){const diff=Math.round((new Date(today)-new Date(curDate))/86400000);if(diff===1)lbl='Hier';else if(diff<=3)lbl='il y a '+diff+'j';}
+  $('cDt').textContent=lbl;$('cDt').style.color=curDate>today?'var(--org)':curDate<today?'var(--t3)':'var(--t1)';
   const t=dayTotals();$('mSm').innerHTML='<div><div class="mv mono" style="color:var(--org)">'+Math.round(t.kcal)+'</div><div class="ml">kcal</div></div><div><div class="mv mono" style="color:var(--acc)">'+Math.round(t.p)+'g</div><div class="ml">prot</div></div><div><div class="mv mono" style="color:var(--grn)">'+Math.round(t.g)+'g</div><div class="ml">gluc</div></div><div><div class="mv mono" style="color:var(--pnk)">'+Math.round(t.l)+'g</div><div class="ml">lip</div></div><div><div class="mv mono" style="color:var(--brn)">'+Math.round(t.f)+'g</div><div class="ml">fib</div></div>';
   // Favs
   const favs=getFavs(),recent=getRecent(),all=[...new Set([...favs,...recent])].slice(0,12);
@@ -730,8 +742,9 @@ function renderMealTabs(){const c=$('mT');c.innerHTML='';MEALS.forEach((m,i)=>{c
 function renderMealsList(){
   const items=dayLog(),c=$('mC'),foods=getAllFoods();
   c.innerHTML=MEALS.map((name,idx)=>{const mi=items.filter(i=>i.meal===idx),mk=mi.reduce((s,i)=>s+i.kcal,0);
-    return '<div class="m-section card"><div class="m-header"><h3>'+name+'</h3><span class="mk mono">'+Math.round(mk)+'</span></div>'+(mi.length?mi.map(i=>'<div class="mi"><span class="mn">'+i.food+'</span><span class="mf mono">'+i.qty+'g\u00B7'+Math.round(i.kcal)+'</span><span class="md" data-id="'+i.id+'">\u00D7</span></div>').join(''):'<div class="empty">Vide</div>')+'</div>'}).join('');
+    return '<div class="m-section card"><div class="m-header"><h3>'+name+'</h3><span class="mk mono">'+Math.round(mk)+'</span></div>'+(mi.length?mi.map(i=>'<div class="mi"><span class="mn" data-eid="'+i.id+'" style="cursor:pointer">'+i.food+'</span><span class="mf mono">'+i.qty+'g\u00B7'+Math.round(i.kcal)+'</span><span class="md" data-id="'+i.id+'">\u00D7</span></div>').join(''):'<div class="empty">Vide</div>')+'</div>'}).join('');
   c.querySelectorAll('.md').forEach(el=>el.addEventListener('click',function(){rmFood(+this.dataset.id)}));
+  c.querySelectorAll('.mn[data-eid]').forEach(el=>el.addEventListener('click',function(){editFoodQty(+this.dataset.eid)}));
 }
 
 // ===== SEARCH =====
@@ -741,6 +754,15 @@ function selectFood(name){const foods=getAllFoods();if(!foods[name])return;selFo
 function closeQty(){$('qMo').classList.remove('show');selFood=null}
 function confirmFood(){if(!selFood)return;const foods=getAllFoods();const qty=parseFloat($('qIn').value);if(!qty||qty<=0)return;const d=foods[selFood],m=qty/100;const item={food:selFood,qty:Math.round(qty),kcal:Math.round(d[0]*m*10)/10,p:Math.round(d[1]*m*10)/10,g:Math.round(d[2]*m*10)/10,l:Math.round(d[3]*m*10)/10,f:Math.round((d[4]||0)*m*10)/10,meal:curMeal,id:Date.now()};const log=getLog();if(!log[curDate])log[curDate]=[];log[curDate].push(item);sv("nt_log",log);const rec=getRecent().filter(f=>f!==selFood);rec.unshift(selFood);sv("nt_recent",rec.slice(0,10));closeQty();renderMealsTab();if($('tab-home').classList.contains('active'))renderHome()}
 function rmFood(id){const log=getLog();if(log[curDate]){log[curDate]=log[curDate].filter(i=>i.id!==id);sv("nt_log",log);renderMealsTab();if($('tab-home').classList.contains('active'))renderHome()}}
+function editFoodQty(id){
+  const log=getLog(),items=log[curDate];if(!items)return;
+  const item=items.find(i=>i.id===id);if(!item)return;
+  const foods=getAllFoods(),d=foods[item.food];if(!d)return;
+  const nq=prompt('Modifier la quantite (g) pour '+item.food+':',item.qty);
+  if(nq===null)return;const qty=parseFloat(nq);if(!qty||qty<=0)return;
+  const m=qty/100;item.qty=Math.round(qty);item.kcal=Math.round(d[0]*m*10)/10;item.p=Math.round(d[1]*m*10)/10;item.g=Math.round(d[2]*m*10)/10;item.l=Math.round(d[3]*m*10)/10;item.f=Math.round((d[4]||0)*m*10)/10;
+  sv("nt_log",log);renderMealsTab();if($('tab-home').classList.contains('active'))renderHome();
+}
 
 // ===== RECIPES =====
 function renderRecipes(){
@@ -785,6 +807,28 @@ function deleteSavedMeal(idx){
 
 // ===== TREND & ANALYSIS =====
 function trend72(){const w=getW();if(w.length<3)return null;const l=w.slice(-3),a=((l[2].w-l[1].w)+(l[1].w-l[0].w))/2;if(a<-0.05)return{dir:'down'};if(a>0.15)return{dir:'up_fast'};if(a>0.05)return{dir:'up'};return{dir:'stable'}}
+function weightStats(){
+  const w=getW();if(!w.length)return null;
+  const cur=w[w.length-1].w,start=w[0].w,mn=Math.min(...w.map(x=>x.w)),mx=Math.max(...w.map(x=>x.w));
+  const hm=getH()/100,bmi=hm>0?(cur/(hm*hm)).toFixed(1):'--';
+  // 7-day avg
+  const now=new Date(),d7=new Date(now);d7.setDate(d7.getDate()-7);
+  const w7=w.filter(x=>x.date>=d7.toISOString().slice(0,10)),avg7=w7.length?+(w7.reduce((s,x)=>s+x.w,0)/w7.length).toFixed(1):cur;
+  // 30-day avg
+  const d30=new Date(now);d30.setDate(d30.getDate()-30);
+  const w30=w.filter(x=>x.date>=d30.toISOString().slice(0,10)),avg30=w30.length?+(w30.reduce((s,x)=>s+x.w,0)/w30.length).toFixed(1):cur;
+  // Weekly rate (kg/week)
+  let rate=0;if(w7.length>=2){rate=+((w7[w7.length-1].w-w7[0].w)/(w7.length-1)*7).toFixed(2)}
+  else if(w.length>=2){const days=Math.max(1,(new Date(w[w.length-1].date)-new Date(w[0].date))/86400000);rate=+((cur-start)/days*7).toFixed(2)}
+  // Est. goal date
+  const pw=getPW();let estDays=null;
+  if(rate!==0&&((cur>pw&&rate<0)||(cur<pw&&rate>0))){estDays=Math.ceil(Math.abs(cur-pw)/Math.abs(rate)*7)}
+  // Regularity (% of last 14 days with a weigh-in)
+  const d14=new Date(now);d14.setDate(d14.getDate()-14);
+  const w14=w.filter(x=>x.date>=d14.toISOString().slice(0,10));
+  const reg=Math.round(w14.length/14*100);
+  return{cur,start,mn,mx,bmi,avg7,avg30,rate,estDays,total:+(cur-start).toFixed(1),reg,count:w.length}
+}
 function renderAlert(cid){const el=$(cid);if(!el)return;const tr=trend72();if(!tr){el.innerHTML='';return}const ph=getPh(),tg=getTg();let msg='',tp='info';
   if(ph==='A'){if(tr.dir==='stable'){msg='Stagne 72h \u2192 +200kcal';tp='warn'}else if(tr.dir==='down'){msg='Baisse \u2192 rien';tp='success'}}
   else if(ph==='B'){if(tr.dir==='stable'){msg='Stagne \u2192 -200kcal';tp='warn'}else if(tr.dir==='down'){msg='Deficit OK';tp='success'}else if(tr.dir==='up'||tr.dir==='up_fast'){msg='Remonte \u2192 verifier';tp='danger'}}
@@ -800,12 +844,21 @@ function buildAn(){const w=getW(),ph=getPh(),tg=getTg(),tr=trend72();const dates
   else if(ph==='D'){if(tr&&tr.dir==='down'){v='increase';vt='+200 KCAL';vx='Surplus faible.';va='Gluc: '+tg.gluc+'\u2192'+(tg.gluc+50)}else{v='maintain';vt='MAINTENIR';vx='PDM OK.'}}
   else{if(tr&&tr.dir==='stable'){v='decrease';vt='AJUSTER';vx='Stagnation.';va='\u00B150g'}else{v='maintain';vt='MAINTENIR';vx='Reset OK.'}}
   return{v,vt,vx,va,ac,ap,wc,dwd:dwd.length}}
-function renderAnalysis(cid){const el=$(cid);if(!el)return;const a=buildAn();if(!a){el.innerHTML='';return}let ah='';if(a.va){ah='<div class="ava mono">'+a.va+'</div>';if(a.v==='increase'||a.v==='decrease'){const d=a.v==='increase'?50:-50;ah+='<button type="button" class="btn btn-p btn-apply" data-delta="'+d+'">Appliquer</button>'}}
-  el.innerHTML='<div class="an"><h3>Analyse</h3><div class="an-v '+a.v+'"><div class="avt">'+(a.v==='increase'?'\u2B06 ':a.v==='decrease'?'\u2B07 ':'\u27A1 ')+a.vt+'</div><div>'+a.vx+'</div>'+ah+'</div><div class="an-g"><div class="an-s"><div class="al">Moy cal</div><div class="av mono" style="color:var(--org)">'+a.ac+'</div></div><div class="an-s"><div class="al">Moy prot</div><div class="av mono" style="color:var(--acc)">'+a.ap+'g</div></div><div class="an-s"><div class="al">Evol</div><div class="av mono" style="color:'+(a.wc<0?'var(--grn)':a.wc>0?'var(--red)':'var(--acc)')+'">'+(a.wc>0?'+':'')+a.wc.toFixed(1)+'</div></div><div class="an-s"><div class="al">Trackes</div><div class="av mono">'+a.dwd+'/7</div></div></div></div>';
+function renderAnalysis(cid){const el=$(cid);if(!el)return;const a=buildAn();if(!a){el.innerHTML='';return}
+  const st=weightStats();let ah='';if(a.va){ah='<div class="ava mono">'+a.va+'</div>';if(a.v==='increase'||a.v==='decrease'){const d=a.v==='increase'?50:-50;ah+='<button type="button" class="btn btn-p btn-apply" data-delta="'+d+'">Appliquer</button>'}}
+  let extra='';if(st&&st.count>=2){
+    extra='<div class="an-g" style="margin-top:8px"><div class="an-s"><div class="al">Moy 7j</div><div class="av mono" style="color:var(--acc)">'+st.avg7+'</div></div><div class="an-s"><div class="al">Moy 30j</div><div class="av mono" style="color:var(--pur)">'+st.avg30+'</div></div><div class="an-s"><div class="al">Rythme</div><div class="av mono" style="color:'+(st.rate<0?'var(--grn)':st.rate>0?'var(--red)':'var(--acc)')+'">'+(st.rate>0?'+':'')+st.rate+'/sem</div></div><div class="an-s"><div class="al">'+(st.estDays?'Objectif':'Regularite')+'</div><div class="av mono" style="color:var(--org)">'+(st.estDays?'~'+st.estDays+'j':st.reg+'%')+'</div></div></div>';
+  }
+  el.innerHTML='<div class="an"><h3>Analyse</h3><div class="an-v '+a.v+'"><div class="avt">'+(a.v==='increase'?'\u2B06 ':a.v==='decrease'?'\u2B07 ':'\u27A1 ')+a.vt+'</div><div>'+a.vx+'</div>'+ah+'</div><div class="an-g"><div class="an-s"><div class="al">Moy cal</div><div class="av mono" style="color:var(--org)">'+a.ac+'</div></div><div class="an-s"><div class="al">Moy prot</div><div class="av mono" style="color:var(--acc)">'+a.ap+'g</div></div><div class="an-s"><div class="al">Evol 7j</div><div class="av mono" style="color:'+(a.wc<0?'var(--grn)':a.wc>0?'var(--red)':'var(--acc)')+'">'+(a.wc>0?'+':'')+a.wc.toFixed(1)+'</div></div><div class="an-s"><div class="al">Trackes</div><div class="av mono">'+a.dwd+'/7</div></div></div>'+extra+'</div>';
   el.querySelectorAll('.btn-apply').forEach(b=>b.addEventListener('click',function(){const tg=getTg();tg.gluc=Math.max(0,tg.gluc+(+this.dataset.delta));tg.kcal=tg.prot*4+tg.gluc*4+tg.lip*9;sv("nt_targets",tg);renderHome()}))}
 
 // ===== WEIGHT =====
 function saveWeight(){const inp=$('wIn');let v=inp.value.replace(',','.');const w=parseFloat(v);if(isNaN(w)||w<20||w>300){inp.style.borderColor='var(--red)';setTimeout(()=>inp.style.borderColor='',600);return}const ws=getW(),td=new Date().toISOString().slice(0,10),ex=ws.findIndex(e=>e.date===td);if(ex>=0)ws[ex].w=w;else ws.push({date:td,w});ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);inp.value='';renderCharts()}
+let editWDate='';
+function openWeightEdit(date,w){editWDate=date;$('wEditDate').textContent=fmtD(date);$('wEditIn').value=w;$('wEditMo').classList.add('show')}
+function closeWeightEdit(){$('wEditMo').classList.remove('show');editWDate=''}
+function saveWeightEdit(){const v=parseFloat(($('wEditIn').value||'').replace(',','.'));if(isNaN(v)||v<20||v>300){$('wEditIn').style.borderColor='var(--red)';setTimeout(()=>$('wEditIn').style.borderColor='',600);return}const ws=getW(),idx=ws.findIndex(e=>e.date===editWDate);if(idx>=0)ws[idx].w=v;sv("nt_weights",ws);closeWeightEdit();renderCharts();if($('tab-home').classList.contains('active'))renderHome()}
+function deleteWeight(){const ws=getW().filter(e=>e.date!==editWDate);sv("nt_weights",ws);closeWeightEdit();renderCharts();if($('tab-home').classList.contains('active'))renderHome()}
 
 // ===== SPORT =====
 function renderSport(){
@@ -883,6 +936,11 @@ function wire(){
   $('stepNo').addEventListener('click',()=>$('stepMo').classList.remove('show'));
   $('stepOk').addEventListener('click',()=>{const v=+$('stepIn').value||0;const s=getSteps();s[curDate]=v;sv("nt_steps",s);$('stepMo').classList.remove('show');renderHome()});
   $('stepSync').addEventListener('click',async()=>{await syncSteps();$('stepMo').classList.remove('show')});
+  // Weight edit
+  $('wEditMo').addEventListener('click',e=>{if(e.target===$('wEditMo'))closeWeightEdit()});
+  $('wEditNo').addEventListener('click',closeWeightEdit);
+  $('wEditOk').addEventListener('click',saveWeightEdit);
+  $('wEditDel').addEventListener('click',()=>{if(confirm('Supprimer cette pesee ?'))deleteWeight()});
   // Saved meals
   $('smBtn').addEventListener('click',openSavedMeals);
   $('smMo').addEventListener('click',e=>{if(e.target===$('smMo'))$('smMo').classList.remove('show')});
