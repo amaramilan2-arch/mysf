@@ -278,11 +278,6 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .ph-btn .pl{font-size:1rem;display:block;margin-bottom:1px;font-weight:800}
 .ph-det{background:var(--s2);border-radius:8px;padding:10px;margin-bottom:6px;border-left:3px solid;font-size:.68rem;line-height:1.5;color:var(--t2)}
 .ph-det strong{color:var(--t1);font-size:.72rem}
-.import-a{width:100%;min-height:80px;resize:vertical;background:var(--s2);border:1px solid var(--s3);border-radius:var(--r);padding:10px;font-size:.72rem;color:var(--t1);font-family:'JetBrains Mono',monospace;line-height:1.5}
-.import-a:focus{border-color:var(--acc)}
-.import-a::placeholder{color:var(--t3)}
-.fb-guide{background:var(--s2);border-radius:var(--r);padding:12px;margin-bottom:10px;font-size:.7rem;color:var(--t2);line-height:1.7;border:1px solid var(--s3)}
-.fb-guide ol{padding-left:16px}.fb-guide strong{color:var(--t1)}.fb-guide code{background:var(--s3);padding:1px 4px;border-radius:3px;font-size:.65rem}
 
 /* Modal */
 .mo{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
@@ -306,7 +301,13 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
 [data-theme="light"] .card,.card{transition:background .3s,border-color .3s}
 [data-theme="light"] .streak-bar{background:linear-gradient(135deg,rgba(212,165,32,.06),rgba(224,138,32,.03));border-color:rgba(212,165,32,.15)}
 [data-theme="light"] .brand-g{background:linear-gradient(135deg,var(--acc),var(--pur),var(--pnk));-webkit-background-clip:text;background-clip:text}
-.water-glasses{display:flex;gap:3px;margin-top:4px}
+.sm-item{background:var(--s2);border:1px solid var(--s3);border-radius:var(--r);padding:10px;margin-bottom:6px}
+.sm-item .sm-name{font-weight:700;font-size:.78rem;color:var(--t1);margin-bottom:3px}
+.sm-item .sm-detail{font-size:.62rem;color:var(--t3);margin-bottom:6px;line-height:1.4}
+.sm-item .sm-macros{font-size:.65rem;color:var(--t2);margin-bottom:6px}
+.sm-item .sm-acts{display:flex;gap:5px}
+.sm-item .sm-acts button{font-size:.65rem}
+.water-glasses{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap}
 .water-glass{width:14px;height:14px;border-radius:4px;border:1.5px solid var(--cyan);opacity:.25;transition:.2s}
 .water-glass.filled{opacity:1;background:var(--cyan)}
 .sport-type-row{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -359,15 +360,16 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
     <div class="mc"><div class="mc-d" style="background:var(--brn)"></div><div class="mc-l">Fibres</div><div class="mc-v mono" id="hF">0</div><div class="mc-t mono" id="hFt"></div><div class="mc-bw"><div class="mc-b" id="hFb" style="background:var(--brn)"></div></div></div>
   </div>
   <div class="info-row">
-    <div class="info-card" style="flex-direction:column;align-items:stretch">
+    <div class="info-card" style="flex-direction:column;align-items:stretch;gap:6px">
       <div style="display:flex;align-items:center;gap:8px">
         <div class="ic-i" style="background:linear-gradient(135deg,var(--cyan),#3DB8A8)">&#x1F4A7;</div>
-        <div style="flex:1"><div class="ic-v" id="wV">0L</div><div class="ic-l">Eau</div></div>
-        <div style="display:flex;gap:4px">
+        <div style="flex:1;min-width:0"><div class="ic-v" id="wV">0L</div><div class="ic-l">Eau</div></div>
+        <div style="display:flex;gap:4px;flex-shrink:0">
           <button type="button" class="btn btn-o btn-sm" id="wMinus" style="width:28px;height:28px;padding:0;font-size:1rem;border-radius:50%">-</button>
           <button type="button" class="btn btn-p btn-sm" id="wPlus" style="width:28px;height:28px;padding:0;font-size:1rem;border-radius:50%">+</button>
         </div>
       </div>
+      <div class="water-glasses" id="wGlasses"></div>
     </div>
     <div class="info-card" id="stepsCard" style="cursor:pointer">
       <div class="ic-i" style="background:linear-gradient(135deg,var(--org),#E89830)">&#x1F463;</div>
@@ -405,7 +407,10 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
 <!-- MEALS -->
 <div class="tp" id="tab-meals">
   <div class="dn"><button type="button" id="dP">&#x276E;</button><span class="dd" id="cDt">Aujourd'hui</span><button type="button" id="dN">&#x276F;</button></div>
-  <div class="sw"><span class="si">&#x1F50D;</span><input type="text" id="fSr" placeholder="Rechercher un aliment..." autocomplete="off"><div class="sr" id="fRs"></div></div>
+  <div style="display:flex;gap:6px;align-items:stretch">
+    <div class="sw" style="flex:1"><span class="si">&#x1F50D;</span><input type="text" id="fSr" placeholder="Rechercher un aliment..." autocomplete="off"><div class="sr" id="fRs"></div></div>
+    <button type="button" class="btn btn-o btn-sm" id="smBtn" style="white-space:nowrap;font-size:.68rem;padding:8px 10px;border-radius:var(--r)">&#x2B50; Repas</button>
+  </div>
   <div class="fav-s" id="favS"></div>
   <div class="msum" id="mSm"></div>
   <div class="mt" id="mT"></div>
@@ -492,21 +497,11 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
     <div id="sCalcR"></div>
   </div>
   <div class="ss"><h3><span class="sd" style="background:var(--pur)"></span>Phase</h3><div class="ph-sel" id="phSel"></div><div id="phDet"></div></div>
-  <div class="ss"><h3><span class="sd" style="background:var(--cyan)"></span>Import donnees</h3>
-    <p style="font-size:.68rem;color:var(--t3);margin-bottom:6px">Format: <code style="background:var(--s3);padding:1px 4px;border-radius:3px;font-size:.62rem">date,poids</code></p>
-    <textarea class="import-a" id="impT" placeholder="2026-03-15,74.5"></textarea>
-    <button class="btn btn-p" type="button" id="impB" style="width:100%;margin-top:6px">Importer</button><div id="impF" style="font-size:.68rem;margin-top:4px"></div>
-  </div>
   <div class="ss"><h3><span class="sd" style="background:var(--yel)"></span>Apparence</h3>
     <div style="display:flex;gap:8px">
       <button class="btn btn-o" type="button" id="thDark" style="flex:1">&#x1F319; Sombre</button>
       <button class="btn btn-o" type="button" id="thLight" style="flex:1">&#x2600;&#xFE0F; Clair</button>
     </div>
-  </div>
-  <div class="ss"><h3><span class="sd" style="background:var(--acc)"></span>Firebase</h3>
-    <div class="fb-guide"><strong>Guide (2 min) :</strong><ol><li>Va sur <strong>console.firebase.google.com</strong></li><li>Cree un projet <code>mysf</code> (desactive Analytics)</li><li><strong>Authentication</strong> &gt; Commencer &gt; <strong>Google</strong> &gt; Activer</li><li><strong>Authentication</strong> &gt; Parametres &gt; <strong>Domaines autorises</strong> &gt; ajoute <code>amaramilan2-arch.github.io</code></li><li><strong>Firestore Database</strong> &gt; Creer (mode test)</li><li>&#x2699; Parametres &gt; Vos apps &gt; Web <code>&lt;/&gt;</code> &gt; copie <strong>apiKey</strong> + <strong>projectId</strong></li><li>Colle ci-dessous, sauvegarde, recharge</li></ol></div>
-    <div class="sg"><div class="full"><label>API Key</label><input type="text" class="inp" id="fbK" placeholder="AIzaSy..."></div><div class="full"><label>Project ID</label><input type="text" class="inp" id="fbP" placeholder="mon-projet"></div></div>
-    <button class="btn btn-p" type="button" id="fbS" style="width:100%">Sauvegarder Firebase</button><div id="fbSt" style="font-size:.68rem;margin-top:4px"></div>
   </div>
   <div class="ss"><h3><span class="sd" style="background:var(--grn)"></span>Compte</h3>
     <div id="sAcc"></div>
@@ -546,9 +541,54 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
   <button class="btn btn-o" type="button" id="phMC" style="width:100%;margin-top:8px">Fermer</button>
 </div></div>
 
+<div class="mo" id="smMo"><div class="modal" style="max-height:80vh;overflow-y:auto">
+  <h3>&#x2B50; Repas sauvegardes</h3>
+  <div id="smList"></div>
+  <div style="margin-top:10px;border-top:1px solid var(--s3);padding-top:10px">
+    <div style="font-size:.7rem;font-weight:600;margin-bottom:6px;color:var(--t2)">Sauvegarder le repas actuel</div>
+    <div style="display:flex;gap:6px"><input type="text" class="inp" id="smName" placeholder="Nom du repas" style="flex:1"><button class="btn btn-p btn-sm" type="button" id="smSave">Sauvegarder</button></div>
+  </div>
+  <button class="btn btn-o" type="button" id="smClose" style="width:100%;margin-top:10px">Fermer</button>
+</div></div>
+
 <script>
 // ===== DATA =====
-const FOODS={"Poulet blanc":[165,31,0,3.6,0],"Poulet cuisse":[209,26,0,11,0],"Dinde escalope":[135,30,0,1.5,0],"Boeuf 5%":[137,26,0,3.5,0],"Boeuf 15%":[230,24,0,15,0],"Boeuf hache 5%":[137,26,0,3.5,0],"Boeuf hache 15%":[230,24,0,15,0],"Porc filet":[143,26,0,4,0],"Porc cote":[250,25,0,16,0],"Agneau gigot":[200,28,0,10,0],"Jambon blanc":[115,21,1,3,0],"Bacon":[300,25,0,22,0],"Canard magret":[190,28,0,8,0],"Veau escalope":[172,31,0,5,0],"Merguez":[280,15,1,24,0],"Saucisse poulet":[150,17,2,8,0],"Steak vegetal":[180,18,8,8,4],"Foie de veau":[140,20,4,5,0],"Lapin":[136,21,0,6,0],"Saumon":[208,20,0,13,0],"Saumon fume":[117,18,0,4.5,0],"Thon naturel":[108,26,0,0.6,0],"Thon huile":[190,26,0,9,0],"Cabillaud":[82,18,0,0.7,0],"Crevettes":[99,24,0,0.3,0],"Sardine":[208,25,0,11,0],"Maquereau":[205,19,0,14,0],"Truite":[141,20,0,6.6,0],"Bar/Loup":[97,20,0,2,0],"Moules":[86,12,3.7,2.2,0],"Surimi":[96,8,14,0.8,0],"Calamar":[92,16,3,1.4,0],"Dorade":[100,20,0,2,0],"Oeuf entier":[155,13,1.1,11,0],"Blanc oeuf":[52,11,0.7,0.2,0],"Whey":[380,80,6,4,0],"Caseine":[360,75,5,3,0],"Prot vegetale":[370,75,8,5,3],"Skyr":[63,11,4,0.2,0],"Yaourt grec 0%":[59,10,3.6,0.4,0],"Yaourt grec 10%":[115,5,5,10,0],"Fromage blanc 0%":[48,8,4,0.1,0],"Fromage blanc 3%":[75,7.5,4,3.5,0],"Cottage cheese":[98,11,3.4,4.3,0],"Lait demi-ecreme":[46,3.2,4.8,1.6,0],"Lait entier":[64,3.2,4.8,3.6,0],"Lait amande":[24,0.5,3,1.1,0.5],"Lait avoine":[46,1,8,1.5,0.8],"Lait soja":[54,3.3,6,1.8,0.6],"Mozzarella":[280,22,2,21,0],"Emmental":[380,27,0,29,0],"Parmesan":[392,36,0,26,0],"Feta":[264,14,4,21,0],"Cheddar":[402,25,1.3,33,0],"Chevre frais":[200,13,1,16,0],"Beurre":[717,0.9,0.1,81,0],"Creme 15%":[162,2.5,3,15,0],"Creme 30%":[300,2.5,2.5,30,0],"Riz blanc":[130,2.7,28,0.3,0.4],"Riz complet":[123,2.6,26,0.9,1.8],"Riz basmati":[121,3.5,25,0.4,0.4],"Pates cuites":[131,5,25,1.1,1.8],"Pates completes":[124,5.3,23,1,3.2],"Quinoa":[120,4.4,21.3,1.9,2.8],"Boulgour":[83,3.1,18.6,0.2,4.5],"Semoule":[112,3.6,23,0.2,1.4],"Couscous":[112,3.8,23,0.2,1.4],"Avoine flocons":[372,13,60,7,10],"Porridge":[71,2.5,12,1.4,1.7],"Pain complet":[247,9,41,3.5,7],"Pain blanc":[265,9,49,3.2,2.7],"Baguette":[270,9,55,1.5,2.5],"Pain de mie":[261,8,47,4,2.5],"Galette riz":[387,7,85,1,1.5],"Tortilla":[312,8.3,52,7.5,2],"Wrap complet":[295,9,48,6.5,4],"Patate douce":[86,1.6,20,0.1,3],"Pomme de terre":[87,1.9,20,0.1,1.8],"Frites four":[165,2.5,28,5,2.5],"Lentilles":[116,9,20,0.4,7.9],"Lentilles corail":[116,8,20,0.4,4.5],"Pois chiches":[164,8.9,27,2.6,7.6],"Haricots rouges":[127,8.7,22.8,0.5,6.4],"Haricots blancs":[139,9.7,25,0.5,6.3],"Edamame":[121,12,9,5,5.2],"Tofu":[144,15.5,2.3,8.7,1],"Tempeh":[192,20,9,11,0],"Brocoli":[34,2.8,7,0.4,2.6],"Epinards":[23,2.9,3.6,0.4,2.2],"Courgette":[17,1.2,3.1,0.3,1],"Tomate":[18,0.9,3.9,0.2,1.2],"Carotte":[41,0.9,10,0.2,2.8],"Poivron":[31,1,6,0.3,2.1],"Haricots verts":[31,1.8,7,0.1,3.4],"Concombre":[15,0.7,3.6,0.1,0.5],"Salade":[15,1.4,2.9,0.2,1.3],"Champignons":[22,3.1,3.3,0.3,1],"Oignon":[40,1.1,9,0.1,1.7],"Aubergine":[25,1,6,0.2,3],"Chou-fleur":[25,1.9,5,0.3,2],"Asperges":[20,2.2,3.9,0.1,2.1],"Petits pois":[81,5.4,14.5,0.4,5.7],"Mais":[86,3.2,19,1.2,2.7],"Chou rouge":[31,1.4,7,0.2,2.1],"Chou vert":[25,1.3,6,0.1,2.5],"Betterave":[43,1.6,10,0.2,2.8],"Radis":[16,0.7,3.4,0.1,1.6],"Celeri":[16,0.7,3,0.2,1.6],"Fenouil":[31,1.2,7,0.2,3.1],"Poireau":[61,1.5,14,0.3,1.8],"Artichaut":[47,3.3,11,0.2,5.4],"Endive":[17,1.3,3.2,0.2,3.1],"Ail":[149,6.4,33,0.5,2.1],"Avocat":[160,2,8.5,14.7,6.7],"Banane":[89,1.1,23,0.3,2.6],"Pomme":[52,0.3,14,0.2,2.4],"Orange":[47,0.9,12,0.1,2.4],"Fraise":[33,0.7,8,0.3,2],"Myrtille":[57,0.7,14,0.3,2.4],"Framboise":[52,1.2,12,0.7,6.5],"Kiwi":[61,1.1,15,0.5,3],"Mangue":[60,0.8,15,0.4,1.6],"Raisin":[69,0.7,18,0.2,0.9],"Pasteque":[30,0.6,7.6,0.2,0.4],"Ananas":[50,0.5,13,0.1,1.4],"Poire":[57,0.4,15,0.1,3.1],"Cerise":[63,1,16,0.2,2.1],"Datte":[277,1.8,75,0.2,6.7],"Figue":[74,0.8,19,0.3,2.9],"Peche":[39,0.9,10,0.3,1.5],"Abricot":[48,1.4,11,0.4,2],"Melon":[34,0.8,8,0.2,0.9],"Prune":[46,0.7,11,0.3,1.4],"Grenade":[83,1.7,19,1.2,4],"Litchi":[66,0.8,17,0.4,1.3],"Citron":[29,1.1,9,0.3,2.8],"Pamplemousse":[42,0.8,11,0.1,1.6],"Amandes":[579,21,22,49,12.5],"Noix":[654,15,14,65,6.7],"Noix cajou":[553,18,30,44,3.3],"Cacahuetes":[567,26,16,49,8.5],"Beurre cacahuete":[588,25,20,50,6],"Beurre amande":[614,21,19,56,10],"Noisettes":[628,15,17,61,9.7],"Graines chia":[486,17,42,31,34],"Graines tournesol":[584,21,20,51,8.6],"Graines courge":[559,30,11,49,6],"Graines lin":[534,18,29,42,27],"Huile olive":[884,0,0,100,0],"Huile coco":[862,0,0,100,0],"Chocolat noir 70%":[598,8,33,43,11],"Chocolat noir 85%":[580,10,22,50,13],"Chocolat lait":[535,8,56,30,2],"Miel":[304,0.3,82,0,0.2],"Confiture":[250,0.4,63,0.1,0.9],"Granola":[471,10,64,20,5],"Compote pomme":[68,0.3,17,0.1,1.2],"Sauce tomate":[29,1.3,5.5,0.2,1.5],"Houmous":[166,8,14,9.6,6],"Pesto":[387,5,6,38,2],"Guacamole":[160,2,9,14,7],"Pizza margherita":[250,11,30,10,2],"Burger boeuf":[295,17,24,15,1.5],"Wrap poulet":[180,14,18,6,1.5],"Poke bowl":[145,12,18,3,1.5],"Sushi 6pcs":[190,8,36,1,0.8],"Croissant":[406,8,46,21,2],"Pain chocolat":[420,7,48,23,2.5],"Pancake":[227,6,35,7,1.2],"Crepe":[190,6,30,5,1],"Tacos poulet":[200,15,20,7,2],"Salade cesar":[180,12,8,12,2],"Soupe legumes":[35,1.5,6,0.5,1.5],"Risotto":[170,4,25,6,0.5]};
+const FOODS={
+// Viandes
+"Poulet blanc":[165,31,0,3.6,0],"Poulet cuisse":[209,26,0,11,0],"Dinde escalope":[135,30,0,1.5,0],"Boeuf 5%":[137,26,0,3.5,0],"Boeuf 15%":[230,24,0,15,0],"Boeuf hache 5%":[137,26,0,3.5,0],"Boeuf hache 15%":[230,24,0,15,0],"Porc filet":[143,26,0,4,0],"Porc cote":[250,25,0,16,0],"Agneau gigot":[200,28,0,10,0],"Agneau epaule":[235,25,0,15,0],"Jambon blanc":[115,21,1,3,0],"Bacon":[300,25,0,22,0],"Canard magret":[190,28,0,8,0],"Veau escalope":[172,31,0,5,0],"Merguez":[280,15,1,24,0],"Saucisse poulet":[150,17,2,8,0],"Steak vegetal":[180,18,8,8,4],"Foie de veau":[140,20,4,5,0],"Lapin":[136,21,0,6,0],
+// Poissons
+"Saumon":[208,20,0,13,0],"Saumon fume":[117,18,0,4.5,0],"Thon naturel":[108,26,0,0.6,0],"Thon huile":[190,26,0,9,0],"Cabillaud":[82,18,0,0.7,0],"Crevettes":[99,24,0,0.3,0],"Sardine":[208,25,0,11,0],"Maquereau":[205,19,0,14,0],"Truite":[141,20,0,6.6,0],"Bar/Loup":[97,20,0,2,0],"Moules":[86,12,3.7,2.2,0],"Surimi":[96,8,14,0.8,0],"Calamar":[92,16,3,1.4,0],"Dorade":[100,20,0,2,0],"Poulpe":[82,15,2.2,1,0],"Gambas":[90,21,0,0.5,0],
+// Oeufs & Proteines
+"Oeuf entier":[155,13,1.1,11,0],"Blanc oeuf":[52,11,0.7,0.2,0],"Whey":[380,80,6,4,0],"Caseine":[360,75,5,3,0],"Prot vegetale":[370,75,8,5,3],
+// Produits laitiers
+"Skyr":[63,11,4,0.2,0],"Yaourt grec 0%":[59,10,3.6,0.4,0],"Yaourt grec 10%":[115,5,5,10,0],"Fromage blanc 0%":[48,8,4,0.1,0],"Fromage blanc 3%":[75,7.5,4,3.5,0],"Cottage cheese":[98,11,3.4,4.3,0],"Lait demi-ecreme":[46,3.2,4.8,1.6,0],"Lait entier":[64,3.2,4.8,3.6,0],"Lait amande":[24,0.5,3,1.1,0.5],"Lait avoine":[46,1,8,1.5,0.8],"Lait soja":[54,3.3,6,1.8,0.6],"Mozzarella":[280,22,2,21,0],"Emmental":[380,27,0,29,0],"Parmesan":[392,36,0,26,0],"Feta":[264,14,4,21,0],"Cheddar":[402,25,1.3,33,0],"Chevre frais":[200,13,1,16,0],"Ricotta":[174,11,3,13,0],"Beurre":[717,0.9,0.1,81,0],"Creme 15%":[162,2.5,3,15,0],"Creme 30%":[300,2.5,2.5,30,0],
+// Feculents
+"Riz blanc":[130,2.7,28,0.3,0.4],"Riz complet":[123,2.6,26,0.9,1.8],"Riz basmati":[121,3.5,25,0.4,0.4],"Pates cuites":[131,5,25,1.1,1.8],"Pates completes":[124,5.3,23,1,3.2],"Quinoa":[120,4.4,21.3,1.9,2.8],"Boulgour":[83,3.1,18.6,0.2,4.5],"Semoule":[112,3.6,23,0.2,1.4],"Couscous":[112,3.8,23,0.2,1.4],"Avoine flocons":[372,13,60,7,10],"Porridge":[71,2.5,12,1.4,1.7],"Pain complet":[247,9,41,3.5,7],"Pain blanc":[265,9,49,3.2,2.7],"Baguette":[270,9,55,1.5,2.5],"Pain de mie":[261,8,47,4,2.5],"Galette riz":[387,7,85,1,1.5],"Tortilla":[312,8.3,52,7.5,2],"Wrap complet":[295,9,48,6.5,4],"Patate douce":[86,1.6,20,0.1,3],"Pomme de terre":[87,1.9,20,0.1,1.8],"Frites four":[165,2.5,28,5,2.5],"Manioc":[160,1.4,38,0.3,1.8],"Igname":[118,1.5,28,0.2,4.1],
+// Legumineuses
+"Lentilles":[116,9,20,0.4,7.9],"Lentilles corail":[116,8,20,0.4,4.5],"Pois chiches":[164,8.9,27,2.6,7.6],"Haricots rouges":[127,8.7,22.8,0.5,6.4],"Haricots blancs":[139,9.7,25,0.5,6.3],"Feves":[88,7.6,13,0.7,5.4],"Pois casses":[118,8.3,21,0.4,8.3],"Edamame":[121,12,9,5,5.2],"Tofu":[144,15.5,2.3,8.7,1],"Tempeh":[192,20,9,11,0],
+// Legumes
+"Brocoli":[34,2.8,7,0.4,2.6],"Epinards":[23,2.9,3.6,0.4,2.2],"Courgette":[17,1.2,3.1,0.3,1],"Tomate":[18,0.9,3.9,0.2,1.2],"Carotte":[41,0.9,10,0.2,2.8],"Poivron":[31,1,6,0.3,2.1],"Haricots verts":[31,1.8,7,0.1,3.4],"Concombre":[15,0.7,3.6,0.1,0.5],"Salade":[15,1.4,2.9,0.2,1.3],"Champignons":[22,3.1,3.3,0.3,1],"Oignon":[40,1.1,9,0.1,1.7],"Aubergine":[25,1,6,0.2,3],"Chou-fleur":[25,1.9,5,0.3,2],"Asperges":[20,2.2,3.9,0.1,2.1],"Petits pois":[81,5.4,14.5,0.4,5.7],"Mais":[86,3.2,19,1.2,2.7],"Chou rouge":[31,1.4,7,0.2,2.1],"Chou vert":[25,1.3,6,0.1,2.5],"Betterave":[43,1.6,10,0.2,2.8],"Radis":[16,0.7,3.4,0.1,1.6],"Celeri":[16,0.7,3,0.2,1.6],"Fenouil":[31,1.2,7,0.2,3.1],"Poireau":[61,1.5,14,0.3,1.8],"Artichaut":[47,3.3,11,0.2,5.4],"Endive":[17,1.3,3.2,0.2,3.1],"Ail":[149,6.4,33,0.5,2.1],"Avocat":[160,2,8.5,14.7,6.7],"Navet":[28,0.9,6,0.1,1.8],"Gombo":[33,1.9,7,0.2,3.2],
+// Fruits
+"Banane":[89,1.1,23,0.3,2.6],"Pomme":[52,0.3,14,0.2,2.4],"Orange":[47,0.9,12,0.1,2.4],"Fraise":[33,0.7,8,0.3,2],"Myrtille":[57,0.7,14,0.3,2.4],"Framboise":[52,1.2,12,0.7,6.5],"Kiwi":[61,1.1,15,0.5,3],"Mangue":[60,0.8,15,0.4,1.6],"Raisin":[69,0.7,18,0.2,0.9],"Pasteque":[30,0.6,7.6,0.2,0.4],"Ananas":[50,0.5,13,0.1,1.4],"Poire":[57,0.4,15,0.1,3.1],"Cerise":[63,1,16,0.2,2.1],"Peche":[39,0.9,10,0.3,1.5],"Abricot":[48,1.4,11,0.4,2],"Melon":[34,0.8,8,0.2,0.9],"Prune":[46,0.7,11,0.3,1.4],"Grenade":[83,1.7,19,1.2,4],"Litchi":[66,0.8,17,0.4,1.3],"Citron":[29,1.1,9,0.3,2.8],"Pamplemousse":[42,0.8,11,0.1,1.6],"Papaye":[43,0.5,11,0.3,1.7],"Fruit passion":[97,2.2,23,0.7,10.4],"Noix coco fraiche":[354,3.3,15,33,9],
+// Fruits secs
+"Datte":[277,1.8,75,0.2,6.7],"Figue seche":[249,3.3,64,0.9,9.8],"Abricot sec":[241,3.4,63,0.5,7.3],"Raisin sec":[299,3.1,79,0.5,3.7],"Pruneau":[240,2.2,64,0.4,7.1],"Cranberry sechee":[308,0.1,82,1.4,5.7],"Banane sechee":[346,3.9,88,1.8,5.9],
+// Graines & Oleagineux
+"Amandes":[579,21,22,49,12.5],"Noix":[654,15,14,65,6.7],"Noix cajou":[553,18,30,44,3.3],"Cacahuetes":[567,26,16,49,8.5],"Beurre cacahuete":[588,25,20,50,6],"Beurre amande":[614,21,19,56,10],"Noisettes":[628,15,17,61,9.7],"Pistaches":[560,20,28,45,10],"Noix pecan":[691,9,14,72,9.6],"Noix bresil":[656,14,12,66,7.5],"Noix macadamia":[718,8,14,76,8.6],"Graines chia":[486,17,42,31,34],"Graines tournesol":[584,21,20,51,8.6],"Graines courge":[559,30,11,49,6],"Graines lin":[534,18,29,42,27],"Graines sesame":[573,18,23,50,12],"Graines chanvre":[553,32,9,49,4],"Tahini":[595,17,21,54,9],
+// Huiles & Sucres
+"Huile olive":[884,0,0,100,0],"Huile coco":[862,0,0,100,0],"Huile colza":[884,0,0,100,0],"Chocolat noir 70%":[598,8,33,43,11],"Chocolat noir 85%":[580,10,22,50,13],"Chocolat lait":[535,8,56,30,2],"Miel":[304,0.3,82,0,0.2],"Confiture":[250,0.4,63,0.1,0.9],"Sirop erable":[260,0,67,0,0],"Granola":[471,10,64,20,5],"Compote pomme":[68,0.3,17,0.1,1.2],
+// Sauces & Condiments
+"Sauce tomate":[29,1.3,5.5,0.2,1.5],"Houmous":[166,8,14,9.6,6],"Pesto":[387,5,6,38,2],"Guacamole":[160,2,9,14,7],"Harissa":[70,3,9,3,5],"Sauce soja":[53,8,5,0,0.8],"Tzatziki":[56,4,4,2.5,0.3],
+// Plats tunisiens
+"Couscous tunisien":[155,8,20,5,2.5],"Brik oeuf":[220,9,18,13,1],"Ojja merguez":[130,8,6,9,1.5],"Lablabi":[140,7,20,4,5],"Chorba frik":[65,5,8,1.5,2],"Mloukhia":[90,8,5,5,3],"Kafteji":[120,3,10,8,2.5],"Mechouia":[85,2,6,6,2],"Tajine tunisien":[180,12,10,10,1.5],"Fricasse":[290,8,30,16,1.5],"Makroud":[380,5,55,16,3],"Bambalouni":[350,5,42,18,1],"Chakchouka":[110,7,8,6,2],"Slata mechouia":[80,2,5,6,2],"Kamounia":[140,14,5,8,1],"Marqa bel khodra":[70,4,8,3,2.5],
+// Plats portugais
+"Bacalhau a bras":[180,14,10,10,1],"Pastel de nata":[290,4,32,17,0.5],"Francesinha":[350,22,25,18,1],"Caldo verde":[75,3,8,3.5,2],"Arroz de marisco":[130,10,15,3.5,0.5],"Sardinha grelhada":[208,25,0,11,0],"Bitoque":[250,22,15,11,0.5],"Pasteis bacalhau":[240,10,20,14,1],"Feijoada portuguesa":[160,12,12,7,4],"Arroz de pato":[185,12,20,7,0.5],"Cozido portugues":[145,12,10,6,2],
+// Plats italiens
+"Pizza margherita":[250,11,30,10,2],"Risotto":[170,4,25,6,0.5],"Lasagne bolognaise":[175,10,15,8,1.5],"Carbonara":[190,10,22,7,1],"Penne arrabiata":[145,5,24,3.5,2],"Bolognaise":[130,9,8,7,1.5],"Gnocchi":[133,3,28,1,1.5],"Parmigiana":[160,8,10,10,2],"Osso buco":[180,20,5,9,0.5],"Minestrone":[55,3,9,1,2.5],"Tiramisu":[280,5,30,16,0.3],"Bruschetta":[180,5,22,8,1.5],"Ravioli ricotta":[185,8,22,7,1],
+// Plats classiques
+"Burger boeuf":[295,17,24,15,1.5],"Wrap poulet":[180,14,18,6,1.5],"Poke bowl":[145,12,18,3,1.5],"Sushi 6pcs":[190,8,36,1,0.8],"Croissant":[406,8,46,21,2],"Pain chocolat":[420,7,48,23,2.5],"Pancake":[227,6,35,7,1.2],"Crepe":[190,6,30,5,1],"Tacos poulet":[200,15,20,7,2],"Salade cesar":[180,12,8,12,2],"Soupe legumes":[35,1.5,6,0.5,1.5],"Quiche lorraine":[250,10,18,15,0.8],"Gratin dauphinois":[140,4,15,7,1],"Ratatouille":[55,1.5,7,2.5,2],"Blanquette veau":[130,12,5,7,0.5],"Boeuf bourguignon":[150,14,4,8,0.8],"Pot-au-feu":[100,10,6,4,1.5],"Hachis parmentier":[145,8,14,6.5,1.5],
+// Plats du monde
+"Curry poulet":[155,14,8,8,1.5],"Pad thai":[175,10,25,5,1],"Nasi goreng":[170,8,24,5,1],"Falafel":[333,13,32,18,5],"Chili con carne":[120,9,10,5,3],"Dahl lentilles":[110,7,15,3,4],"Fried rice":[165,5,25,5,1],"Nems poulet":[220,8,22,11,1],"Bo bun":[160,10,20,4.5,1.5],"Bibimbap":[155,10,22,3.5,2],"Kebab":[230,15,20,11,1.5],"Gyoza":[195,8,24,7.5,1],"Ramen":[120,8,15,3.5,1]
+};
 
 const MEALS=["Petit-dej","Dejeuner","Diner","Collation"];
 const SPLITS=["Upper","Lower","Push","Pull","Legs","Full Body"];
@@ -590,13 +630,14 @@ const getTg=()=>ld("nt_targets",{kcal:2200,prot:150,gluc:250,lip:75,fib:30});
 const getPW=()=>ld("nt_pw",75);const getSG=()=>ld("nt_sg",10000);const getH=()=>ld("nt_height",175);
 const getWater=()=>ld("nt_water",{});const getFavs=()=>ld("nt_favs",[]);const getRecent=()=>ld("nt_recent",[]);
 const getRecipes=()=>ld("nt_recipes",{});
+const getSavedMeals=()=>ld("nt_savedmeals",[]);
 const getAllFoods=()=>{const r=getRecipes();return{...FOODS,...r}};
 const dayLog=d=>(getLog()[d||curDate])||[];
 const dayTotals=d=>{const items=dayLog(d);let t={kcal:0,p:0,g:0,l:0,f:0};items.forEach(i=>{t.kcal+=i.kcal;t.p+=i.p;t.g+=i.g;t.l+=i.l;t.f+=(i.f||0)});return t};
 const fmtD=d=>{const p=d.split('-');return p[2]+'/'+p[1]};
 
 // ===== CLOUD SYNC =====
-const SYNC_KEYS=["nt_log","nt_weights","nt_workouts","nt_steps","nt_water","nt_recipes","nt_favs","nt_recent","nt_targets","nt_pw","nt_height","nt_sg","nt_phase","nt_setup","nt_theme"];
+const SYNC_KEYS=["nt_log","nt_weights","nt_workouts","nt_steps","nt_water","nt_recipes","nt_favs","nt_recent","nt_targets","nt_pw","nt_height","nt_sg","nt_phase","nt_setup","nt_theme","nt_savedmeals"];
 let db=null,syncing=false;
 function getDb(){if(db)return db;if(firebaseReady&&firebase.firestore){db=firebase.firestore();return db}return null}
 async function cloudSave(){if(!currentUser||!getDb()||syncing)return;syncing=true;try{const data={};SYNC_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)data[k]=v});data.updatedAt=Date.now();data.displayName=currentUser.displayName||'';data.email=currentUser.email||'';data.photoURL=currentUser.photoURL||'';await getDb().collection('users').doc(currentUser.uid).set(data,{merge:true});console.log('MYSF: cloud save OK')}catch(e){console.warn('MYSF: cloud save err',e)}syncing=false}
@@ -643,7 +684,7 @@ function renderHome(){
   $('hG').textContent=mg+'g';$('hGt').textContent='/'+tg.gluc;$('hGb').style.width=Math.min(100,tg.gluc?Math.round(t.g/tg.gluc*100):0)+'%';
   $('hL').textContent=ml+'g';$('hLt').textContent='/'+tg.lip;$('hLb').style.width=Math.min(100,tg.lip?Math.round(t.l/tg.lip*100):0)+'%';
   $('hF').textContent=mf+'g';$('hFt').textContent='/'+(tg.fib||30);$('hFb').style.width=Math.min(100,(tg.fib||30)?Math.round(t.f/(tg.fib||30)*100):0)+'%';
-  const w=getWater(),wc=w[curDate]||0;$('wV').innerHTML=((wc)*0.25).toFixed(1)+'L<div class="water-glasses">'+Array.from({length:8},(_, i)=>'<div class="water-glass'+(i<wc?' filled':'')+'"></div>').join('')+'</div>';
+  const w=getWater(),wc=w[curDate]||0;$('wV').textContent=(wc*0.25).toFixed(1)+'L';$('wGlasses').innerHTML=Array.from({length:8},(_,i)=>'<div class="water-glass'+(i<wc?' filled':'')+'"></div>').join('');
   const s=getSteps();$('sV').textContent=(s[curDate]||0).toLocaleString('fr-FR');
   // Weight home
   const ws=getW(),todayW=ws.find(x=>x.date===new Date().toISOString().slice(0,10));
@@ -711,6 +752,37 @@ function renderRecipes(){
 }
 function addRecipe(){const name=$('rcName').value.trim();if(!name)return;const k=+$('rcKcal').value||0,p=+$('rcProt').value||0,g=+$('rcGluc').value||0,l=+$('rcLip').value||0,f=+$('rcFib').value||0;const r=getRecipes();r[name]=[k,p,g,l,f];sv("nt_recipes",r);$('rcName').value='';$('rcKcal').value='';$('rcProt').value='';$('rcGluc').value='';$('rcLip').value='';$('rcFib').value='';renderRecipes()}
 
+// ===== SAVED MEALS =====
+function openSavedMeals(){renderSavedMealsList();$('smMo').classList.add('show')}
+function renderSavedMealsList(){
+  const meals=getSavedMeals(),el=$('smList');
+  if(!meals.length){el.innerHTML='<div class="empty" style="margin:10px 0">Aucun repas sauvegarde</div>';return}
+  el.innerHTML=meals.map((m,i)=>{
+    const tk=m.items.reduce((s,x)=>s+x.kcal,0),tp=m.items.reduce((s,x)=>s+x.p,0),tg=m.items.reduce((s,x)=>s+x.g,0),tl=m.items.reduce((s,x)=>s+x.l,0);
+    const detail=m.items.map(x=>x.food+' '+x.qty+'g').join(', ');
+    return '<div class="sm-item"><div class="sm-name">'+m.name+'</div><div class="sm-detail">'+detail+'</div><div class="sm-macros mono">'+Math.round(tk)+' kcal | P'+Math.round(tp)+' G'+Math.round(tg)+' L'+Math.round(tl)+'</div><div class="sm-acts"><button class="btn btn-p btn-sm" data-smi="'+i+'">Ajouter</button><button class="btn btn-d btn-sm" data-smd="'+i+'">Supprimer</button></div></div>'
+  }).join('');
+  el.querySelectorAll('[data-smi]').forEach(b=>b.addEventListener('click',function(){loadSavedMeal(+this.dataset.smi)}));
+  el.querySelectorAll('[data-smd]').forEach(b=>b.addEventListener('click',function(){deleteSavedMeal(+this.dataset.smd)}));
+}
+function saveMealCombo(){
+  const name=$('smName').value.trim();if(!name)return;
+  const items=dayLog().filter(x=>x.meal===curMeal);
+  if(!items.length){$('smName').style.borderColor='var(--red)';setTimeout(()=>$('smName').style.borderColor='',600);return}
+  const meals=getSavedMeals();
+  meals.push({name,items:items.map(x=>({food:x.food,qty:x.qty,kcal:x.kcal,p:x.p,g:x.g,l:x.l,f:x.f||0}))});
+  sv("nt_savedmeals",meals);$('smName').value='';renderSavedMealsList();
+}
+function loadSavedMeal(idx){
+  const meals=getSavedMeals(),m=meals[idx];if(!m)return;
+  const log=getLog();if(!log[curDate])log[curDate]=[];
+  m.items.forEach(x=>{log[curDate].push({...x,meal:curMeal,id:Date.now()+Math.random()*1000|0})});
+  sv("nt_log",log);$('smMo').classList.remove('show');renderMealsTab();if($('tab-home').classList.contains('active'))renderHome();
+}
+function deleteSavedMeal(idx){
+  const meals=getSavedMeals();meals.splice(idx,1);sv("nt_savedmeals",meals);renderSavedMealsList();
+}
+
 // ===== TREND & ANALYSIS =====
 function trend72(){const w=getW();if(w.length<3)return null;const l=w.slice(-3),a=((l[2].w-l[1].w)+(l[1].w-l[0].w))/2;if(a<-0.05)return{dir:'down'};if(a>0.15)return{dir:'up_fast'};if(a>0.05)return{dir:'up'};return{dir:'stable'}}
 function renderAlert(cid){const el=$(cid);if(!el)return;const tr=trend72();if(!tr){el.innerHTML='';return}const ph=getPh(),tg=getTg();let msg='',tp='info';
@@ -766,8 +838,6 @@ function renderSettings(){
   // Theme buttons
   const ct=getTheme();$('thDark').className='btn '+(ct==='dark'?'btn-p':'btn-o');$('thLight').className='btn '+(ct==='light'?'btn-p':'btn-o');
   renderPresets();renderPhSel();renderPhDet();
-  const cfg=ld("nt_firebase",{});$('fbK').value=cfg.apiKey||'';$('fbP').value=cfg.projectId||'';
-  $('fbSt').innerHTML=firebaseReady?'<span style="color:var(--grn)">\u2713 Connecte</span>':'<span style="color:var(--t3)">Non configure</span>';
   const ac=$('sAcc');
   if(currentUser){ac.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'+(currentUser.photoURL?'<img src="'+currentUser.photoURL+'" style="width:40px;height:40px;border-radius:50%;border:2px solid var(--acc)">':'<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--pur));display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:#fff">'+(currentUser.displayName||'?')[0].toUpperCase()+'</div>')+'<div><div style="font-weight:700;font-size:.85rem">'+(currentUser.displayName||'Utilisateur')+'</div><div style="font-size:.65rem;color:var(--t3)">'+(currentUser.email||'')+'</div><div style="font-size:.55rem;color:var(--grn);margin-top:2px">&#x2713; Connecte'+(getDb()?' + Cloud sync':'')+'</div></div></div><button class="btn btn-o" type="button" id="logout" style="width:100%">Deconnexion</button>';$('logout').addEventListener('click',()=>{if(currentUser&&getDb())cloudSave().then(()=>{if(firebaseReady)firebase.auth().signOut();currentUser=null;location.reload()});else{if(firebaseReady)firebase.auth().signOut();currentUser=null;location.reload()}});$('syncBtns').style.display='block'}
   else{ac.innerHTML='<div class="alt info" style="margin:0"><span>Mode local — connecte-toi pour sauvegarder tes donnees dans le cloud et les retrouver sur tous tes appareils.</span></div>';$('syncBtns').style.display='none'}
@@ -813,13 +883,16 @@ function wire(){
   $('stepNo').addEventListener('click',()=>$('stepMo').classList.remove('show'));
   $('stepOk').addEventListener('click',()=>{const v=+$('stepIn').value||0;const s=getSteps();s[curDate]=v;sv("nt_steps",s);$('stepMo').classList.remove('show');renderHome()});
   $('stepSync').addEventListener('click',async()=>{await syncSteps();$('stepMo').classList.remove('show')});
+  // Saved meals
+  $('smBtn').addEventListener('click',openSavedMeals);
+  $('smMo').addEventListener('click',e=>{if(e.target===$('smMo'))$('smMo').classList.remove('show')});
+  $('smClose').addEventListener('click',()=>$('smMo').classList.remove('show'));
+  $('smSave').addEventListener('click',saveMealCombo);
   // Settings
   $('sSave').addEventListener('click',()=>{sv("nt_targets",{kcal:+$('sK').value||2200,prot:+$('sP').value||150,gluc:+$('sG').value||250,lip:+$('sL').value||75,fib:+$('sFib').value||30});sv("nt_pw",parseFloat(($('sW').value||'75').replace(',','.'))||75);sv("nt_height",+$('sH').value||175);sv("nt_sg",+$('sSt').value||10000);const b=$('sSave');b.textContent='\u2713';b.classList.replace('btn-p','btn-s');setTimeout(()=>{b.textContent='Sauvegarder';b.classList.replace('btn-s','btn-p')},1200);if($('tab-home').classList.contains('active'))renderHome()});
   $('sCalc').addEventListener('click',()=>{const pw=parseFloat(($('sW').value||'75').replace(',','.'))||75,sg=+$('sSt').value||10000,m=PH_MULT[getPh()];const tdee=Math.round((pw*30+(sg-2000)*0.05)*m),prot=Math.round(pw*2),lip=Math.round(pw),gluc=Math.max(0,Math.round((tdee-prot*4-lip*9)/4));$('sK').value=tdee;$('sP').value=prot;$('sG').value=gluc;$('sL').value=lip;$('sCalcR').innerHTML='<div class="alt info" style="margin-top:6px"><span>TDEE='+Math.round(pw*30+(sg-2000)*0.05)+'\u00D7'+m+'=<strong>'+tdee+'kcal</strong></span></div>'});
   $('applyPct').addEventListener('click',applyPct);
-  $('fbS').addEventListener('click',()=>{const c={apiKey:$('fbK').value.trim(),projectId:$('fbP').value.trim()};if(!c.apiKey||!c.projectId){$('fbSt').innerHTML='<span style="color:var(--red)">Requis</span>';return}sv("nt_firebase",c);$('fbSt').innerHTML='<span style="color:var(--grn)">\u2713 OK, recharge</span>'});
-  $('impB').addEventListener('click',()=>{const t=$('impT').value.trim();if(!t)return;const lines=t.split(/\r?\n/).filter(l=>l.trim());let imp=0,err=0;const ws=getW();lines.forEach(l=>{const p=l.split(/[,;\t]/);if(p.length<2){err++;return}let ds=p[0].trim().replace(/\//g,'-');if(!/^\d{4}-\d{2}-\d{2}$/.test(ds)){err++;return}const v=parseFloat(p[1].trim().replace(',','.'));if(v>=20&&v<=300){const i=ws.findIndex(e=>e.date===ds);if(i>=0)ws[i].w=v;else ws.push({date:ds,w:v});imp++}else err++});ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);$('impF').innerHTML='<span style="color:var(--grn)">'+imp+'</span>'+(err?' <span style="color:var(--red)">'+err+' err</span>':'');$('impT').value=''});
-  $('sExp').addEventListener('click',()=>{const d={log:getLog(),weights:getW(),workouts:getWk(),steps:getSteps(),water:getWater(),recipes:getRecipes(),phase:getPh(),targets:getTg()};const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mysf_'+curDate+'.json';a.click()});
+  $('sExp').addEventListener('click',()=>{const d={log:getLog(),weights:getW(),workouts:getWk(),steps:getSteps(),water:getWater(),recipes:getRecipes(),savedmeals:getSavedMeals(),phase:getPh(),targets:getTg()};const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mysf_'+curDate+'.json';a.click()});
   $('sRst').addEventListener('click',()=>{if(confirm('Tout supprimer?')){localStorage.clear();location.reload()}});
   document.addEventListener('click',e=>{if(!e.target.closest('.sw'))$('fRs').classList.remove('show')});
   // Theme
