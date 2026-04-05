@@ -996,20 +996,61 @@ function weightStats(){
   const reg=Math.round(w14.length/14*100);
   return{cur,start,mn,mx,bmi,avg7,avg30,rate,estDays,total:+(cur-start).toFixed(1),reg,count:w.length}
 }
-function renderAlert(cid){const el=$(cid);if(!el)return;const tr=trend72();if(!tr){el.innerHTML='';return}const ph=getPh(),tg=getTg();let msg='',tp='info';
-  if(ph==='A'){if(tr.dir==='stable'){msg='Stagne 72h \u2192 +200kcal';tp='warn'}else if(tr.dir==='down'){msg='Baisse \u2192 rien';tp='success'}}
-  else if(ph==='B'){if(tr.dir==='stable'){msg='Stagne \u2192 -200kcal';tp='warn'}else if(tr.dir==='down'){msg='Deficit OK';tp='success'}else if(tr.dir==='up'||tr.dir==='up_fast'){msg='Remonte \u2192 verifier';tp='danger'}}
-  else if(ph==='C'){if(tr.dir==='down'){msg='Reverse: baisse = +200kcal!';tp='danger'}else if(tr.dir==='stable'){msg='Stable OK';tp='success'}}
-  else if(ph==='D'){if(tr.dir==='down'){msg='Baisse PDM \u2192 +200kcal';tp='warn'}else if(tr.dir==='up'){msg='Surplus OK';tp='success'}}
-  else{if(tr.dir==='stable'){msg='Stagne reset';tp='warn'}else if(tr.dir==='down'){msg='Reset OK';tp='success'}}
-  if(!msg){el.innerHTML='';return}el.innerHTML='<div class="alt '+tp+'"><span>'+msg+'</span></div>'}
+function renderAlert(cid){const el=$(cid);if(!el)return;const tr=trend72();if(!tr){el.innerHTML='';return}const ph=getPh(),tg=getTg(),st=weightStats();let msg='',tp='info',act='';
+  const kcal=tg.kcal,newUp=kcal+200,newDn=Math.max(1200,kcal-200);
+  if(ph==='A'){
+    if(tr.dir==='down'){msg='Poids baisse \u2014 on maintient '+kcal+' kcal';tp='success';act='maintenir'}
+    else if(tr.dir==='stable'){msg='Stagnation 72h \u2014 passe a '+newUp+' kcal (+200)';tp='warn';act='+200'}
+    else if(tr.dir==='up'){msg='Poids monte \u2014 on maintient, le corps s\'adapte';tp='info';act='maintenir'}
+    else{msg='Prise rapide \u2014 stop, redescends a '+kcal+' kcal';tp='danger';act='maintenir'}
+  }else if(ph==='B'){
+    if(tr.dir==='down'){msg='Deficit efficace \u2014 on maintient '+kcal+' kcal';tp='success';act='maintenir'}
+    else if(tr.dir==='stable'){msg='Stagnation en deficit \u2014 baisse a '+newDn+' kcal (-200)';tp='warn';act='-200'}
+    else if(tr.dir==='up'){msg='Remontee en deficit \u2014 baisse a '+newDn+' kcal (-200)';tp='danger';act='-200'}
+    else{msg='Remontee rapide \u2014 baisse a '+newDn+' kcal (-200) et verifie ton tracking';tp='danger';act='-200'}
+  }else if(ph==='C'){
+    if(tr.dir==='down'){msg='Encore en perte en reverse \u2014 monte a '+newUp+' kcal (+200)';tp='warn';act='+200'}
+    else if(tr.dir==='stable'){msg='Reverse stable \u2014 on maintient '+kcal+' kcal';tp='success';act='maintenir'}
+    else if(tr.dir==='up'){msg='Legere prise OK en reverse \u2014 on maintient '+kcal+' kcal';tp='info';act='maintenir'}
+    else{msg='Prise trop rapide \u2014 on maintient '+kcal+' kcal, surveille';tp='warn';act='maintenir'}
+  }else if(ph==='D'){
+    if(tr.dir==='down'){msg='Poids baisse en PDM \u2014 monte a '+newUp+' kcal (+200)';tp='warn';act='+200'}
+    else if(tr.dir==='stable'){msg='Stagnation en PDM \u2014 monte a '+newUp+' kcal (+200)';tp='warn';act='+200'}
+    else if(tr.dir==='up'){msg='PDM on track \u2014 on maintient '+kcal+' kcal';tp='success';act='maintenir'}
+    else{msg='Prise trop rapide \u2014 baisse a '+newDn+' kcal (-200)';tp='danger';act='-200'}
+  }else{
+    if(tr.dir==='down'){msg='Reset OK \u2014 on maintient '+kcal+' kcal';tp='success';act='maintenir'}
+    else if(tr.dir==='stable'){msg='Stagnation reset \u2014 baisse a '+newDn+' kcal (-200)';tp='warn';act='-200'}
+    else{msg='Remontee en reset \u2014 baisse a '+newDn+' kcal (-200)';tp='danger';act='-200'}
+  }
+  let btn='';
+  if(act==='+200')btn=' <button type="button" class="btn btn-p btn-sm" style="margin-left:8px;padding:4px 10px;min-height:28px" id="alertApply" data-d="200">Appliquer +200</button>';
+  else if(act==='-200')btn=' <button type="button" class="btn btn-d btn-sm" style="margin-left:8px;padding:4px 10px;min-height:28px" id="alertApply" data-d="-200">Appliquer -200</button>';
+  el.innerHTML='<div class="alt '+tp+'" style="align-items:center;flex-wrap:wrap"><span>'+msg+'</span>'+btn+'</div>';
+  const ab=$('alertApply');if(ab)ab.addEventListener('click',function(){const tg=getTg(),d=+this.dataset.d;tg.gluc=Math.max(0,tg.gluc+Math.round(d/4));tg.kcal=tg.prot*4+tg.gluc*4+tg.lip*9;sv("nt_targets",tg);renderHome()});
+}
 function buildAn(){const w=getW(),ph=getPh(),tg=getTg(),tr=trend72();const dates=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);dates.push(d.toISOString().slice(0,10))}const dt=dates.map(d=>dayTotals(d)),dwd=dt.filter(t=>t.kcal>0);const ac=dwd.length?Math.round(dwd.reduce((s,t)=>s+t.kcal,0)/dwd.length):0,ap=dwd.length?Math.round(dwd.reduce((s,t)=>s+t.p,0)/dwd.length):0;const rw=w.filter(x=>x.date>=dates[0]);let wc=0;if(rw.length>=2)wc=rw[rw.length-1].w-rw[0].w;let v='maintain',vt='',vx='',va='';
-  if(!tr&&w.length<3)return{v:'maintain',vt:'Donnees insuffisantes',vx:'3 pesees min.',va:'',ac,ap,wc,dwd:dwd.length};
-  if(ph==='A'){if(tr&&tr.dir==='stable'){v='increase';vt='+200 KCAL';vx='Stagnation.';va='Gluc: '+tg.gluc+'\u2192'+(tg.gluc+50)}else{v='maintain';vt='MAINTENIR';vx='Continue.'}}
-  else if(ph==='B'){if(tr&&tr.dir==='stable'){v='decrease';vt='-200 KCAL';vx='Stagnation deficit.';va='Gluc: '+tg.gluc+'\u2192'+Math.max(0,tg.gluc-50)}else if(tr&&tr.dir==='down'){v='maintain';vt='MAINTENIR';vx='Deficit OK.'}else if(tr&&(tr.dir==='up'||tr.dir==='up_fast')){v='decrease';vt='VERIFIER';vx='Remontee.'}else{v='maintain';vt='MAINTENIR';vx='Continue.'}}
-  else if(ph==='C'){if(tr&&tr.dir==='down'){v='increase';vt='+200 KCAL';vx='Reverse!';va='Gluc: '+tg.gluc+'\u2192'+(tg.gluc+50)}else{v='maintain';vt='MAINTENIR';vx='Stable.'}}
-  else if(ph==='D'){if(tr&&tr.dir==='down'){v='increase';vt='+200 KCAL';vx='Surplus faible.';va='Gluc: '+tg.gluc+'\u2192'+(tg.gluc+50)}else{v='maintain';vt='MAINTENIR';vx='PDM OK.'}}
-  else{if(tr&&tr.dir==='stable'){v='decrease';vt='AJUSTER';vx='Stagnation.';va='\u00B150g'}else{v='maintain';vt='MAINTENIR';vx='Reset OK.'}}
+  const kcal=tg.kcal,newUp=kcal+200,newDn=Math.max(1200,kcal-200);
+  if(!tr&&w.length<3)return{v:'maintain',vt:'Donnees insuffisantes',vx:'3 pesees min pour une recommandation.',va:'',ac,ap,wc,dwd:dwd.length};
+  if(ph==='A'){
+    if(tr&&tr.dir==='stable'){v='increase';vt='+200 KCAL \u2192 '+newUp;vx='Stagnation 72h. Augmente les glucides.';va='Gluc: '+tg.gluc+'g \u2192 '+(tg.gluc+50)+'g'}
+    else{v='maintain';vt='MAINTENIR '+kcal+' KCAL';vx=tr&&tr.dir==='down'?'Poids en baisse, on garde le cap.':'Poids stable ou en hausse, on continue.'}}
+  else if(ph==='B'){
+    if(tr&&tr.dir==='down'){v='maintain';vt='MAINTENIR '+kcal+' KCAL';vx='Deficit fonctionne, poids en baisse.'}
+    else if(tr&&tr.dir==='stable'){v='decrease';vt='-200 KCAL \u2192 '+newDn;vx='Stagnation en deficit. Reduis les glucides.';va='Gluc: '+tg.gluc+'g \u2192 '+Math.max(0,tg.gluc-50)+'g'}
+    else if(tr&&(tr.dir==='up'||tr.dir==='up_fast')){v='decrease';vt='-200 KCAL \u2192 '+newDn;vx='Poids remonte en deficit. Reduis et verifie ton tracking.';va='Gluc: '+tg.gluc+'g \u2192 '+Math.max(0,tg.gluc-50)+'g'}
+    else{v='maintain';vt='MAINTENIR '+kcal+' KCAL';vx='Continue le deficit.'}}
+  else if(ph==='C'){
+    if(tr&&tr.dir==='down'){v='increase';vt='+200 KCAL \u2192 '+newUp;vx='Encore en perte, monte pour reverse.';va='Gluc: '+tg.gluc+'g \u2192 '+(tg.gluc+50)+'g'}
+    else{v='maintain';vt='MAINTENIR '+kcal+' KCAL';vx='Reverse stable, continue.'}}
+  else if(ph==='D'){
+    if(tr&&tr.dir==='down'){v='increase';vt='+200 KCAL \u2192 '+newUp;vx='Pas assez de surplus. Augmente.';va='Gluc: '+tg.gluc+'g \u2192 '+(tg.gluc+50)+'g'}
+    else if(tr&&tr.dir==='up_fast'){v='decrease';vt='-200 KCAL \u2192 '+newDn;vx='Prise trop rapide. Reduis legerement.';va='Gluc: '+tg.gluc+'g \u2192 '+Math.max(0,tg.gluc-50)+'g'}
+    else{v='maintain';vt='MAINTENIR '+kcal+' KCAL';vx='PDM on track, continue.'}}
+  else{
+    if(tr&&tr.dir==='stable'){v='decrease';vt='-200 KCAL \u2192 '+newDn;vx='Stagnation reset. Ajuste a la baisse.';va='Gluc: '+tg.gluc+'g \u2192 '+Math.max(0,tg.gluc-50)+'g'}
+    else if(tr&&(tr.dir==='up'||tr.dir==='up_fast')){v='decrease';vt='-200 KCAL \u2192 '+newDn;vx='Remontee en reset. Baisse les calories.';va='Gluc: '+tg.gluc+'g \u2192 '+Math.max(0,tg.gluc-50)+'g'}
+    else{v='maintain';vt='MAINTENIR '+kcal+' KCAL';vx='Reset OK, continue.'}}
   return{v,vt,vx,va,ac,ap,wc,dwd:dwd.length}}
 function renderAnalysis(cid){const el=$(cid);if(!el)return;const a=buildAn();if(!a){el.innerHTML='';return}
   const st=weightStats();let ah='';if(a.va){ah='<div class="ava mono">'+a.va+'</div>';if(a.v==='increase'||a.v==='decrease'){const d=a.v==='increase'?50:-50;ah+='<button type="button" class="btn btn-p btn-apply" data-delta="'+d+'">Appliquer</button>'}}
