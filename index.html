@@ -211,6 +211,11 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .hi .hd{color:var(--t3);font-size:.68rem}.hi .hw{font-weight:600}
 .chip{padding:3px 7px;border-radius:6px;font-size:.58rem;font-weight:700}
 .chip.dn{background:var(--grnG);color:var(--grn)}.chip.up{background:var(--redG);color:var(--red)}.chip.st{background:var(--accG);color:var(--acc)}
+.rng-btn{padding:5px 10px;border-radius:6px;font-size:.62rem;font-weight:700;background:var(--s2);color:var(--t3);border:1px solid var(--s3);cursor:pointer;text-transform:uppercase;letter-spacing:.4px;transition:all .15s}
+.rng-btn.sel{background:var(--accG);color:var(--acc);border-color:var(--acc)}
+.sum-row{display:flex;gap:5px;flex-wrap:wrap}.sum-box{flex:1;min-width:60px;background:var(--s2);border-radius:8px;padding:8px;text-align:center}
+.sum-box .sl{font-size:.52rem;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-bottom:2px}
+.sum-box .sv{font-size:.88rem;font-weight:700;font-family:var(--mono)}
 
 /* Meals */
 .dn{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:12px}
@@ -404,11 +409,29 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <div class="tp" id="tab-charts">
   <div class="ch"><h3><span class="cd" style="background:var(--acc)"></span>Poids</h3>
     <div class="irow"><input type="text" inputmode="decimal" class="inp" id="wIn" placeholder="Poids (kg)"><button class="btn btn-p btn-sm" type="button" id="wAdd">+</button></div>
-    <div class="ws" id="wSt"></div><div class="chw"><canvas id="wCh"></canvas></div>
+    <div class="ws" id="wSt"></div>
+    <div style="display:flex;gap:4px;margin-bottom:8px" id="wRange"></div>
+    <div class="chw" style="height:220px"><canvas id="wCh"></canvas></div>
   </div>
-  <div class="ch"><h3><span class="cd" style="background:var(--org)"></span>Calories 7j</h3><div class="chw"><canvas id="cCh"></canvas></div></div>
-  <div class="ch"><h3><span class="cd" style="background:var(--pur)"></span>Macros 7j</h3><div class="chw" style="height:180px"><canvas id="mCh"></canvas></div></div>
-  <div class="ch"><h3><span class="cd" style="background:var(--grn)"></span>Proteines 7j</h3><div class="chw"><canvas id="pCh"></canvas></div></div>
+  <div class="ch"><h3><span class="cd" style="background:var(--org)"></span>Bilan calorique</h3>
+    <div style="display:flex;gap:4px;margin-bottom:8px" id="cRange"></div>
+    <div class="chw"><canvas id="cCh"></canvas></div>
+    <div id="calSummary" style="margin-top:8px"></div>
+  </div>
+  <div class="ch"><h3><span class="cd" style="background:var(--pur)"></span>Macros</h3>
+    <div style="display:flex;gap:4px;margin-bottom:8px" id="mRange"></div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="chw" style="height:180px;flex:1"><canvas id="mCh"></canvas></div>
+      <div id="macroLeg" style="flex:0 0 auto"></div>
+    </div>
+    <div id="macroAvg" style="margin-top:8px"></div>
+  </div>
+  <div class="ch"><h3><span class="cd" style="background:var(--grn)"></span>Proteines</h3>
+    <div class="chw"><canvas id="pCh"></canvas></div>
+  </div>
+  <div class="ch"><h3><span class="cd" style="background:var(--pnk)"></span>Analyse poids</h3>
+    <div id="wAnalysis"></div>
+  </div>
   <div class="stitle" style="margin-top:4px">Historique</div><div id="wHi"></div>
 </div>
 
@@ -482,16 +505,20 @@ input,textarea{-webkit-user-select:text;user-select:text}
 
 <!-- SETTINGS -->
 <div class="tp" id="tab-settings">
-  <div class="ss"><h3><span class="sd" style="background:var(--org)"></span>Objectifs</h3>
+  <div class="ss"><h3><span class="sd" style="background:var(--org)"></span>Profil &amp; TDEE</h3>
     <div class="sg">
-      <div><label>Calories</label><input type="number" inputmode="numeric" class="inp" id="sK"></div>
-      <div><label>Prot (g)</label><input type="number" inputmode="numeric" class="inp" id="sP"></div>
-      <div><label>Gluc (g)</label><input type="number" inputmode="numeric" class="inp" id="sG"></div>
-      <div><label>Lip (g)</label><input type="number" inputmode="numeric" class="inp" id="sL"></div>
-      <div><label>Fibres (g)</label><input type="number" inputmode="numeric" class="inp" id="sFib"></div>
-      <div><label>Poids (kg)</label><input type="text" inputmode="decimal" class="inp" id="sW"></div>
+      <div><label>Poids actuel (kg)</label><input type="text" inputmode="decimal" class="inp" id="sW"></div>
       <div><label>Taille (cm)</label><input type="number" inputmode="numeric" class="inp" id="sH" placeholder="175"></div>
       <div><label>Pas/jour</label><input type="number" inputmode="numeric" class="inp" id="sSt"></div>
+    </div>
+    <div class="stitle">Niveau d'activite</div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px" id="actLvl"></div>
+    <button class="btn btn-o" type="button" id="sCalc" style="width:100%">Calculer TDEE + Macros auto</button>
+    <div id="sCalcR"></div>
+  </div>
+  <div class="ss"><h3><span class="sd" style="background:var(--acc)"></span>Objectifs calories &amp; macros</h3>
+    <div class="sg">
+      <div class="full"><label>Calories (kcal/jour)</label><input type="number" inputmode="numeric" class="inp" id="sK"></div>
     </div>
     <div class="stitle">Presets macros</div>
     <div class="preset-row" id="presets"></div>
@@ -501,9 +528,16 @@ input,textarea{-webkit-user-select:text;user-select:text}
       <div><label>% Lip</label><input type="number" inputmode="numeric" class="inp" id="pLip" placeholder="30"></div>
       <div><button class="btn btn-o btn-sm" type="button" id="applyPct" style="width:100%;margin-top:14px">Appliquer %</button></div>
     </div>
-    <button class="btn btn-p" type="button" id="sSave" style="width:100%;margin-bottom:6px">Sauvegarder</button>
-    <button class="btn btn-o" type="button" id="sCalc" style="width:100%">Calcul auto TDEE</button>
-    <div id="sCalcR"></div>
+    <div id="pctWarn" style="font-size:.65rem;margin-bottom:6px"></div>
+    <div class="sg">
+      <div><label>Prot (g)</label><input type="number" inputmode="numeric" class="inp" id="sP"></div>
+      <div><label>Gluc (g)</label><input type="number" inputmode="numeric" class="inp" id="sG"></div>
+      <div><label>Lip (g)</label><input type="number" inputmode="numeric" class="inp" id="sL"></div>
+      <div><label>Fibres (g)</label><input type="number" inputmode="numeric" class="inp" id="sFib"></div>
+    </div>
+    <div id="macroPreview" style="margin-bottom:10px"></div>
+    <div><label>Poids objectif (kg)</label><input type="text" inputmode="decimal" class="inp" id="sPW" style="margin-bottom:10px"></div>
+    <button class="btn btn-p" type="button" id="sSave" style="width:100%">Sauvegarder</button>
   </div>
   <div class="ss"><h3><span class="sd" style="background:var(--pur)"></span>Phase</h3><div class="ph-sel" id="phSel"></div><div id="phDet"></div></div>
   <div class="ss"><h3><span class="sd" style="background:var(--yel)"></span>Apparence</h3>
@@ -754,20 +788,97 @@ function renderHome(){
 }
 
 // ===== CHARTS =====
+let wRng=30,cRng=7,mRng=7;
+function ema(data,span){const k=2/(span+1);let r=[data[0]];for(let i=1;i<data.length;i++)r.push(data[i]*k+r[i-1]*(1-k));return r}
+function mkRng(cid,vals,cur,cb){const el=$(cid);el.innerHTML='';vals.forEach(v=>{const b=document.createElement('button');b.type='button';b.className='rng-btn'+(v.d===cur?' sel':'');b.textContent=v.l;b.addEventListener('click',()=>{cb(v.d);renderCharts()});el.appendChild(b)})}
+function getDates(n){const dates=[];for(let i=n-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);dates.push(d.toISOString().slice(0,10))}return dates}
 function renderCharts(){
   const ws=getW(),se=$('wSt'),st=weightStats();
+  // Weight stats - 2 rows
   if(!st)se.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:8px"><span class="wl">Aucune pesee</span></div>';
-  else{se.style.gridTemplateColumns='1fr 1fr 1fr 1fr';se.innerHTML='<div><div class="wl">Actuel</div><div class="wv">'+st.cur+'</div></div><div><div class="wl">Min / Max</div><div class="wv">'+st.mn+' / '+st.mx+'</div></div><div><div class="wl">Evol</div><div class="wv" style="color:'+(st.total<0?'var(--grn)':st.total>0?'var(--red)':'var(--acc)')+'">'+(st.total>0?'+':'')+st.total+'</div></div><div><div class="wl">IMC</div><div class="wv" style="color:'+(st.bmi<18.5?'var(--org)':st.bmi>25?'var(--red)':'var(--grn)')+'">'+st.bmi+'</div></div>'}
-  if(chartW)chartW.destroy();const l=ws.slice(-30);
-  if(l.length)chartW=new Chart($('wCh').getContext('2d'),{type:'line',data:{labels:l.map(w=>fmtD(w.date)),datasets:[{data:l.map(w=>w.w),borderColor:'#6C5CE7',backgroundColor:'rgba(108,92,231,.06)',fill:true,tension:.35,pointRadius:3,pointBackgroundColor:'#A29BFE',borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#52546A',font:{size:8},maxTicksLimit:7},grid:{color:'rgba(37,38,47,.6)'}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:false}}}});
-  const tg=getTg(),dates=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);dates.push(d.toISOString().slice(0,10))}
+  else{se.style.gridTemplateColumns='1fr 1fr 1fr';se.innerHTML='<div><div class="wl">Actuel</div><div class="wv">'+st.cur+'</div></div><div><div class="wl">Objectif</div><div class="wv" style="color:var(--org)">'+getPW()+'</div></div><div><div class="wl">IMC</div><div class="wv" style="color:'+(st.bmi<18.5?'var(--org)':st.bmi>25?'var(--red)':'var(--grn)')+'">'+st.bmi+'</div></div><div><div class="wl">Moy 7j</div><div class="wv" style="color:var(--acc)">'+st.avg7+'</div></div><div><div class="wl">Rythme</div><div class="wv" style="color:'+(st.rate<0?'var(--grn)':st.rate>0?'var(--red)':'var(--acc)')+'">'+(st.rate>0?'+':'')+st.rate+'/sem</div></div><div><div class="wl">'+(st.estDays?'ETA objectif':'Regularite')+'</div><div class="wv" style="color:var(--org)">'+(st.estDays?'~'+st.estDays+'j':st.reg+'%')+'</div></div>'}
+  // Weight range selector
+  mkRng('wRange',[{l:'7j',d:7},{l:'30j',d:30},{l:'90j',d:90},{l:'Tout',d:9999}],wRng,v=>{wRng=v});
+  // Weight chart with EMA + goal line
+  if(chartW)chartW.destroy();
+  const l=wRng>=9999?ws:ws.slice(-wRng);
+  if(l.length){
+    const pw=getPW(),wData=l.map(w=>w.w),emaData=l.length>=3?ema(wData,Math.min(7,l.length)):null;
+    const datasets=[{label:'Poids',data:wData,borderColor:'#6C5CE7',backgroundColor:'rgba(108,92,231,.06)',fill:true,tension:.35,pointRadius:l.length>60?1:3,pointBackgroundColor:'#A29BFE',borderWidth:2.5}];
+    if(emaData)datasets.push({label:'Tendance (EMA)',data:emaData.map(v=>+v.toFixed(1)),borderColor:'#00B894',borderWidth:2,pointRadius:0,tension:.4,fill:false,borderDash:[]});
+    if(pw>0)datasets.push({label:'Objectif',data:l.map(()=>pw),borderColor:'rgba(243,156,18,.5)',borderDash:[6,4],pointRadius:0,borderWidth:1.5,fill:false});
+    chartW=new Chart($('wCh').getContext('2d'),{type:'line',data:{labels:l.map(w=>fmtD(w.date)),datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{x:{ticks:{color:'#52546A',font:{size:7},maxTicksLimit:l.length>60?5:7},grid:{color:'rgba(37,38,47,.6)'}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:true,position:'bottom',labels:{color:'#9395A5',font:{size:8},padding:8,usePointStyle:true,pointStyleWidth:8}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+' kg'}}}}})
+  }
+  // Calorie range selector
+  mkRng('cRange',[{l:'7j',d:7},{l:'14j',d:14},{l:'30j',d:30}],cRng,v=>{cRng=v});
+  const tg=getTg(),dates=getDates(cRng);
   const dt=dates.map(d=>dayTotals(d)),lbls=dates.map(d=>fmtD(d));
-  if(chartC)chartC.destroy();chartC=new Chart($('cCh').getContext('2d'),{type:'bar',data:{labels:lbls,datasets:[{data:dt.map(t=>Math.round(t.kcal)),backgroundColor:'rgba(243,156,18,.4)',borderRadius:6,borderSkipped:false},{data:dates.map(()=>tg.kcal),type:'line',borderColor:'rgba(231,76,60,.4)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#52546A',font:{size:8}},grid:{display:false}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:false}}}});
-  if(chartM)chartM.destroy();const ap=dt.reduce((s,t)=>s+t.p,0)/7,ag=dt.reduce((s,t)=>s+t.g,0)/7,al=dt.reduce((s,t)=>s+t.l,0)/7;
-  chartM=new Chart($('mCh').getContext('2d'),{type:'doughnut',data:{labels:['Prot','Gluc','Lip'],datasets:[{data:[Math.round(ap),Math.round(ag),Math.round(al)],backgroundColor:['#6C5CE7','#00B894','#FD79A8'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{color:'#9395A5',font:{size:9},padding:10,usePointStyle:true}}}}});
-  if(chartP)chartP.destroy();chartP=new Chart($('pCh').getContext('2d'),{type:'bar',data:{labels:lbls,datasets:[{data:dt.map(t=>Math.round(t.p)),backgroundColor:'rgba(108,92,231,.4)',borderRadius:6,borderSkipped:false},{data:dates.map(()=>tg.prot),type:'line',borderColor:'rgba(0,184,148,.4)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#52546A',font:{size:8}},grid:{display:false}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:false}}}});
+  // Calorie chart with deficit/surplus coloring
+  if(chartC)chartC.destroy();
+  const calColors=dt.map(t=>t.kcal>0?(t.kcal>tg.kcal?'rgba(231,76,60,.5)':'rgba(0,184,148,.5)'):'rgba(82,84,106,.2)');
+  chartC=new Chart($('cCh').getContext('2d'),{type:'bar',data:{labels:lbls,datasets:[{data:dt.map(t=>Math.round(t.kcal)),backgroundColor:calColors,borderRadius:6,borderSkipped:false},{data:dates.map(()=>tg.kcal),type:'line',borderColor:'rgba(243,156,18,.6)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false,label:'Objectif'}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#52546A',font:{size:cRng>14?6:8},maxTicksLimit:cRng>14?8:14},grid:{display:false}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:false}}}});
+  // Calorie summary
+  const tracked=dt.filter(t=>t.kcal>0),avgK=tracked.length?Math.round(tracked.reduce((s,t)=>s+t.kcal,0)/tracked.length):0;
+  const deficit=tg.kcal-avgK,defCol=deficit>0?'var(--grn)':deficit<0?'var(--red)':'var(--acc)';
+  const overDays=tracked.filter(t=>t.kcal>tg.kcal).length,underDays=tracked.filter(t=>t.kcal<=tg.kcal&&t.kcal>0).length;
+  $('calSummary').innerHTML='<div class="sum-row"><div class="sum-box"><div class="sl">Moy/jour</div><div class="sv" style="color:var(--org)">'+avgK+'</div></div><div class="sum-box"><div class="sl">Deficit/Surplus</div><div class="sv" style="color:'+defCol+'">'+(deficit>0?'-':'+')+ Math.abs(deficit)+'</div></div><div class="sum-box"><div class="sl">Sous obj.</div><div class="sv" style="color:var(--grn)">'+underDays+'j</div></div><div class="sum-box"><div class="sl">Au-dessus</div><div class="sv" style="color:var(--red)">'+overDays+'j</div></div></div>';
+  // Macro range selector
+  mkRng('mRange',[{l:'7j',d:7},{l:'14j',d:14},{l:'30j',d:30}],mRng,v=>{mRng=v});
+  const mDates=getDates(mRng),mDt=mDates.map(d=>dayTotals(d)),mTracked=mDt.filter(t=>t.kcal>0);
+  const ap=mTracked.length?mTracked.reduce((s,t)=>s+t.p,0)/mTracked.length:0;
+  const ag=mTracked.length?mTracked.reduce((s,t)=>s+t.g,0)/mTracked.length:0;
+  const al=mTracked.length?mTracked.reduce((s,t)=>s+t.l,0)/mTracked.length:0;
+  if(chartM)chartM.destroy();
+  chartM=new Chart($('mCh').getContext('2d'),{type:'doughnut',data:{labels:['Prot','Gluc','Lip'],datasets:[{data:[Math.round(ap),Math.round(ag),Math.round(al)],backgroundColor:['#6C5CE7','#00B894','#FD79A8'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:false}}}});
+  // Macro legend + averages
+  const totalG=ap+ag+al,ppct=totalG?Math.round(ap/totalG*100):0,gpct=totalG?Math.round(ag/totalG*100):0,lpct=totalG?Math.round(al/totalG*100):0;
+  $('macroLeg').innerHTML='<div style="font-size:.7rem;line-height:2"><div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6C5CE7;margin-right:4px"></span>Prot <strong>'+ppct+'%</strong></div><div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#00B894;margin-right:4px"></span>Gluc <strong>'+gpct+'%</strong></div><div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FD79A8;margin-right:4px"></span>Lip <strong>'+lpct+'%</strong></div></div>';
+  $('macroAvg').innerHTML='<div class="sum-row"><div class="sum-box"><div class="sl">Prot moy</div><div class="sv" style="color:#6C5CE7">'+Math.round(ap)+'g</div></div><div class="sum-box"><div class="sl">Obj</div><div class="sv" style="color:var(--t3)">'+tg.prot+'g</div></div><div class="sum-box"><div class="sl">Gluc moy</div><div class="sv" style="color:#00B894">'+Math.round(ag)+'g</div></div><div class="sum-box"><div class="sl">Lip moy</div><div class="sv" style="color:#FD79A8">'+Math.round(al)+'g</div></div></div>';
+  // Proteins chart
+  const p7dates=getDates(7),p7dt=p7dates.map(d=>dayTotals(d)),p7lbl=p7dates.map(d=>fmtD(d));
+  if(chartP)chartP.destroy();chartP=new Chart($('pCh').getContext('2d'),{type:'bar',data:{labels:p7lbl,datasets:[{data:p7dt.map(t=>Math.round(t.p)),backgroundColor:'rgba(108,92,231,.4)',borderRadius:6,borderSkipped:false},{data:p7dates.map(()=>tg.prot),type:'line',borderColor:'rgba(0,184,148,.4)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#52546A',font:{size:8}},grid:{display:false}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:false}}}});
+  // Weight analysis section
+  renderWeightAnalysis();
+  // History
   const rv=[...ws].reverse().slice(0,20);$('wHi').innerHTML=rv.map((w,i)=>{let ch='';const idx=ws.length-1-i;if(idx>=2){const a=((ws[idx].w-ws[idx-1].w)+(ws[idx-1].w-ws[idx-2].w))/2;ch=a<-0.05?'<span class="chip dn">\u2193</span>':a>0.05?'<span class="chip up">\u2191</span>':'<span class="chip st">\u2192</span>'}return '<div class="hi" data-wd="'+w.date+'" data-ww="'+w.w+'" style="cursor:pointer"><span class="hd">'+fmtD(w.date)+'</span>'+ch+'<span class="hw mono">'+w.w+' kg</span><span style="font-size:.55rem;color:var(--t3);margin-left:4px">&#x270E;</span></div>'}).join('');
   $('wHi').querySelectorAll('.hi[data-wd]').forEach(el=>el.addEventListener('click',function(){openWeightEdit(this.dataset.wd,this.dataset.ww)}));
+}
+function renderWeightAnalysis(){
+  const el=$('wAnalysis'),st=weightStats(),ws=getW();
+  if(!st||st.count<3){el.innerHTML='<div class="alt info"><span>3 pesees minimum pour l\'analyse</span></div>';return}
+  const ph=getPh(),pw=getPW(),tr=trend72();
+  // Phase timeline
+  let phInfo='Phase '+ph+' ('+PH_NAMES[ph]+') \u2014 x'+PH_MULT[ph];
+  // Rate analysis
+  let rateMsg='',rateCls='info';
+  if(ph==='B'){
+    if(st.rate<-1){rateMsg='Perte rapide ('+st.rate+' kg/sem). Risque de perte musculaire, envisage de ralentir.';rateCls='warn'}
+    else if(st.rate<0){rateMsg='Deficit efficace ('+st.rate+' kg/sem). Rythme optimal entre -0.3 et -0.7.';rateCls='success'}
+    else if(st.rate>=0){rateMsg='Pas de perte cette semaine. Verifie ton intake ou ajuste -200kcal.';rateCls='danger'}
+  }else if(ph==='D'){
+    if(st.rate>0.5){rateMsg='Prise rapide (+'+st.rate+' kg/sem). Reduis de 100-200kcal pour eviter trop de gras.';rateCls='warn'}
+    else if(st.rate>0){rateMsg='PDM on track (+'+st.rate+' kg/sem). Vise +0.2 a +0.4 /sem.';rateCls='success'}
+    else{rateMsg='Poids stable ou en baisse. Augmente de +200kcal.';rateCls='danger'}
+  }else if(ph==='C'){
+    if(Math.abs(st.rate)<0.2){rateMsg='Reverse stable. Poids bien controle.';rateCls='success'}
+    else if(st.rate<-0.2){rateMsg='Encore en perte. Ajoute +200kcal pour reverse.';rateCls='warn'}
+    else{rateMsg='Legere prise OK en reverse. Surveille.';rateCls='info'}
+  }else{
+    if(st.rate<0){rateMsg='Tendance baisse ('+st.rate+' kg/sem).';rateCls='success'}
+    else if(st.rate>0){rateMsg='Tendance hausse (+'+st.rate+' kg/sem).';rateCls='warn'}
+    else{rateMsg='Poids stable.';rateCls='info'}
+  }
+  // Variance (consistency)
+  const last14=ws.slice(-14).map(w=>w.w);
+  let variance=0;if(last14.length>1){const avg=last14.reduce((a,b)=>a+b,0)/last14.length;variance=Math.sqrt(last14.reduce((s,v)=>s+(v-avg)*(v-avg),0)/last14.length)}
+  const varMsg=variance<0.3?'Tres stable':'Fluctuations '+(variance<0.6?'normales':'importantes ('+variance.toFixed(1)+' kg)');
+  const varCls=variance<0.3?'var(--grn)':variance<0.6?'var(--acc)':'var(--org)';
+  let html='<div style="margin-bottom:8px"><span class="chip" style="background:'+PHC[ph]+'20;color:'+PHC[ph]+'">'+phInfo+'</span></div>';
+  html+='<div class="alt '+rateCls+'" style="margin-bottom:6px"><span>'+rateMsg+'</span></div>';
+  html+='<div class="sum-row"><div class="sum-box"><div class="sl">Depart</div><div class="sv">'+st.start+'</div></div><div class="sum-box"><div class="sl">Min</div><div class="sv" style="color:var(--grn)">'+st.mn+'</div></div><div class="sum-box"><div class="sl">Max</div><div class="sv" style="color:var(--red)">'+st.mx+'</div></div><div class="sum-box"><div class="sl">Total</div><div class="sv" style="color:'+(st.total<0?'var(--grn)':'var(--red)')+'">'+(st.total>0?'+':'')+st.total+'</div></div></div>';
+  html+='<div class="sum-row" style="margin-top:5px"><div class="sum-box"><div class="sl">Moy 30j</div><div class="sv" style="color:var(--pur)">'+st.avg30+'</div></div><div class="sum-box"><div class="sl">Pesees</div><div class="sv">'+st.count+'</div></div><div class="sum-box"><div class="sl">Regularite</div><div class="sv" style="color:var(--org)">'+st.reg+'%</div></div><div class="sum-box"><div class="sl">Fluctuation</div><div class="sv" style="color:'+varCls+'">'+variance.toFixed(1)+'</div></div></div>';
+  if(st.estDays){html+='<div class="alt info" style="margin-top:8px;margin-bottom:0"><span>A ce rythme, objectif '+pw+' kg atteint dans ~<strong>'+st.estDays+' jours</strong></span></div>'}
+  el.innerHTML=html;
 }
 
 // ===== MEALS =====
@@ -943,10 +1054,15 @@ function renderWkHist(){const wks=[...getWk()].reverse().slice(0,15),el=$('wkHis
 
 // ===== SETTINGS =====
 function renderSettings(){
-  const tg=getTg();$('sK').value=tg.kcal;$('sP').value=tg.prot;$('sG').value=tg.gluc;$('sL').value=tg.lip;$('sFib').value=tg.fib||30;$('sW').value=getPW();$('sH').value=getH();$('sSt').value=getSG();
+  const tg=getTg();$('sK').value=tg.kcal;$('sP').value=tg.prot;$('sG').value=tg.gluc;$('sL').value=tg.lip;$('sFib').value=tg.fib||30;$('sW').value=getW().length?getW()[getW().length-1].w:75;$('sH').value=getH();$('sSt').value=getSG();$('sPW').value=getPW();
+  // Activity level buttons
+  const curAct=ld("nt_activity","moderate");
+  const acts=[{k:'sedentary',l:'Sedentaire',m:1.2},{k:'light',l:'Leger',m:1.375},{k:'moderate',l:'Modere',m:1.55},{k:'active',l:'Actif',m:1.725},{k:'very_active',l:'Tres actif',m:1.9}];
+  $('actLvl').innerHTML=acts.map(a=>'<button type="button" class="rng-btn'+(a.k===curAct?' sel':'')+'" data-act="'+a.k+'" style="flex:1;min-width:55px">'+a.l+'</button>').join('');
+  $('actLvl').querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()=>{sv("nt_activity",b.dataset.act);renderSettings()}));
   // Theme buttons
   const ct=getTheme();$('thDark').className='btn '+(ct==='dark'?'btn-p':'btn-o');$('thLight').className='btn '+(ct==='light'?'btn-p':'btn-o');
-  renderPresets();renderPhSel();renderPhDet();
+  renderPresets();renderPhSel();renderPhDet();updateMacroPreview();
   const ac=$('sAcc');
   if(currentUser){ac.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'+(currentUser.photoURL?'<img src="'+currentUser.photoURL+'" style="width:40px;height:40px;border-radius:50%;border:2px solid var(--acc)">':'<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--pur));display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:#fff">'+(currentUser.displayName||'?')[0].toUpperCase()+'</div>')+'<div><div style="font-weight:700;font-size:.85rem">'+(currentUser.displayName||'Utilisateur')+'</div><div style="font-size:.65rem;color:var(--t3)">'+(currentUser.email||'')+'</div><div style="font-size:.55rem;color:var(--grn);margin-top:2px">&#x2713; Connecte'+(getDb()?' + Cloud sync':'')+'</div></div></div><button class="btn btn-o" type="button" id="logout" style="width:100%">Deconnexion</button>';$('logout').addEventListener('click',()=>{if(currentUser&&getDb())cloudSave().then(()=>{if(firebaseReady)firebase.auth().signOut();currentUser=null;location.reload()});else{if(firebaseReady)firebase.auth().signOut();currentUser=null;location.reload()}});$('syncBtns').style.display='block'}
   else{ac.innerHTML='<div class="alt info" style="margin:0"><span>Mode local — connecte-toi pour sauvegarder tes donnees dans le cloud et les retrouver sur tous tes appareils.</span></div>';$('syncBtns').style.display='none'}
@@ -958,8 +1074,28 @@ function renderPresets(){
 }
 function applyPct(){
   const kcal=+$('sK').value||2200,pp=+$('pProt').value||30,pg=+$('pGluc').value||40,pl=+$('pLip').value||30;
+  const total=pp+pg+pl;
+  if(total!==100)$('pctWarn').innerHTML='<span style="color:var(--org)">Total: '+total+'% '+(total>100?'(depasse 100%)':'(sous 100%)')+'</span>';
+  else $('pctWarn').innerHTML='<span style="color:var(--grn)">Total: 100% &#x2713;</span>';
   const prot=Math.round(kcal*pp/100/4),gluc=Math.round(kcal*pg/100/4),lip=Math.round(kcal*pl/100/9);
   $('sP').value=prot;$('sG').value=gluc;$('sL').value=lip;
+  updateMacroPreview();
+}
+function updateMacroPreview(){
+  const kcal=+$('sK').value||0,p=+$('sP').value||0,g=+$('sG').value||0,l=+$('sL').value||0,f=+$('sFib').value||0;
+  const pK=p*4,gK=g*4,lK=l*9,macroTotal=pK+gK+lK;
+  const diff=kcal-macroTotal;
+  const pPct=macroTotal?Math.round(pK/macroTotal*100):0,gPct=macroTotal?Math.round(gK/macroTotal*100):0,lPct=macroTotal?Math.round(lK/macroTotal*100):0;
+  let html='<div style="margin-bottom:6px"><div style="display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--s3)">';
+  html+='<div style="width:'+pPct+'%;background:#6C5CE7"></div>';
+  html+='<div style="width:'+gPct+'%;background:#00B894"></div>';
+  html+='<div style="width:'+lPct+'%;background:#FD79A8"></div></div></div>';
+  html+='<div class="sum-row"><div class="sum-box"><div class="sl">Prot</div><div class="sv" style="color:#6C5CE7;font-size:.75rem">'+p+'g <span style="font-size:.55rem;color:var(--t3)">'+pK+' kcal ('+pPct+'%)</span></div></div>';
+  html+='<div class="sum-box"><div class="sl">Gluc</div><div class="sv" style="color:#00B894;font-size:.75rem">'+g+'g <span style="font-size:.55rem;color:var(--t3)">'+gK+' kcal ('+gPct+'%)</span></div></div>';
+  html+='<div class="sum-box"><div class="sl">Lip</div><div class="sv" style="color:#FD79A8;font-size:.75rem">'+l+'g <span style="font-size:.55rem;color:var(--t3)">'+lK+' kcal ('+lPct+'%)</span></div></div></div>';
+  if(Math.abs(diff)>10)html+='<div style="font-size:.65rem;margin-top:4px;color:'+(diff>0?'var(--org)':'var(--red)')+'">Macros = '+macroTotal+' kcal ('+(diff>0?diff+' kcal non repartis':Math.abs(diff)+' kcal en trop')+')</div>';
+  else html+='<div style="font-size:.65rem;margin-top:4px;color:var(--grn)">Macros = '+macroTotal+' kcal &#x2713;</div>';
+  $('macroPreview').innerHTML=html;
 }
 function renderPhSel(){const ph=getPh(),c=$('phSel');c.innerHTML='';Object.keys(PH_NAMES).forEach(k=>{const b=document.createElement('div');b.className='ph-btn'+(k===ph?' sel':'');b.style.color=k===ph?PHC[k]:'var(--t2)';b.style.borderColor=k===ph?PHC[k]:'var(--s3)';if(k===ph)b.style.background=PHC[k]+'10';b.innerHTML='<span class="pl">'+k+'</span>'+PH_NAMES[k];b.addEventListener('click',()=>{sv("nt_phase",k);updateBadge();renderPhSel();renderPhDet()});c.appendChild(b)})}
 function renderPhDet(){const ph=getPh(),i={A:{c:PHC.A,t:'Pre-prep (x1.0)',d:'Baisse: rien. Stagne: +200kcal.'},B:{c:PHC.B,t:'Deficit (x0.85)',d:'Stagne: -200kcal. Remontee: verifier.'},C:{c:PHC.C,t:'Reverse (x0.90)',d:'Baisse=+200kcal. Stable: rien.'},D:{c:PHC.D,t:'PDM (x1.075)',d:'Baisse: +200kcal.'},E:{c:PHC.E,t:'Reset (x0.88)',d:'Deficit+Reverse.'}}[ph];$('phDet').innerHTML='<div class="ph-det" style="border-color:'+i.c+'"><strong style="color:'+i.c+'">'+ph+' \u2014 '+i.t+'</strong><br>'+i.d+'</div>'}
@@ -1008,9 +1144,25 @@ function wire(){
   $('smClose').addEventListener('click',()=>$('smMo').classList.remove('show'));
   $('smSave').addEventListener('click',saveMealCombo);
   // Settings
-  $('sSave').addEventListener('click',()=>{sv("nt_targets",{kcal:+$('sK').value||2200,prot:+$('sP').value||150,gluc:+$('sG').value||250,lip:+$('sL').value||75,fib:+$('sFib').value||30});sv("nt_pw",parseFloat(($('sW').value||'75').replace(',','.'))||75);sv("nt_height",+$('sH').value||175);sv("nt_sg",+$('sSt').value||10000);const b=$('sSave');b.textContent='\u2713';b.classList.replace('btn-p','btn-s');setTimeout(()=>{b.textContent='Sauvegarder';b.classList.replace('btn-s','btn-p')},1200);if($('tab-home').classList.contains('active'))renderHome()});
-  $('sCalc').addEventListener('click',()=>{const pw=parseFloat(($('sW').value||'75').replace(',','.'))||75,sg=+$('sSt').value||10000,m=PH_MULT[getPh()];const tdee=Math.round((pw*30+(sg-2000)*0.05)*m),prot=Math.round(pw*2),lip=Math.round(pw),gluc=Math.max(0,Math.round((tdee-prot*4-lip*9)/4));$('sK').value=tdee;$('sP').value=prot;$('sG').value=gluc;$('sL').value=lip;$('sCalcR').innerHTML='<div class="alt info" style="margin-top:6px"><span>TDEE='+Math.round(pw*30+(sg-2000)*0.05)+'\u00D7'+m+'=<strong>'+tdee+'kcal</strong></span></div>'});
+  $('sSave').addEventListener('click',()=>{sv("nt_targets",{kcal:+$('sK').value||2200,prot:+$('sP').value||150,gluc:+$('sG').value||250,lip:+$('sL').value||75,fib:+$('sFib').value||30});sv("nt_pw",parseFloat(($('sPW').value||'75').replace(',','.'))||75);sv("nt_height",+$('sH').value||175);sv("nt_sg",+$('sSt').value||10000);const b=$('sSave');b.textContent='\u2713';b.classList.replace('btn-p','btn-s');setTimeout(()=>{b.textContent='Sauvegarder';b.classList.replace('btn-s','btn-p')},1200);if($('tab-home').classList.contains('active'))renderHome()});
+  $('sCalc').addEventListener('click',()=>{
+    const pw=parseFloat(($('sW').value||'75').replace(',','.'))||75,h=+$('sH').value||175,sg=+$('sSt').value||10000,m=PH_MULT[getPh()];
+    const actMult={sedentary:1.2,light:1.375,moderate:1.55,active:1.725,very_active:1.9};
+    const act=ld("nt_activity","moderate"),am=actMult[act]||1.55;
+    // Mifflin-St Jeor + activity + phase
+    const bmr=10*pw+6.25*h-5*30-5;// assume ~30 years, male approx
+    const tdeeBase=Math.round(bmr*am);
+    const stepBonus=Math.round(Math.max(0,(sg-5000)*0.04));
+    const tdeeRaw=tdeeBase+stepBonus;
+    const tdee=Math.round(tdeeRaw*m);
+    const prot=Math.round(pw*2),lip=Math.round(pw*1),gluc=Math.max(0,Math.round((tdee-prot*4-lip*9)/4));
+    $('sK').value=tdee;$('sP').value=prot;$('sG').value=gluc;$('sL').value=lip;
+    $('sCalcR').innerHTML='<div class="alt info" style="margin-top:6px"><span><strong>BMR</strong>='+Math.round(bmr)+' \u00D7 '+am+' ('+act.replace('_',' ')+') = '+tdeeBase+'<br>+ Pas bonus: +'+stepBonus+' \u2192 '+tdeeRaw+'<br>\u00D7 Phase '+getPh()+' ('+m+') = <strong>'+tdee+' kcal</strong><br><br>Prot: '+pw+'\u00D72 = <strong>'+prot+'g</strong> ('+prot*4+' kcal)<br>Lip: '+pw+'\u00D71 = <strong>'+lip+'g</strong> ('+lip*9+' kcal)<br>Gluc: reste = <strong>'+gluc+'g</strong> ('+gluc*4+' kcal)</span></div>';
+    updateMacroPreview();
+  });
   $('applyPct').addEventListener('click',applyPct);
+  // Live macro preview on input change
+  ['sK','sP','sG','sL','sFib'].forEach(id=>$(id).addEventListener('input',updateMacroPreview));
   $('sExp').addEventListener('click',()=>{const d={log:getLog(),weights:getW(),workouts:getWk(),steps:getSteps(),water:getWater(),recipes:getRecipes(),savedmeals:getSavedMeals(),phase:getPh(),targets:getTg()};const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mysf_'+curDate+'.json';a.click()});
   $('sRst').addEventListener('click',()=>{if(confirm('Tout supprimer?')){localStorage.clear();location.reload()}});
   // Import tabs
