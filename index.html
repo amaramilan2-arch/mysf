@@ -440,6 +440,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="dn"><button type="button" id="dP">&#x276E;</button><span class="dd" id="cDt">Aujourd'hui</span><button type="button" id="dN">&#x276F;</button></div>
   <div style="display:flex;gap:6px;align-items:stretch">
     <div class="sw" style="flex:1"><span class="si">&#x1F50D;</span><input type="text" id="fSr" placeholder="Rechercher un aliment..." autocomplete="off"><div class="sr" id="fRs"></div></div>
+    <button type="button" class="btn btn-s btn-sm" id="scanBtn" style="font-size:1rem;padding:8px 12px;border-radius:var(--r);min-width:44px" title="Scanner code-barres">&#x1F4F7;</button>
     <button type="button" class="btn btn-p btn-sm" id="manualBtn" style="font-size:.9rem;padding:8px 12px;border-radius:var(--r);min-width:44px" title="Saisie manuelle">+</button>
     <button type="button" class="btn btn-o btn-sm" id="smBtn" style="white-space:nowrap;font-size:.68rem;padding:8px 10px;border-radius:var(--r)">&#x2B50;</button>
   </div>
@@ -639,6 +640,20 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <button class="btn btn-o" type="button" id="smClose" style="width:100%;margin-top:10px">Fermer</button>
 </div></div>
 
+<div class="mo" id="scMo"><div class="modal">
+  <h3>&#x1F4F7; Scanner un code-barres</h3>
+  <div style="position:relative;width:100%;aspect-ratio:4/3;background:#000;border-radius:var(--r);overflow:hidden;margin-top:8px">
+    <video id="scVid" playsinline muted autoplay style="width:100%;height:100%;object-fit:cover"></video>
+    <div style="position:absolute;inset:15% 10%;border:2px solid var(--acc);border-radius:8px;box-shadow:0 0 0 9999px rgba(0,0,0,.35);pointer-events:none"></div>
+  </div>
+  <div id="scMsg" style="margin:10px 0 6px;font-size:.78rem;color:var(--t2);text-align:center;min-height:1.2em"></div>
+  <div style="display:flex;gap:6px;margin-top:4px">
+    <input type="text" inputmode="numeric" class="inp" id="scMan" placeholder="Ou saisis le code" style="flex:1">
+    <button class="btn btn-p btn-sm" type="button" id="scManGo">OK</button>
+  </div>
+  <button class="btn btn-o" type="button" id="scClose" style="width:100%;margin-top:10px">Fermer</button>
+</div></div>
+
 <script>
 // ===== DATA =====
 const FOODS={
@@ -732,14 +747,15 @@ const getTg=()=>ld("nt_targets",{kcal:2200,prot:150,gluc:250,lip:75,fib:30});
 const getPW=()=>ld("nt_pw",75);const getSG=()=>ld("nt_sg",10000);const getH=()=>ld("nt_height",175);
 const getWater=()=>ld("nt_water",{});const getFavs=()=>ld("nt_favs",[]);const getRecent=()=>ld("nt_recent",[]);
 const getRecipes=()=>ld("nt_recipes",{});
+const getBarcodes=()=>ld("nt_barcodes",{});
 const getSavedMeals=()=>ld("nt_savedmeals",[]);
-const getAllFoods=()=>{const r=getRecipes();return{...FOODS,...r}};
+const getAllFoods=()=>{const r=getRecipes(),bc=getBarcodes(),bf={};Object.keys(bc).forEach(e=>{const p=bc[e];bf[p.name]=[p.kcal,p.p,p.g,p.l,p.f||0]});return{...FOODS,...r,...bf}};
 const dayLog=d=>(getLog()[d||curDate])||[];
 const dayTotals=d=>{const items=dayLog(d);let t={kcal:0,p:0,g:0,l:0,f:0};items.forEach(i=>{t.kcal+=i.kcal;t.p+=i.p;t.g+=i.g;t.l+=i.l;t.f+=(i.f||0)});return t};
 const fmtD=d=>{const p=d.split('-');return p[2]+'/'+p[1]};
 
 // ===== CLOUD SYNC =====
-const SYNC_KEYS=["nt_log","nt_weights","nt_workouts","nt_steps","nt_water","nt_recipes","nt_favs","nt_recent","nt_targets","nt_pw","nt_height","nt_sg","nt_phase","nt_setup","nt_theme","nt_savedmeals","nt_palier"];
+const SYNC_KEYS=["nt_log","nt_weights","nt_workouts","nt_steps","nt_water","nt_recipes","nt_favs","nt_recent","nt_targets","nt_pw","nt_height","nt_sg","nt_phase","nt_setup","nt_theme","nt_savedmeals","nt_palier","nt_barcodes"];
 let db=null,syncing=false;
 function getDb(){if(db)return db;if(firebaseReady&&firebase.firestore){db=firebase.firestore();return db}return null}
 async function cloudSave(){if(!currentUser||!getDb()||syncing)return;syncing=true;try{const data={};SYNC_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)data[k]=v});data.updatedAt=Date.now();data.displayName=currentUser.displayName||'';data.email=currentUser.email||'';data.photoURL=currentUser.photoURL||'';await getDb().collection('users').doc(currentUser.uid).set(data,{merge:true});console.log('MYSF: cloud save OK')}catch(e){console.warn('MYSF: cloud save err',e)}syncing=false}
@@ -943,6 +959,129 @@ function editFoodQty(id){
   if(nq===null)return;const qty=parseFloat(nq);if(!qty||qty<=0)return;
   const m=qty/100;item.qty=Math.round(qty);item.kcal=Math.round(d[0]*m*10)/10;item.p=Math.round(d[1]*m*10)/10;item.g=Math.round(d[2]*m*10)/10;item.l=Math.round(d[3]*m*10)/10;item.f=Math.round((d[4]||0)*m*10)/10;
   sv("nt_log",log);renderMealsTab();if($('tab-home').classList.contains('active'))renderHome();
+}
+
+// ===== BARCODE SCANNER =====
+let scanStream=null,scanActive=false,scanReader=null,scanRAF=null;
+function scSetMsg(t,color){const el=$('scMsg');if(!el)return;el.textContent=t;el.style.color=color||'var(--t2)'}
+async function openScanner(){
+  $('scMo').classList.add('show');
+  $('scMan').value='';
+  scSetMsg('Autorisation camera...');
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    scSetMsg('Camera indisponible. Saisis le code manuellement.','var(--red)');return;
+  }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}});
+    scanStream=stream;
+    const video=$('scVid');video.srcObject=stream;
+    await video.play();
+    scSetMsg('Place le code dans le cadre');
+    scanActive=true;
+    startDetection(video);
+  }catch(e){
+    scSetMsg('Camera refusee: '+(e.message||e.name||'erreur')+'. Saisis le code manuellement.','var(--red)');
+  }
+}
+function closeScanner(){
+  scanActive=false;
+  if(scanRAF){cancelAnimationFrame(scanRAF);scanRAF=null}
+  if(scanReader){try{scanReader.reset()}catch(e){}scanReader=null}
+  if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null}
+  const v=$('scVid');if(v){v.srcObject=null}
+  $('scMo').classList.remove('show');
+}
+function loadScript(src){
+  return new Promise((res,rej)=>{
+    if(document.querySelector('script[data-src="'+src+'"]'))return res();
+    const s=document.createElement('script');s.src=src;s.dataset.src=src;
+    s.onload=()=>res();s.onerror=()=>rej(new Error('load '+src));
+    document.head.appendChild(s);
+  });
+}
+async function startDetection(video){
+  // Prefer native BarcodeDetector (Android Chrome/Edge), fallback to ZXing
+  if('BarcodeDetector' in window){
+    try{
+      const det=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128','code_39']});
+      const loop=async()=>{
+        if(!scanActive)return;
+        try{
+          const codes=await det.detect(video);
+          if(codes&&codes.length){onBarcodeFound(codes[0].rawValue);return}
+        }catch(e){}
+        scanRAF=requestAnimationFrame(loop);
+      };
+      loop();return;
+    }catch(e){/* fall through */}
+  }
+  scSetMsg('Chargement du scanner...');
+  try{
+    await loadScript('https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js');
+    if(!window.ZXing)throw new Error('ZXing manquant');
+    const hints=new Map();
+    const fmts=[ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E,ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.CODE_39];
+    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,fmts);
+    scanReader=new ZXing.BrowserMultiFormatReader(hints,300);
+    scSetMsg('Place le code dans le cadre');
+    scanReader.decodeFromVideoElement(video,(result,err)=>{
+      if(!scanActive)return;
+      if(result&&result.getText)onBarcodeFound(result.getText());
+    });
+  }catch(e){
+    scSetMsg('Scanner indisponible. Saisis le code manuellement.','var(--red)');
+  }
+}
+async function onBarcodeFound(ean){
+  if(!scanActive)return;
+  scanActive=false;
+  if(scanRAF){cancelAnimationFrame(scanRAF);scanRAF=null}
+  if(scanReader){try{scanReader.reset()}catch(e){}scanReader=null}
+  if(navigator.vibrate)try{navigator.vibrate(60)}catch(e){}
+  scSetMsg('Code '+ean+' - recherche...');
+  const cache=getBarcodes();
+  if(cache[ean]){
+    const name=cache[ean].name;
+    closeScanner();selectFood(name);return;
+  }
+  try{
+    const r=await fetch('https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(ean)+'.json?fields=product_name,brands,nutriments,code');
+    const j=await r.json();
+    if(j.status===1&&j.product){
+      const prod=j.product,n=prod.nutriments||{};
+      const kcal=Math.round(n['energy-kcal_100g']||n.energy_kcal_100g||((n['energy_100g']||0)/4.184)||0);
+      const prot=+((n.proteins_100g||0).toFixed(1));
+      const gluc=+((n.carbohydrates_100g||0).toFixed(1));
+      const lip=+((n.fat_100g||0).toFixed(1));
+      const fib=+((n.fiber_100g||0).toFixed(1));
+      if(kcal<=0&&prot<=0&&gluc<=0&&lip<=0){
+        scSetMsg('Produit trouve mais sans valeurs nutritionnelles.','var(--red)');
+        setTimeout(()=>{scanActive=true;const v=$('scVid');if(v&&scanStream)startDetection(v)},1500);
+        return;
+      }
+      const brand=(prod.brands||'').split(',')[0].trim();
+      let name=((brand?brand+' ':'')+(prod.product_name||'Produit '+ean)).trim();
+      if(name.length>50)name=name.slice(0,50);
+      // Avoid collision with existing name
+      const foods=getAllFoods();let finalName=name,i=2;
+      while(foods[finalName]&&finalName!==name){finalName=name+' ('+i+')';i++}
+      cache[ean]={name:finalName,kcal,p:prot,g:gluc,l:lip,f:fib,ean,ts:Date.now()};
+      sv("nt_barcodes",cache);
+      scSetMsg('Produit ajoute!','var(--grn)');
+      setTimeout(()=>{closeScanner();selectFood(finalName)},350);
+    }else{
+      scSetMsg('Produit introuvable sur OpenFoodFacts ('+ean+')','var(--red)');
+      setTimeout(()=>{scanActive=true;const v=$('scVid');if(v&&scanStream)startDetection(v)},1800);
+    }
+  }catch(e){
+    scSetMsg('Erreur reseau. Reessaie.','var(--red)');
+    setTimeout(()=>{scanActive=true;const v=$('scVid');if(v&&scanStream)startDetection(v)},1500);
+  }
+}
+function scanManualSubmit(){
+  const v=($('scMan').value||'').trim().replace(/\s/g,'');
+  if(!/^\d{6,14}$/.test(v)){$('scMan').style.borderColor='var(--red)';setTimeout(()=>$('scMan').style.borderColor='',700);return}
+  scanActive=true;onBarcodeFound(v);
 }
 
 // ===== RECIPES =====
@@ -1268,6 +1407,12 @@ function wire(){
   $('smMo').addEventListener('click',e=>{if(e.target===$('smMo'))$('smMo').classList.remove('show')});
   $('smClose').addEventListener('click',()=>$('smMo').classList.remove('show'));
   $('smSave').addEventListener('click',saveMealCombo);
+  // Barcode scanner
+  $('scanBtn').addEventListener('click',openScanner);
+  $('scClose').addEventListener('click',closeScanner);
+  $('scMo').addEventListener('click',e=>{if(e.target===$('scMo'))closeScanner()});
+  $('scManGo').addEventListener('click',scanManualSubmit);
+  $('scMan').addEventListener('keydown',e=>{if(e.key==='Enter')scanManualSubmit()});
   // Settings
   $('sSave').addEventListener('click',()=>{sv("nt_targets",{kcal:+$('sK').value||2200,prot:+$('sP').value||150,gluc:+$('sG').value||250,lip:+$('sL').value||75,fib:+$('sFib').value||30});sv("nt_pw",parseFloat(($('sPW').value||'75').replace(',','.'))||75);sv("nt_height",+$('sH').value||175);sv("nt_sg",+$('sSt').value||10000);const b=$('sSave');b.textContent='\u2713';b.classList.replace('btn-p','btn-s');setTimeout(()=>{b.textContent='Sauvegarder';b.classList.replace('btn-s','btn-p')},1200);if($('tab-home').classList.contains('active'))renderHome()});
   $('sCalc').addEventListener('click',()=>{
