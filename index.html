@@ -81,10 +81,12 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .inp{flex:1;background:var(--s2);border:1px solid var(--s3);border-radius:var(--r);padding:12px 14px;color:var(--t1);font-size:16px;transition:.2s;min-height:44px}
 .inp:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accG)}
 .inp::placeholder{color:var(--t3);font-size:.82rem}
-.btn{padding:12px 20px;border-radius:var(--r);font-weight:600;font-size:.82rem;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;min-height:44px}
+.btn{padding:12px 20px;border-radius:var(--r);font-weight:600;font-size:.82rem;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;min-height:46px;-webkit-appearance:none;appearance:none;line-height:1;white-space:nowrap}
 .btn:active{transform:scale(.96)}
 .btn-p{background:var(--acc);color:#0a0c14;font-weight:700}
-.btn-sm{padding:8px 12px;font-size:.76rem;min-height:36px}
+.btn-sm{padding:10px 14px;font-size:.78rem;min-height:42px;border-radius:10px}
+.btn-icon{width:46px;height:46px;min-height:46px;padding:0;font-size:1.15rem;border-radius:12px;flex:0 0 46px}
+.btn-icon.btn-sm{width:42px;height:42px;min-height:42px;flex:0 0 42px;font-size:1rem;border-radius:10px}
 .imp-tab.sel{border-color:var(--acc);background:linear-gradient(135deg,var(--accG),rgba(162,155,254,.08));color:var(--acc);box-shadow:0 0 8px var(--accG)}
 .btn-o{border:1px solid var(--s3);color:var(--t2)}
 .btn-o:active{background:var(--s3)}
@@ -377,9 +379,9 @@ input,textarea{-webkit-user-select:text;user-select:text}
       <div style="display:flex;align-items:center;gap:8px">
         <div class="ic-i" style="background:linear-gradient(135deg,var(--cyan),#3DB8A8)">&#x1F4A7;</div>
         <div style="flex:1;min-width:0"><div class="ic-v" id="wV">0L</div><div class="ic-l">Eau</div></div>
-        <div style="display:flex;gap:4px;flex-shrink:0">
-          <button type="button" class="btn btn-o btn-sm" id="wMinus" style="width:28px;height:28px;padding:0;font-size:1rem;border-radius:50%">-</button>
-          <button type="button" class="btn btn-p btn-sm" id="wPlus" style="width:28px;height:28px;padding:0;font-size:1rem;border-radius:50%">+</button>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button type="button" class="btn btn-o btn-icon btn-sm" id="wMinus" style="border-radius:50%" aria-label="Moins d'eau">-</button>
+          <button type="button" class="btn btn-p btn-icon btn-sm" id="wPlus" style="border-radius:50%" aria-label="Plus d'eau">+</button>
         </div>
       </div>
       <div class="water-glasses" id="wGlasses"></div>
@@ -394,9 +396,9 @@ input,textarea{-webkit-user-select:text;user-select:text}
     <div style="display:flex;align-items:center;gap:10px">
       <div class="ic-i" style="background:linear-gradient(135deg,var(--pur),#9B7BFF)">&#x2696;&#xFE0F;</div>
       <div style="flex:1"><div class="ic-v mono" id="wHv">--</div><div class="ic-l">Poids du jour</div></div>
-      <div style="display:flex;gap:5px;align-items:center">
-        <input type="text" inputmode="decimal" class="inp" id="wHIn" placeholder="kg" style="width:70px;padding:8px;text-align:center;font-size:.85rem">
-        <button type="button" class="btn btn-p btn-sm" id="wHAdd" style="border-radius:50%;width:32px;height:32px;padding:0;font-size:1rem">&#x2713;</button>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="text" inputmode="decimal" class="inp" id="wHIn" placeholder="kg" style="width:72px;padding:10px;text-align:center;font-size:.9rem">
+        <button type="button" class="btn btn-p btn-icon btn-sm" id="wHAdd" style="border-radius:50%" aria-label="Valider poids">&#x2713;</button>
       </div>
     </div>
   </div>
@@ -408,7 +410,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <!-- CHARTS -->
 <div class="tp" id="tab-charts">
   <div class="ch"><h3><span class="cd" style="background:var(--acc)"></span>Poids</h3>
-    <div class="irow"><input type="text" inputmode="decimal" class="inp" id="wIn" placeholder="Poids (kg)"><button class="btn btn-p btn-sm" type="button" id="wAdd">+</button></div>
+    <div class="irow"><input type="text" inputmode="decimal" class="inp" id="wIn" placeholder="Poids (kg)"><button class="btn btn-p btn-icon" type="button" id="wAdd" aria-label="Ajouter poids">+</button></div>
     <div class="ws" id="wSt"></div>
     <div style="display:flex;gap:4px;margin-bottom:8px" id="wRange"></div>
     <div class="chw" style="height:220px"><canvas id="wCh"></canvas></div>
@@ -440,9 +442,9 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="dn"><button type="button" id="dP">&#x276E;</button><span class="dd" id="cDt">Aujourd'hui</span><button type="button" id="dN">&#x276F;</button></div>
   <div style="display:flex;gap:6px;align-items:stretch">
     <div class="sw" style="flex:1"><span class="si">&#x1F50D;</span><input type="text" id="fSr" placeholder="Rechercher un aliment..." autocomplete="off"><div class="sr" id="fRs"></div></div>
-    <button type="button" class="btn btn-s btn-sm" id="scanBtn" style="font-size:1rem;padding:8px 12px;border-radius:var(--r);min-width:44px" title="Scanner code-barres">&#x1F4F7;</button>
-    <button type="button" class="btn btn-p btn-sm" id="manualBtn" style="font-size:.9rem;padding:8px 12px;border-radius:var(--r);min-width:44px" title="Saisie manuelle">+</button>
-    <button type="button" class="btn btn-o btn-sm" id="smBtn" style="white-space:nowrap;font-size:.68rem;padding:8px 10px;border-radius:var(--r)">&#x2B50;</button>
+    <button type="button" class="btn btn-s btn-icon btn-sm" id="scanBtn" title="Scanner code-barres">&#x1F4F7;</button>
+    <button type="button" class="btn btn-p btn-icon btn-sm" id="manualBtn" title="Saisie manuelle">+</button>
+    <button type="button" class="btn btn-o btn-icon btn-sm" id="smBtn" title="Repas sauvegardes">&#x2B50;</button>
   </div>
   <div class="fav-s" id="favS"></div>
   <div class="msum" id="mSm"></div>
@@ -962,25 +964,39 @@ function editFoodQty(id){
 }
 
 // ===== BARCODE SCANNER =====
-let scanStream=null,scanActive=false,scanReader=null,scanRAF=null;
+let scanStream=null,scanActive=false,scanReader=null,scanRAF=null,scanMode='';
 function scSetMsg(t,color){const el=$('scMsg');if(!el)return;el.textContent=t;el.style.color=color||'var(--t2)'}
 async function openScanner(){
   $('scMo').classList.add('show');
   $('scMan').value='';
+  scanMode='';
   scSetMsg('Autorisation camera...');
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
     scSetMsg('Camera indisponible. Saisis le code manuellement.','var(--red)');return;
   }
+  if(!window.isSecureContext){
+    scSetMsg('HTTPS requis pour la camera. Saisie manuelle.','var(--red)');return;
+  }
   try{
-    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}});
+    const stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},
+      audio:false
+    });
     scanStream=stream;
-    const video=$('scVid');video.srcObject=stream;
-    await video.play();
-    scSetMsg('Place le code dans le cadre');
+    const video=$('scVid');
+    video.srcObject=stream;
+    video.setAttribute('playsinline','');
+    video.setAttribute('webkit-playsinline','');
+    video.muted=true;
+    await video.play().catch(e=>{throw new Error('play: '+e.message)});
+    // Wait until video has real dimensions
+    let tries=0;
+    while(video.videoWidth===0&&tries<40){await new Promise(r=>setTimeout(r,50));tries++}
+    if(video.videoWidth===0){scSetMsg('Video sans dimensions. Saisis le code.','var(--red)');return}
     scanActive=true;
-    startDetection(video);
+    await startDetection(video);
   }catch(e){
-    scSetMsg('Camera refusee: '+(e.message||e.name||'erreur')+'. Saisis le code manuellement.','var(--red)');
+    scSetMsg('Camera KO: '+(e.message||e.name||'erreur')+'. Saisis le code.','var(--red)');
   }
 }
 function closeScanner(){
@@ -988,48 +1004,90 @@ function closeScanner(){
   if(scanRAF){cancelAnimationFrame(scanRAF);scanRAF=null}
   if(scanReader){try{scanReader.reset()}catch(e){}scanReader=null}
   if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null}
-  const v=$('scVid');if(v){v.srcObject=null}
+  const v=$('scVid');if(v){v.srcObject=null;try{v.pause()}catch(e){}}
   $('scMo').classList.remove('show');
 }
 function loadScript(src){
   return new Promise((res,rej)=>{
     if(document.querySelector('script[data-src="'+src+'"]'))return res();
     const s=document.createElement('script');s.src=src;s.dataset.src=src;
-    s.onload=()=>res();s.onerror=()=>rej(new Error('load '+src));
+    s.onload=()=>res();s.onerror=()=>rej(new Error('load failed: '+src));
     document.head.appendChild(s);
   });
 }
 async function startDetection(video){
-  // Prefer native BarcodeDetector (Android Chrome/Edge), fallback to ZXing
+  const EAN_FMTS=['ean_13','ean_8','upc_a','upc_e','code_128','code_39'];
+  // 1. Native BarcodeDetector — only if it supports the formats we need
   if('BarcodeDetector' in window){
     try{
-      const det=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128','code_39']});
-      const loop=async()=>{
-        if(!scanActive)return;
-        try{
-          const codes=await det.detect(video);
-          if(codes&&codes.length){onBarcodeFound(codes[0].rawValue);return}
-        }catch(e){}
-        scanRAF=requestAnimationFrame(loop);
-      };
-      loop();return;
+      const supp=await BarcodeDetector.getSupportedFormats();
+      if(supp.some(f=>EAN_FMTS.includes(f))){
+        const avail=EAN_FMTS.filter(f=>supp.includes(f));
+        const det=new BarcodeDetector({formats:avail});
+        scanMode='native';
+        scSetMsg('Scan natif - place le code dans le cadre');
+        const loop=async()=>{
+          if(!scanActive)return;
+          try{
+            const codes=await det.detect(video);
+            if(codes&&codes.length){onBarcodeFound(codes[0].rawValue);return}
+          }catch(e){}
+          scanRAF=requestAnimationFrame(loop);
+        };
+        loop();return;
+      }
     }catch(e){/* fall through */}
   }
+  // 2. ZXing manual canvas loop (universal fallback, iOS Safari, etc.)
   scSetMsg('Chargement du scanner...');
+  const CDNs=[
+    'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js',
+    'https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js'
+  ];
+  let loaded=false;
+  for(const url of CDNs){
+    try{await loadScript(url);if(window.ZXing){loaded=true;break}}catch(e){}
+  }
+  if(!loaded||!window.ZXing||!ZXing.MultiFormatReader){
+    scSetMsg('Scanner indisponible (reseau?). Saisis le code.','var(--red)');return;
+  }
   try{
-    await loadScript('https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js');
-    if(!window.ZXing)throw new Error('ZXing manquant');
+    scanMode='zxing';
+    const reader=new ZXing.MultiFormatReader();
     const hints=new Map();
-    const fmts=[ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E,ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.CODE_39];
-    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,fmts);
-    scanReader=new ZXing.BrowserMultiFormatReader(hints,300);
-    scSetMsg('Place le code dans le cadre');
-    scanReader.decodeFromVideoElement(video,(result,err)=>{
+    const F=ZXing.BarcodeFormat,DHT=ZXing.DecodeHintType;
+    hints.set(DHT.POSSIBLE_FORMATS,[F.EAN_13,F.EAN_8,F.UPC_A,F.UPC_E,F.CODE_128,F.CODE_39]);
+    hints.set(DHT.TRY_HARDER,true);
+    reader.setHints(hints);
+    scanReader={reset:()=>{try{reader.reset()}catch(e){}}};
+    const cvs=document.createElement('canvas');
+    const ctx=cvs.getContext('2d',{willReadFrequently:true});
+    scSetMsg('Place le code bien cadre et eclaire');
+    let last=0;
+    const tick=(ts)=>{
       if(!scanActive)return;
-      if(result&&result.getText)onBarcodeFound(result.getText());
-    });
+      if(ts-last>=120&&video.readyState>=2&&video.videoWidth>0){
+        last=ts;
+        // Crop to central region for faster + more reliable decode
+        const vw=video.videoWidth,vh=video.videoHeight;
+        const cw=Math.floor(vw*0.8),ch=Math.floor(vh*0.55);
+        const cx=Math.floor((vw-cw)/2),cy=Math.floor((vh-ch)/2);
+        cvs.width=cw;cvs.height=ch;
+        try{
+          ctx.drawImage(video,cx,cy,cw,ch,0,0,cw,ch);
+          const src=new ZXing.HTMLCanvasElementLuminanceSource(cvs);
+          const bb=new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(src));
+          const res=reader.decode(bb);
+          const txt=res&&(res.getText?res.getText():res.text);
+          if(txt){onBarcodeFound(txt);return}
+        }catch(e){/* NotFoundException is normal */}
+        try{reader.reset()}catch(e){}
+      }
+      scanRAF=requestAnimationFrame(tick);
+    };
+    scanRAF=requestAnimationFrame(tick);
   }catch(e){
-    scSetMsg('Scanner indisponible. Saisis le code manuellement.','var(--red)');
+    scSetMsg('Scanner KO: '+(e.message||'erreur').slice(0,60)+'. Saisis le code.','var(--red)');
   }
 }
 async function onBarcodeFound(ean){
@@ -1252,9 +1310,9 @@ function renderAlert(cid){const el=$(cid);if(!el)return;const tr=trend72();if(!t
   if(tr.dir!=='observing'&&tr.confidence==='low')confBadge=' <span style="font-size:.55rem;color:var(--t3);margin-left:4px">(confiance basse, vise '+tr.idealDays+'j)</span>';
   // Apply button only when an adjustment is recommended. Palier auto-resets on kcal change.
   let btn='';
-  if(rec.act==='+200')btn=' <button type="button" class="btn btn-p btn-sm" style="margin-left:8px;padding:4px 10px;min-height:28px" id="alertApply" data-d="200">Appliquer +200</button>';
-  else if(rec.act==='-200')btn=' <button type="button" class="btn btn-d btn-sm" style="margin-left:8px;padding:4px 10px;min-height:28px" id="alertApply" data-d="-200">Appliquer -200</button>';
-  el.innerHTML='<div class="alt '+rec.tp+'" style="align-items:center;flex-wrap:wrap"><span>'+rec.msg+confBadge+'</span>'+btn+'</div>';
+  if(rec.act==='+200')btn=' <button type="button" class="btn btn-p btn-sm" style="margin-top:6px" id="alertApply" data-d="200">Appliquer +200</button>';
+  else if(rec.act==='-200')btn=' <button type="button" class="btn btn-d btn-sm" style="margin-top:6px" id="alertApply" data-d="-200">Appliquer -200</button>';
+  el.innerHTML='<div class="alt '+rec.tp+'" style="flex-direction:column;align-items:stretch;gap:4px"><span>'+rec.msg+confBadge+'</span>'+btn+'</div>';
   const ab=$('alertApply');if(ab)ab.addEventListener('click',function(){
     const tg=getTg(),d=+this.dataset.d;
     tg.gluc=Math.max(0,tg.gluc+Math.round(d/4));
