@@ -81,12 +81,12 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .inp{flex:1;background:var(--s2);border:1px solid var(--s3);border-radius:var(--r);padding:12px 14px;color:var(--t1);font-size:16px;transition:.2s;min-height:44px}
 .inp:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accG)}
 .inp::placeholder{color:var(--t3);font-size:.82rem}
-.btn{padding:12px 20px;border-radius:var(--r);font-weight:600;font-size:.82rem;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;min-height:46px;-webkit-appearance:none;appearance:none;line-height:1;white-space:nowrap}
+.btn{padding:9px 16px;border-radius:10px;font-weight:600;font-size:.78rem;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;min-height:38px;-webkit-appearance:none;appearance:none;line-height:1;white-space:nowrap}
 .btn:active{transform:scale(.96)}
 .btn-p{background:var(--acc);color:#0a0c14;font-weight:700}
-.btn-sm{padding:10px 14px;font-size:.78rem;min-height:42px;border-radius:10px}
-.btn-icon{width:46px;height:46px;min-height:46px;padding:0;font-size:1.15rem;border-radius:12px;flex:0 0 46px}
-.btn-icon.btn-sm{width:42px;height:42px;min-height:42px;flex:0 0 42px;font-size:1rem;border-radius:10px}
+.btn-sm{padding:7px 11px;font-size:.72rem;min-height:32px;border-radius:9px}
+.btn-icon{width:38px;height:38px;min-height:38px;padding:0;font-size:1rem;border-radius:10px;flex:0 0 38px}
+.btn-icon.btn-sm{width:32px;height:32px;min-height:32px;flex:0 0 32px;font-size:.88rem;border-radius:9px}
 .imp-tab.sel{border-color:var(--acc);background:linear-gradient(135deg,var(--accG),rgba(162,155,254,.08));color:var(--acc);box-shadow:0 0 8px var(--accG)}
 .btn-o{border:1px solid var(--s3);color:var(--t2)}
 .btn-o:active{background:var(--s3)}
@@ -128,44 +128,45 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .nav button svg{width:21px;height:21px;pointer-events:none;stroke-width:1.8}
 
 /* HOME */
-.home-hi{font-size:1.4rem;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,var(--t1),var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.home-dt{font-size:.72rem;color:var(--t3);margin-top:3px;margin-bottom:16px;font-weight:500}
-.cal-hero{position:relative;display:flex;flex-direction:column;align-items:center;padding:14px 0 10px;margin-bottom:12px}
-.cal-hero::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:240px;height:240px;background:radial-gradient(circle,var(--accG),transparent 70%);pointer-events:none}
-.cal-ring{position:relative;width:160px;height:160px}
-.cal-ring canvas{width:160px!important;height:160px!important}
+.home-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:8px}
+.home-hi{font-size:1.15rem;font-weight:800;letter-spacing:-.3px;background:linear-gradient(135deg,var(--t1),var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.home-dt{font-size:.65rem;color:var(--t3);font-weight:500;text-transform:capitalize}
+.cal-hero{position:relative;display:flex;flex-direction:column;align-items:center;padding:6px 0 4px;margin-bottom:10px}
+.cal-hero::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;background:radial-gradient(circle,var(--accG),transparent 70%);pointer-events:none}
+.cal-ring{position:relative;width:140px;height:140px}
+.cal-ring canvas{width:140px!important;height:140px!important}
 .cal-ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
-.cal-ctr .cv{font-size:2.2rem;font-weight:700;line-height:1;letter-spacing:-1px}
-.cal-ctr .cl{font-size:.6rem;color:var(--t3);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-.cal-sub{margin-top:10px;font-size:.76rem;color:var(--t3);letter-spacing:.3px}
+.cal-ctr .cv{font-size:1.9rem;font-weight:700;line-height:1;letter-spacing:-1px}
+.cal-ctr .cl{font-size:.55rem;color:var(--t3);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.cal-sub{margin-top:6px;font-size:.7rem;color:var(--t3);letter-spacing:.3px}
 
-.macro-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:14px}
-.mc{background:var(--s1);border-radius:var(--r);padding:11px 6px;text-align:center;border:1px solid var(--s3);position:relative;overflow:hidden}
+.macro-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-bottom:10px}
+.mc{background:var(--s1);border-radius:10px;padding:8px 4px;text-align:center;border:1px solid var(--s3);position:relative;overflow:hidden}
 .mc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0}
 .mc:nth-child(1)::before{background:linear-gradient(90deg,var(--acc),var(--pur))}
 .mc:nth-child(2)::before{background:linear-gradient(90deg,var(--grn),var(--cyan))}
 .mc:nth-child(3)::before{background:linear-gradient(90deg,var(--pnk),var(--red))}
 .mc:nth-child(4)::before{background:linear-gradient(90deg,var(--brn),var(--org))}
-.mc .mc-d{width:5px;height:5px;border-radius:50%;margin:0 auto 4px}
-.mc .mc-l{font-size:.55rem;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);font-weight:700}
-.mc .mc-v{font-size:1.05rem;font-weight:700}
-.mc .mc-t{font-size:.58rem;color:var(--t3)}
-.mc .mc-bw{height:4px;background:var(--s3);border-radius:2px;margin-top:6px;overflow:hidden}
+.mc .mc-d{display:none}
+.mc .mc-l{font-size:.52rem;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);font-weight:700}
+.mc .mc-v{font-size:.95rem;font-weight:700;margin-top:2px}
+.mc .mc-t{font-size:.54rem;color:var(--t3)}
+.mc .mc-bw{height:3px;background:var(--s3);border-radius:2px;margin-top:4px;overflow:hidden}
 .mc .mc-b{height:100%;border-radius:2px;transition:width .5s}
 
-.info-row{display:flex;gap:7px;margin-bottom:12px}
-.info-card{flex:1;display:flex;align-items:center;gap:9px;background:var(--s1);border:1px solid var(--s3);border-radius:var(--r);padding:12px;position:relative;overflow:hidden}
+.info-row{display:flex;gap:6px;margin-bottom:8px}
+.info-card{flex:1;display:flex;align-items:center;gap:8px;background:var(--s1);border:1px solid var(--s3);border-radius:10px;padding:9px 10px;position:relative;overflow:hidden;min-height:48px}
 .info-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
 .info-row .info-card:first-child::before{background:linear-gradient(90deg,var(--cyan),var(--acc))}
-.info-row .info-card:last-child::before{background:linear-gradient(90deg,var(--org),var(--yel))}
-.info-card .ic-i{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
-.info-card .ic-v{font-size:1.05rem;font-weight:700}
-.info-card .ic-l{font-size:.55rem;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;font-weight:700}
+.info-row .info-card:nth-child(2)::before{background:linear-gradient(90deg,var(--org),var(--yel))}
+.info-row .info-card:nth-child(3)::before{background:linear-gradient(90deg,var(--pur),var(--pnk))}
+.info-card .ic-i{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.info-card .ic-v{font-size:.92rem;font-weight:700;line-height:1.1}
+.info-card .ic-l{font-size:.52rem;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;font-weight:700}
 
-.streak-bar{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(253,203,110,.05),rgba(243,156,18,.02));border:1px solid rgba(253,203,110,.1);border-radius:var(--r);padding:10px 12px;margin-bottom:10px}
-.streak-bar .sf{font-size:1.2rem}
+.streak-bar{display:flex;align-items:center;gap:6px;font-size:.65rem;color:var(--t3);margin-bottom:6px;padding:0 2px}
+.streak-bar .sf{font-size:.85rem}
 .streak-bar .sv{font-weight:700;color:var(--yel)}
-.streak-bar .sl{font-size:.6rem;color:var(--t3)}
 
 .m-section.card{padding:12px}
 .m-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
@@ -174,7 +175,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .hm-item{display:flex;justify-content:space-between;align-items:center;background:var(--s2);border-radius:10px;padding:11px 12px;margin-bottom:4px;font-size:.78rem;border-left:3px solid var(--acc);transition:.15s}
 .hm-item:nth-child(1){border-left-color:var(--org)}.hm-item:nth-child(2){border-left-color:var(--grn)}.hm-item:nth-child(3){border-left-color:var(--pur)}.hm-item:nth-child(4){border-left-color:var(--pnk)}
 .hm-item .hn{flex:1;font-weight:500}.hm-item .hk{color:var(--org);font-weight:600}
-.weight-home{position:relative;overflow:hidden;border:1px solid rgba(162,155,254,.15);background:linear-gradient(135deg,rgba(162,155,254,.04),var(--s1))}
+.weight-home{position:relative;overflow:hidden;border:1px solid rgba(162,155,254,.15);background:linear-gradient(135deg,rgba(162,155,254,.04),var(--s1));padding:10px 12px;margin-bottom:8px;border-radius:10px}
 .weight-home::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--pur),var(--pnk))}
 
 /* Alert */
@@ -322,9 +323,6 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .sm-item .sm-macros{font-size:.65rem;color:var(--t2);margin-bottom:6px}
 .sm-item .sm-acts{display:flex;gap:5px}
 .sm-item .sm-acts button{font-size:.65rem}
-.water-glasses{display:flex;gap:4px;margin-top:2px;flex-wrap:wrap}
-.water-glass{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--cyan);opacity:.3;transition:.2s}
-.water-glass.filled{opacity:1;background:var(--cyan);border-color:var(--cyan);box-shadow:0 0 6px rgba(0,206,201,.3)}
 .sport-type-row{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .sport-type-row::-webkit-scrollbar{display:none}
 .sport-type-btn{flex-shrink:0;padding:11px 16px;border-radius:var(--r);font-size:.75rem;font-weight:600;border:2px solid var(--s3);cursor:pointer;background:var(--s2);color:var(--t2);transition:.15s;white-space:nowrap;min-height:42px}
@@ -365,46 +363,42 @@ input,textarea{-webkit-user-select:text;user-select:text}
 
 <!-- HOME -->
 <div class="tp active" id="tab-home">
-  <div class="home-hi" id="hHi">Bonjour</div>
-  <div class="home-dt" id="hDt"></div>
-  <div class="cal-hero"><div class="cal-ring"><canvas id="cRing" width="160" height="160"></canvas><div class="cal-ctr"><div class="cv mono" id="cV">0</div><div class="cl">restantes</div></div></div><div class="cal-sub mono" id="cSub">0 / 0 kcal</div></div>
+  <div class="home-head">
+    <div class="home-hi" id="hHi">Bonjour</div>
+    <div class="home-dt" id="hDt"></div>
+  </div>
+  <div class="cal-hero"><div class="cal-ring"><canvas id="cRing" width="140" height="140"></canvas><div class="cal-ctr"><div class="cv mono" id="cV">0</div><div class="cl">restantes</div></div></div><div class="cal-sub mono" id="cSub">0 / 0 kcal</div></div>
   <div class="macro-row">
-    <div class="mc"><div class="mc-d" style="background:var(--acc)"></div><div class="mc-l">Prot</div><div class="mc-v mono" id="hP">0</div><div class="mc-t mono" id="hPt"></div><div class="mc-bw"><div class="mc-b" id="hPb" style="background:var(--acc)"></div></div></div>
-    <div class="mc"><div class="mc-d" style="background:var(--grn)"></div><div class="mc-l">Gluc</div><div class="mc-v mono" id="hG">0</div><div class="mc-t mono" id="hGt"></div><div class="mc-bw"><div class="mc-b" id="hGb" style="background:var(--grn)"></div></div></div>
-    <div class="mc"><div class="mc-d" style="background:var(--pnk)"></div><div class="mc-l">Lip</div><div class="mc-v mono" id="hL">0</div><div class="mc-t mono" id="hLt"></div><div class="mc-bw"><div class="mc-b" id="hLb" style="background:var(--pnk)"></div></div></div>
-    <div class="mc"><div class="mc-d" style="background:var(--brn)"></div><div class="mc-l">Fibres</div><div class="mc-v mono" id="hF">0</div><div class="mc-t mono" id="hFt"></div><div class="mc-bw"><div class="mc-b" id="hFb" style="background:var(--brn)"></div></div></div>
+    <div class="mc"><div class="mc-l">Prot</div><div class="mc-v mono" id="hP">0</div><div class="mc-t mono" id="hPt"></div><div class="mc-bw"><div class="mc-b" id="hPb" style="background:var(--acc)"></div></div></div>
+    <div class="mc"><div class="mc-l">Gluc</div><div class="mc-v mono" id="hG">0</div><div class="mc-t mono" id="hGt"></div><div class="mc-bw"><div class="mc-b" id="hGb" style="background:var(--grn)"></div></div></div>
+    <div class="mc"><div class="mc-l">Lip</div><div class="mc-v mono" id="hL">0</div><div class="mc-t mono" id="hLt"></div><div class="mc-bw"><div class="mc-b" id="hLb" style="background:var(--pnk)"></div></div></div>
+    <div class="mc"><div class="mc-l">Fibres</div><div class="mc-v mono" id="hF">0</div><div class="mc-t mono" id="hFt"></div><div class="mc-bw"><div class="mc-b" id="hFb" style="background:var(--brn)"></div></div></div>
   </div>
   <div class="info-row">
-    <div class="info-card" style="flex-direction:column;align-items:stretch;gap:6px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <div class="ic-i" style="background:linear-gradient(135deg,var(--cyan),#3DB8A8)">&#x1F4A7;</div>
-        <div style="flex:1;min-width:0"><div class="ic-v" id="wV">0L</div><div class="ic-l">Eau</div></div>
-        <div style="display:flex;gap:6px;flex-shrink:0">
-          <button type="button" class="btn btn-o btn-icon btn-sm" id="wMinus" style="border-radius:50%" aria-label="Moins d'eau">-</button>
-          <button type="button" class="btn btn-p btn-icon btn-sm" id="wPlus" style="border-radius:50%" aria-label="Plus d'eau">+</button>
-        </div>
+    <div class="info-card">
+      <div class="ic-i" style="background:linear-gradient(135deg,var(--cyan),#3DB8A8)">&#x1F4A7;</div>
+      <div style="flex:1;min-width:0"><div class="ic-v" id="wV">0L</div><div class="ic-l">Eau</div></div>
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        <button type="button" class="btn btn-o btn-icon btn-sm" id="wMinus" aria-label="Moins d'eau">-</button>
+        <button type="button" class="btn btn-p btn-icon btn-sm" id="wPlus" aria-label="Plus d'eau">+</button>
       </div>
-      <div class="water-glasses" id="wGlasses"></div>
     </div>
     <div class="info-card" id="stepsCard" style="cursor:pointer">
       <div class="ic-i" style="background:linear-gradient(135deg,var(--org),#E89830)">&#x1F463;</div>
-      <div style="flex:1"><div class="ic-v mono" id="sV">0</div><div class="ic-l">Pas</div></div>
-      <span style="font-size:.6rem;color:var(--t3)">&#x270E;</span>
+      <div style="flex:1;min-width:0"><div class="ic-v mono" id="sV">0</div><div class="ic-l">Pas</div></div>
     </div>
-  </div>
-  <div class="weight-home card" id="wHome">
-    <div style="display:flex;align-items:center;gap:10px">
+    <div class="info-card" id="wHome" style="cursor:default">
       <div class="ic-i" style="background:linear-gradient(135deg,var(--pur),#9B7BFF)">&#x2696;&#xFE0F;</div>
-      <div style="flex:1"><div class="ic-v mono" id="wHv">--</div><div class="ic-l">Poids du jour</div></div>
-      <div style="display:flex;gap:6px;align-items:center">
-        <input type="text" inputmode="decimal" class="inp" id="wHIn" placeholder="kg" style="width:72px;padding:10px;text-align:center;font-size:.9rem">
-        <button type="button" class="btn btn-p btn-icon btn-sm" id="wHAdd" style="border-radius:50%" aria-label="Valider poids">&#x2713;</button>
+      <div style="flex:1;min-width:0"><div class="ic-v mono" id="wHv">--</div><div class="ic-l">Poids</div></div>
+      <div style="display:flex;gap:4px;flex-shrink:0;align-items:center">
+        <input type="text" inputmode="decimal" class="inp" id="wHIn" placeholder="kg" style="width:52px;padding:7px 4px;text-align:center;font-size:.78rem;min-height:32px">
+        <button type="button" class="btn btn-p btn-icon btn-sm" id="wHAdd" aria-label="Valider poids">&#x2713;</button>
       </div>
     </div>
   </div>
-  <div class="streak-bar" id="skBar" style="display:none"><div class="sf">&#x1F525;</div><div><div class="sv" id="skV"></div><div class="sl">jours consecutifs</div></div></div>
+  <div class="streak-bar" id="skBar" style="display:none"><span class="sf">&#x1F525;</span><span class="sv" id="skV"></span><span>jours consecutifs</span></div>
   <div id="hAlt"></div><div id="hAn"></div>
-  <div class="stitle">Aujourd'hui</div><div id="hMeals"></div>
+  <div id="hMeals"></div>
 </div>
 
 <!-- CHARTS -->
@@ -595,13 +589,20 @@ input,textarea{-webkit-user-select:text;user-select:text}
 
 <div class="mo" id="qMo"><div class="modal"><h3 id="qN"></h3><div class="fp mono" id="qPr"></div><div class="qq" id="qQ"></div><input type="number" inputmode="decimal" class="inp" id="qIn" placeholder="Quantite (g)" style="width:100%"><div class="acts"><button class="btn btn-o" type="button" id="qNo">Annuler</button><button class="btn btn-p" type="button" id="qYes">Ajouter</button></div></div></div>
 <div class="mo" id="stepMo"><div class="modal"><h3>&#x1F463; Nombre de pas</h3>
-<div style="font-size:.68rem;color:var(--t2);margin-bottom:10px;line-height:1.5">
-<strong style="color:var(--t1)">Saisie manuelle</strong> ou sync automatique :<br>
-<span style="color:var(--grn)">&#x25CF;</span> <strong>Android</strong> : Google Fit (connecte-toi avec Google)<br>
-<span style="color:var(--acc)">&#x25CF;</span> <strong>iOS</strong> : ouvre Sante > tes pas et saisis ici
-</div>
 <input type="number" inputmode="numeric" class="inp" id="stepIn" placeholder="Ex: 8500" style="width:100%;margin-bottom:8px">
-<div class="acts" style="flex-wrap:wrap;gap:6px"><button class="btn btn-o" type="button" id="stepNo">Annuler</button><button class="btn btn-p" type="button" id="stepSync" style="font-size:.7rem">&#x1F4F1; Sync Google Fit</button><button class="btn btn-s" type="button" id="stepOk">Valider</button></div></div></div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px">
+<button type="button" class="btn btn-o btn-sm" data-stepq="1000">+1k</button>
+<button type="button" class="btn btn-o btn-sm" data-stepq="2500">+2.5k</button>
+<button type="button" class="btn btn-o btn-sm" data-stepq="5000">+5k</button>
+<button type="button" class="btn btn-o btn-sm" data-stepq="10000">+10k</button>
+</div>
+<details style="font-size:.66rem;color:var(--t2);margin-bottom:10px;line-height:1.5"><summary style="cursor:pointer;color:var(--acc)">&#x2699;&#xFE0F; Sync automatique</summary>
+<div style="margin-top:6px;padding:8px;background:var(--s2);border-radius:8px">
+<strong style="color:var(--t1)">iOS (Raccourcis)</strong> : cree un raccourci qui recupere le nombre de pas du jour depuis Sante, puis ouvre l'URL :<br>
+<code style="color:var(--acc);font-size:.62rem;word-break:break-all">mysf.app/?steps=[Pas]</code><br>
+<strong style="color:var(--t1)">Android</strong> : utilise Tasker ou une automatisation similaire avec la meme URL.
+</div></details>
+<div class="acts"><button class="btn btn-o" type="button" id="stepNo">Annuler</button><button class="btn btn-s" type="button" id="stepOk">Valider</button></div></div></div>
 <div class="phm" id="phM"><div class="phm-c"><div class="brand brand-g" style="font-size:1.2rem;margin-bottom:12px">MYSF</div>
   <div class="ph-det" style="border-color:var(--phA)"><strong style="color:var(--phA)">A — Pre-prep (x1.0)</strong><br>Baisse: rien. Stagne 72h: +200kcal. Monte: arret.</div>
   <div class="ph-det" style="border-color:var(--phB)"><strong style="color:var(--phB)">B — Deficit (x0.85)</strong><br>Stagne: -200kcal. Remontee: verifier.</div>
@@ -804,7 +805,7 @@ function renderHome(){
   $('hG').textContent=mg+'g';$('hGt').textContent='/'+tg.gluc;$('hGb').style.width=Math.min(100,tg.gluc?Math.round(t.g/tg.gluc*100):0)+'%';
   $('hL').textContent=ml+'g';$('hLt').textContent='/'+tg.lip;$('hLb').style.width=Math.min(100,tg.lip?Math.round(t.l/tg.lip*100):0)+'%';
   $('hF').textContent=mf+'g';$('hFt').textContent='/'+(tg.fib||30);$('hFb').style.width=Math.min(100,(tg.fib||30)?Math.round(t.f/(tg.fib||30)*100):0)+'%';
-  const w=getWater(),wc=w[curDate]||0;$('wV').textContent=(wc*0.25).toFixed(1)+'L';$('wGlasses').innerHTML=Array.from({length:8},(_,i)=>'<div class="water-glass'+(i<wc?' filled':'')+'"></div>').join('');
+  const w=getWater(),wc=w[curDate]||0;$('wV').textContent=(wc*0.25).toFixed(1)+'L';
   const s=getSteps();$('sV').textContent=(s[curDate]||0).toLocaleString('fr-FR');
   // Weight home
   const ws=getW(),todayW=ws.find(x=>x.date===new Date().toISOString().slice(0,10));
@@ -1423,8 +1424,9 @@ function renderPhSel(){const ph=getPh(),c=$('phSel');c.innerHTML='';Object.keys(
 function renderPhDet(){const ph=getPh(),i={A:{c:PHC.A,t:'Pre-prep (x1.0)',d:'Baisse: rien. Stagne: +200kcal.'},B:{c:PHC.B,t:'Deficit (x0.85)',d:'Stagne: -200kcal. Remontee: verifier.'},C:{c:PHC.C,t:'Reverse (x0.90)',d:'Baisse=+200kcal. Stable: rien.'},D:{c:PHC.D,t:'PDM (x1.075)',d:'Baisse: +200kcal.'},E:{c:PHC.E,t:'Reset (x0.88)',d:'Deficit+Reverse.'}}[ph];$('phDet').innerHTML='<div class="ph-det" style="border-color:'+i.c+'"><strong style="color:'+i.c+'">'+ph+' \u2014 '+i.t+'</strong><br>'+i.d+'</div>'}
 function updateBadge(){const ph=getPh(),c=PHC[ph];$('phPill').style.cssText='color:'+c+';background:'+c+'10;border-color:'+c+'25';$('phPill').querySelector('.d').style.background=c;$('phLbl').textContent='Phase '+ph}
 
-// ===== GOOGLE FIT =====
-async function syncSteps(){const tk=ld("nt_gtoken",null);if(!tk)return;const now=Date.now(),start=new Date(new Date().setHours(0,0,0,0)).getTime();try{const r=await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate',{method:'POST',headers:{'Authorization':'Bearer '+tk,'Content-Type':'application/json'},body:JSON.stringify({aggregateBy:[{dataTypeName:"com.google.step_count.delta",dataSourceId:"derived:com.google.step_count.delta:com.google.android.gms:estimated_steps"}],bucketByTime:{durationMillis:86400000},startTimeMillis:start,endTimeMillis:now})});if(!r.ok)return;const d=await r.json();let v=0;if(d.bucket&&d.bucket[0]&&d.bucket[0].dataset[0]&&d.bucket[0].dataset[0].point[0])v=d.bucket[0].dataset[0].point[0].value[0].intVal||0;const s=getSteps();s[curDate]=v;sv("nt_steps",s);renderHome()}catch{}}
+// ===== STEP SYNC via URL param (iOS Shortcuts / Tasker) =====
+// Usage: open the app with ?steps=12345 (optional &date=YYYY-MM-DD) to save steps
+function handleStepUrlParam(){try{const u=new URL(location.href),p=u.searchParams;if(!p.has('steps'))return;const v=parseInt(p.get('steps'),10);if(!isNaN(v)&&v>=0&&v<200000){const d=p.get('date')||new Date().toISOString().slice(0,10);const s=getSteps();s[d]=v;sv("nt_steps",s);try{renderHome()}catch{}}p.delete('steps');p.delete('date');history.replaceState(null,'',u.pathname+(p.toString()?'?'+p.toString():'')+u.hash)}catch{}}
 
 // ===== WIRING =====
 function wire(){
@@ -1449,7 +1451,7 @@ function wire(){
   $('stepMo').addEventListener('click',e=>{if(e.target===$('stepMo'))$('stepMo').classList.remove('show')});
   $('stepNo').addEventListener('click',()=>$('stepMo').classList.remove('show'));
   $('stepOk').addEventListener('click',()=>{const v=+$('stepIn').value||0;const s=getSteps();s[curDate]=v;sv("nt_steps",s);$('stepMo').classList.remove('show');renderHome()});
-  $('stepSync').addEventListener('click',async()=>{await syncSteps();$('stepMo').classList.remove('show')});
+  document.querySelectorAll('[data-stepq]').forEach(b=>b.addEventListener('click',()=>{const cur=+$('stepIn').value||0;$('stepIn').value=cur+(+b.dataset.stepq)}));
   // Weight edit
   $('wEditMo').addEventListener('click',e=>{if(e.target===$('wEditMo'))closeWeightEdit()});
   $('wEditNo').addEventListener('click',closeWeightEdit);
@@ -1545,7 +1547,7 @@ function wire(){
 }
 
 // ===== INIT =====
-initAuth();initNav();initSearch();wire();
+initAuth();initNav();initSearch();wire();handleStepUrlParam();
 </script>
 </body>
 </html>
