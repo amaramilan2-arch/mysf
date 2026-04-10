@@ -993,8 +993,8 @@ function aiReset(){aiImageB64=null;$('aiImg').src='';$('aiPreview').style.displa
 function aiShowErr(type,detail){
   const el=$('aiErr'),styles={
     nokey:  {icon:'\u{1F511}',bg:'var(--orgG)',color:'var(--org)',title:'Cle API manquante',msg:'Ajoute ta cle API Gemini dans Reglages > IA — Analyse repas.'},
-    badkey: {icon:'\u{1F6AB}',bg:'var(--redG)',color:'var(--red)',title:'Cle API invalide',msg:'La cle API est incorrecte ou desactivee. Verifie-la dans Reglages > IA.'},
-    quota:  {icon:'\u{23F3}',bg:'var(--orgG)',color:'var(--org)',title:'Quota depasse',msg:'Tu as atteint la limite de requetes. Reessaie dans quelques minutes.'},
+    badkey: {icon:'\u{1F6AB}',bg:'var(--redG)',color:'var(--red)',title:'Cle API invalide',msg:'La cle API est incorrecte ou desactivee. Verifie-la dans Reglages > IA ou recree-en une sur <b>aistudio.google.com</b>.'},
+    quota:  {icon:'\u{23F3}',bg:'var(--orgG)',color:'var(--org)',title:'Quota depasse',msg:'Tu as atteint la limite de requetes (15/min). Reessaie dans quelques minutes.'},
     network:{icon:'\u{1F4E1}',bg:'var(--redG)',color:'var(--red)',title:'Erreur reseau',msg:'Impossible de contacter l\'API Google. Verifie ta connexion internet.'},
     api:    {icon:'\u{2699}\u{FE0F}',bg:'var(--redG)',color:'var(--red)',title:'Erreur API Google',msg:detail||'L\'API Gemini a retourne une erreur inattendue.'},
     parse:  {icon:'\u{1F372}',bg:'var(--accG)',color:'var(--acc2)',title:'Analyse impossible',msg:'L\'IA n\'a pas pu identifier le repas. Ajoute une description plus detaillee ou une meilleure photo.'},
@@ -1035,11 +1035,19 @@ async function aiAnalyze(){
   }catch(e){aiShowErr('network');return}
 
   if(!r.ok){
-    if(r.status===400){let msg='';try{const j=await r.json();msg=j.error&&j.error.message||''}catch{}if(msg.includes('API_KEY')||msg.includes('key'))aiShowErr('badkey');else aiShowErr('api','Erreur 400 — '+msg.slice(0,100))}
-    else if(r.status===401||r.status===403)aiShowErr('badkey');
-    else if(r.status===429)aiShowErr('quota');
+    let gMsg='';try{const j=await r.json();gMsg=j.error&&j.error.message||''}catch{}
+    const gLow=(gMsg||'').toLowerCase();
+    if(r.status===400&&(gLow.includes('api_key')||gLow.includes('api key')))aiShowErr('badkey');
+    else if(r.status===401||r.status===403){
+      if(gLow.includes('enabled')||gLow.includes('enable'))aiShowErr('api','L\'API Generative Language n\'est pas activee sur ton projet Google Cloud. Va sur <b>console.cloud.google.com</b> > APIs > active "Generative Language API".<br><br><span style="font-size:.62rem;opacity:.7">'+gMsg.slice(0,150)+'</span>');
+      else aiShowErr('badkey');
+    }
+    else if(r.status===429){
+      if(gLow.includes('enable')||gLow.includes('billing')||gLow.includes('project'))aiShowErr('api','Ton projet Google Cloud n\'est pas configure correctement. Recree une cle depuis <b>aistudio.google.com</b> (bouton "Get API Key") — c\'est le plus simple.<br><br><span style="font-size:.62rem;opacity:.7">'+gMsg.slice(0,150)+'</span>');
+      else aiShowErr('quota');
+    }
     else if(r.status>=500)aiShowErr('api','Les serveurs Google sont temporairement indisponibles (erreur '+r.status+'). Reessaie dans un instant.');
-    else aiShowErr('api','Erreur HTTP '+r.status);
+    else aiShowErr('api','Erreur HTTP '+r.status+(gMsg?' — '+gMsg.slice(0,120):''));
     return;
   }
 
