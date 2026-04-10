@@ -1028,14 +1028,14 @@ async function aiAnalyze(){
 
   let r;
   try{
-    r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+encodeURIComponent(key),{
+    r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+encodeURIComponent(key),{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({contents:[{parts}],generationConfig:{temperature:0.3,maxOutputTokens:2048}})
     });
   }catch(e){aiShowErr('network');return}
 
   if(!r.ok){
-    let gMsg='';try{const j=await r.json();gMsg=j.error&&j.error.message||''}catch{}
+    let gMsg='';try{const j=await r.json();gMsg=j.error&&j.error.message||''}catch{try{gMsg=await r.text()}catch{}}
     const gLow=(gMsg||'').toLowerCase();
     if(r.status===400&&(gLow.includes('api_key')||gLow.includes('api key')))aiShowErr('badkey');
     else if(r.status===401||r.status===403){
@@ -1044,7 +1044,7 @@ async function aiAnalyze(){
     }
     else if(r.status===429){
       if(gLow.includes('enable')||gLow.includes('billing')||gLow.includes('project'))aiShowErr('api','Ton projet Google Cloud n\'est pas configure correctement. Recree une cle depuis <b>aistudio.google.com</b> (bouton "Get API Key") — c\'est le plus simple.<br><br><span style="font-size:.62rem;opacity:.7">'+gMsg.slice(0,150)+'</span>');
-      else aiShowErr('quota');
+      else aiShowErr('api','Quota depasse (429). Attends 1-2 minutes puis reessaie.<br><br><span style="font-size:.6rem;opacity:.7">Detail Google: '+gMsg.slice(0,200)+'</span>');
     }
     else if(r.status>=500)aiShowErr('api','Les serveurs Google sont temporairement indisponibles (erreur '+r.status+'). Reessaie dans un instant.');
     else aiShowErr('api','Erreur HTTP '+r.status+(gMsg?' — '+gMsg.slice(0,120):''));
