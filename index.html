@@ -444,6 +444,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="dn"><button type="button" id="dP">&#x276E;</button><span class="dd" id="cDt">Aujourd'hui</span><button type="button" id="dN">&#x276F;</button></div>
   <div style="display:flex;gap:6px;align-items:stretch">
     <div class="sw" style="flex:1"><span class="si">&#x1F50D;</span><input type="text" id="fSr" placeholder="Rechercher un aliment..." autocomplete="off"><div class="sr" id="fRs"></div></div>
+    <button type="button" class="btn btn-icon btn-sm" id="aiBtn" title="Analyser avec IA" style="background:linear-gradient(135deg,var(--cyan),var(--acc));color:#fff;font-size:.82rem">&#x2728;</button>
     <button type="button" class="btn btn-s btn-icon btn-sm" id="scanBtn" title="Scanner code-barres">&#x1F4F7;</button>
     <button type="button" class="btn btn-p btn-icon btn-sm" id="manualBtn" title="Saisie manuelle">+</button>
     <button type="button" class="btn btn-o btn-icon btn-sm" id="smBtn" title="Repas sauvegardes">&#x2B50;</button>
@@ -551,6 +552,13 @@ input,textarea{-webkit-user-select:text;user-select:text}
       <button class="btn btn-o" type="button" id="thLight" style="flex:1">&#x2600;&#xFE0F; Clair</button>
     </div>
   </div>
+  <div class="ss"><h3><span class="sd" style="background:var(--cyan)"></span>IA — Analyse repas</h3>
+    <p style="font-size:.68rem;color:var(--t3);margin-bottom:8px;line-height:1.5">
+      Utilise Gemini (Google) pour analyser un repas en texte et obtenir les macros automatiquement. Gratuit — cree une cle sur <strong style="color:var(--t2)">aistudio.google.com</strong>
+    </p>
+    <input type="text" class="inp" id="aiKey" placeholder="Cle API Gemini" style="width:100%;font-size:.78rem" autocomplete="off">
+    <div id="aiKeyStatus" style="font-size:.62rem;margin-top:4px;color:var(--t3)"></div>
+  </div>
   <div class="ss"><h3><span class="sd" style="background:var(--grn)"></span>Compte</h3>
     <div id="sAcc"></div>
     <div id="syncSt" style="font-size:.68rem;margin-top:6px"></div>
@@ -639,6 +647,39 @@ input,textarea{-webkit-user-select:text;user-select:text}
     <div class="full"><label>Fibres (g)</label><input type="number" inputmode="decimal" class="inp" id="manF" placeholder="0"></div>
   </div>
   <div class="acts"><button class="btn btn-o" type="button" id="manNo">Annuler</button><button class="btn btn-p" type="button" id="manOk">Ajouter</button></div>
+</div></div>
+
+<div class="mo" id="aiMo"><div class="modal" style="max-height:85vh;overflow-y:auto">
+  <h3>&#x2728; Analyse IA</h3>
+  <div style="font-size:.7rem;color:var(--t3);margin-bottom:10px;line-height:1.5">Prends une photo du plat et/ou decris-le. L'IA estimera les macros.</div>
+  <div id="aiPhotoWrap" style="margin-bottom:10px">
+    <div id="aiPreview" style="display:none;position:relative;margin-bottom:8px;border-radius:12px;overflow:hidden;border:1px solid var(--s3)">
+      <img id="aiImg" style="width:100%;max-height:240px;object-fit:cover;display:block">
+      <button type="button" id="aiPhotoClear" style="position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;border:none;cursor:pointer">&#x2715;</button>
+    </div>
+    <label style="display:flex;align-items:center;justify-content:center;gap:6px;padding:14px;border:2px dashed var(--s3);border-radius:12px;cursor:pointer;font-size:.75rem;color:var(--t2);font-weight:600;transition:.15s" id="aiPhotoLabel">
+      &#x1F4F7; Prendre ou choisir une photo
+      <input type="file" accept="image/*" capture="environment" id="aiPhotoIn" style="display:none">
+    </label>
+  </div>
+  <textarea class="inp" id="aiDesc" placeholder="Decris le repas... (ex: steak hache 150g, puree, salade verte)" rows="3" style="width:100%;margin-bottom:10px;resize:vertical;font-size:.82rem;line-height:1.5"></textarea>
+  <div id="aiResult" style="display:none;margin-bottom:10px">
+    <div class="stitle" style="margin-bottom:6px">Resultat</div>
+    <div id="aiItems"></div>
+  </div>
+  <div id="aiErr" style="display:none;font-size:.72rem;color:var(--red);margin-bottom:8px;padding:8px;background:var(--redG);border-radius:8px"></div>
+  <div id="aiLoading" style="display:none;text-align:center;padding:16px">
+    <div style="font-size:.78rem;color:var(--t2);font-weight:600">&#x1F9E0; Analyse en cours...</div>
+    <div style="font-size:.65rem;color:var(--t3);margin-top:4px">Gemini analyse le repas</div>
+  </div>
+  <div class="acts" id="aiActions">
+    <button class="btn btn-o" type="button" id="aiNo">Annuler</button>
+    <button class="btn btn-p" type="button" id="aiGo">&#x2728; Analyser</button>
+  </div>
+  <div class="acts" id="aiAddActions" style="display:none">
+    <button class="btn btn-o" type="button" id="aiRetry">Recommencer</button>
+    <button class="btn btn-s" type="button" id="aiAddAll">Tout ajouter</button>
+  </div>
 </div></div>
 
 <div class="mo" id="smMo"><div class="modal" style="max-height:80vh;overflow-y:auto">
@@ -944,6 +985,80 @@ function renderMealsList(){
     return '<div class="m-section card"><div class="m-header"><h3>'+name+'</h3><span class="mk mono">'+Math.round(mk)+'</span></div>'+(mi.length?mi.map(i=>'<div class="mi"><span class="mn" data-eid="'+i.id+'" style="cursor:pointer">'+i.food+'</span><span class="mf mono">'+(i.qty?i.qty+'g\u00B7':'')+Math.round(i.kcal)+'</span><span class="md" data-id="'+i.id+'">\u00D7</span></div>').join(''):'<div class="empty">Vide</div>')+'</div>'}).join('');
   c.querySelectorAll('.md').forEach(el=>el.addEventListener('click',function(){rmFood(+this.dataset.id)}));
   c.querySelectorAll('.mn[data-eid]').forEach(el=>el.addEventListener('click',function(){editFoodQty(+this.dataset.eid)}));
+}
+
+// ===== AI MEAL ANALYSIS =====
+let aiImageB64=null;
+function aiReset(){aiImageB64=null;$('aiImg').src='';$('aiPreview').style.display='none';$('aiPhotoLabel').style.display='flex';$('aiDesc').value='';$('aiResult').style.display='none';$('aiItems').innerHTML='';$('aiErr').style.display='none';$('aiLoading').style.display='none';$('aiActions').style.display='flex';$('aiAddActions').style.display='none'}
+function aiShowErr(msg){$('aiErr').textContent=msg;$('aiErr').style.display='block';$('aiLoading').style.display='none';$('aiActions').style.display='flex';$('aiAddActions').style.display='none'}
+
+async function aiAnalyze(){
+  const key=ld('nt_aikey','');
+  if(!key){aiShowErr('Ajoute ta cle API Gemini dans Reglages > IA — Analyse repas');return}
+  const desc=$('aiDesc').value.trim();
+  if(!desc&&!aiImageB64){aiShowErr('Prends une photo ou decris le repas');return}
+  $('aiErr').style.display='none';$('aiLoading').style.display='block';$('aiActions').style.display='none';$('aiResult').style.display='none';
+
+  const prompt='Tu es un nutritionniste expert. Analyse ce repas et retourne UNIQUEMENT un JSON valide (pas de markdown, pas de texte autour).\n'+
+    'Format exact: [{"nom":"Nom aliment","qte":150,"kcal":250,"prot":20,"gluc":30,"lip":8,"fib":3},...]\n'+
+    'Estime les quantites si non precisees. Chaque aliment separement. Valeurs pour la quantite estimee, PAS pour 100g.\n'+
+    (desc?'Description du repas: '+desc:'Analyse la photo du repas.');
+
+  const parts=[];
+  if(aiImageB64){
+    const mime=aiImageB64.startsWith('data:image/png')?'image/png':'image/jpeg';
+    const b64=aiImageB64.split(',')[1];
+    parts.push({inline_data:{mime_type:mime,data:b64}});
+  }
+  parts.push({text:prompt});
+
+  try{
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+encodeURIComponent(key),{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts}],generationConfig:{temperature:0.3,maxOutputTokens:2048}})
+    });
+    if(!r.ok){const e=await r.text();if(r.status===400||r.status===403)aiShowErr('Cle API invalide ou quota depasse. Verifie dans Reglages.');else aiShowErr('Erreur API ('+r.status+'): '+e.slice(0,120));return}
+    const d=await r.json();
+    const txt=d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0]&&d.candidates[0].content.parts[0].text||'';
+    // Extract JSON from response (may have ```json ... ``` wrappers)
+    let json=txt;
+    const jm=txt.match(/\[[\s\S]*\]/);
+    if(jm)json=jm[0];
+    const items=JSON.parse(json);
+    if(!Array.isArray(items)||!items.length){aiShowErr('Reponse inattendue. Reessaie avec plus de details.');return}
+    aiShowResults(items);
+  }catch(e){aiShowErr('Erreur: '+(e.message||'Impossible d\'analyser la reponse. Reessaie.'))}
+}
+
+function aiShowResults(items){
+  $('aiLoading').style.display='none';$('aiResult').style.display='block';$('aiActions').style.display='none';$('aiAddActions').style.display='flex';
+  const el=$('aiItems');el.innerHTML='';
+  items.forEach((it,i)=>{
+    const div=document.createElement('div');
+    div.style.cssText='background:var(--s2);border:1px solid var(--s3);border-radius:12px;padding:10px 12px;margin-bottom:6px;font-size:.78rem';
+    div.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'+
+      '<strong style="flex:1">'+it.nom+'</strong>'+
+      '<span class="mono" style="color:var(--org);font-weight:700">'+Math.round(it.kcal)+' kcal</span></div>'+
+      '<div style="display:flex;gap:8px;font-size:.66rem;color:var(--t2)">'+
+      '<span>'+Math.round(it.qte||0)+'g</span>'+
+      '<span style="color:var(--acc)">P'+Math.round(it.prot||0)+'</span>'+
+      '<span style="color:var(--grn)">G'+Math.round(it.gluc||0)+'</span>'+
+      '<span style="color:var(--pnk)">L'+Math.round(it.lip||0)+'</span>'+
+      '<span style="color:var(--brn)">F'+Math.round(it.fib||0)+'</span></div>';
+    div.dataset.idx=i;
+    el.appendChild(div);
+  });
+  el._items=items;
+}
+
+function aiAddAllToLog(){
+  const items=$('aiItems')._items;
+  if(!items||!items.length)return;
+  const log=getLog();if(!log[curDate])log[curDate]=[];
+  items.forEach(it=>{
+    log[curDate].push({food:it.nom||'Aliment IA',qty:Math.round(it.qte||0),kcal:Math.round(it.kcal||0),p:Math.round(it.prot||0),g:Math.round(it.gluc||0),l:Math.round(it.lip||0),f:Math.round(it.fib||0),meal:curMeal,id:Date.now()+Math.random()*1000|0});
+  });
+  sv("nt_log",log);$('aiMo').classList.remove('show');aiReset();renderMealsTab();if($('tab-home').classList.contains('active'))renderHome();
 }
 
 // ===== SEARCH =====
@@ -1393,6 +1508,8 @@ function renderSettings(){
   $('actLvl').querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()=>{sv("nt_activity",b.dataset.act);renderSettings()}));
   // Theme buttons
   const ct=getTheme();$('thDark').className='btn '+(ct==='dark'?'btn-p':'btn-o');$('thLight').className='btn '+(ct==='light'?'btn-p':'btn-o');
+  // AI key
+  $('aiKey').value=ld('nt_aikey','');$('aiKeyStatus').textContent=ld('nt_aikey','')?'Cle configuree':'Aucune cle configuree';
   renderPresets();renderPhSel();renderPhDet();updateMacroPreview();
   const ac=$('sAcc');
   if(currentUser){ac.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'+(currentUser.photoURL?'<img src="'+currentUser.photoURL+'" style="width:40px;height:40px;border-radius:50%;border:2px solid var(--acc)">':'<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--pur));display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:#fff">'+(currentUser.displayName||'?')[0].toUpperCase()+'</div>')+'<div><div style="font-weight:700;font-size:.85rem">'+(currentUser.displayName||'Utilisateur')+'</div><div style="font-size:.65rem;color:var(--t3)">'+(currentUser.email||'')+'</div><div style="font-size:.55rem;color:var(--grn);margin-top:2px">&#x2713; Connecte'+(getDb()?' + Cloud sync':'')+'</div></div></div><button class="btn btn-o" type="button" id="logout" style="width:100%">Deconnexion</button>';$('logout').addEventListener('click',()=>{if(currentUser&&getDb())cloudSave().then(()=>{if(firebaseReady)firebase.auth().signOut();currentUser=null;location.reload()});else{if(firebaseReady)firebase.auth().signOut();currentUser=null;location.reload()}});$('syncBtns').style.display='block'}
@@ -1481,6 +1598,22 @@ function wire(){
   $('scMo').addEventListener('click',e=>{if(e.target===$('scMo'))closeScanner()});
   $('scManGo').addEventListener('click',scanManualSubmit);
   $('scMan').addEventListener('keydown',e=>{if(e.key==='Enter')scanManualSubmit()});
+  // AI meal analysis
+  $('aiBtn').addEventListener('click',()=>{aiReset();$('aiMo').classList.add('show')});
+  $('aiMo').addEventListener('click',e=>{if(e.target===$('aiMo')){$('aiMo').classList.remove('show');aiReset()}});
+  $('aiNo').addEventListener('click',()=>{$('aiMo').classList.remove('show');aiReset()});
+  $('aiGo').addEventListener('click',aiAnalyze);
+  $('aiRetry').addEventListener('click',()=>{$('aiResult').style.display='none';$('aiAddActions').style.display='none';$('aiActions').style.display='flex'});
+  $('aiAddAll').addEventListener('click',aiAddAllToLog);
+  $('aiPhotoClear').addEventListener('click',()=>{aiImageB64=null;$('aiImg').src='';$('aiPreview').style.display='none';$('aiPhotoLabel').style.display='flex'});
+  $('aiPhotoIn').addEventListener('change',e=>{
+    const file=e.target.files&&e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{aiImageB64=ev.target.result;$('aiImg').src=aiImageB64;$('aiPreview').style.display='block';$('aiPhotoLabel').style.display='none'};
+    reader.readAsDataURL(file);e.target.value='';
+  });
+  // AI key save
+  $('aiKey').addEventListener('change',()=>{sv('nt_aikey',$('aiKey').value.trim());$('aiKeyStatus').textContent=$('aiKey').value.trim()?'Cle sauvegardee':'Aucune cle configuree'});
   // Settings
   $('sSave').addEventListener('click',()=>{sv("nt_targets",{kcal:+$('sK').value||2200,prot:+$('sP').value||150,gluc:+$('sG').value||250,lip:+$('sL').value||75,fib:+$('sFib').value||30});sv("nt_pw",parseFloat(($('sPW').value||'75').replace(',','.'))||75);sv("nt_height",+$('sH').value||175);sv("nt_sg",+$('sSt').value||10000);const b=$('sSave');b.textContent='\u2713';b.classList.replace('btn-p','btn-s');setTimeout(()=>{b.textContent='Sauvegarder';b.classList.replace('btn-s','btn-p')},1200);if($('tab-home').classList.contains('active'))renderHome()});
   $('sCalc').addEventListener('click',()=>{
