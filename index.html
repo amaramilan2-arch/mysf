@@ -554,9 +554,9 @@ input,textarea{-webkit-user-select:text;user-select:text}
   </div>
   <div class="ss"><h3><span class="sd" style="background:var(--cyan)"></span>IA — Analyse repas</h3>
     <p style="font-size:.68rem;color:var(--t3);margin-bottom:8px;line-height:1.5">
-      Utilise Gemini (Google) pour analyser un repas en texte et obtenir les macros automatiquement. Gratuit — cree une cle sur <strong style="color:var(--t2)">aistudio.google.com</strong>
+      Analyse un repas par photo + description grace a l'IA. Gratuit — cree un compte et une cle API sur <strong style="color:var(--t2)">console.groq.com</strong>
     </p>
-    <input type="text" class="inp" id="aiKey" placeholder="Cle API Gemini" style="width:100%;font-size:.78rem" autocomplete="off">
+    <input type="text" class="inp" id="aiKey" placeholder="Cle API Groq (gsk_...)" style="width:100%;font-size:.78rem" autocomplete="off">
     <div id="aiKeyStatus" style="font-size:.62rem;margin-top:4px;color:var(--t3)"></div>
   </div>
   <div class="ss"><h3><span class="sd" style="background:var(--grn)"></span>Compte</h3>
@@ -1012,11 +1012,11 @@ function compressImage(dataUrl,maxSize,quality){
 function aiReset(){aiImageB64=null;$('aiImg').src='';$('aiPreview').style.display='none';$('aiPhotoLabel').style.display='flex';$('aiDesc').value='';$('aiResult').style.display='none';$('aiItems').innerHTML='';$('aiErr').style.display='none';$('aiLoading').style.display='none';$('aiActions').style.display='flex';$('aiAddActions').style.display='none'}
 function aiShowErr(type,detail){
   const el=$('aiErr'),styles={
-    nokey:  {icon:'\u{1F511}',bg:'var(--orgG)',color:'var(--org)',title:'Cle API manquante',msg:'Ajoute ta cle API Gemini dans Reglages > IA — Analyse repas.'},
-    badkey: {icon:'\u{1F6AB}',bg:'var(--redG)',color:'var(--red)',title:'Cle API invalide',msg:'La cle API est incorrecte ou desactivee. Verifie-la dans Reglages > IA ou recree-en une sur <b>aistudio.google.com</b>.'},
-    quota:  {icon:'\u{23F3}',bg:'var(--orgG)',color:'var(--org)',title:'Quota depasse',msg:'Tu as atteint la limite de requetes (15/min). Reessaie dans quelques minutes.'},
-    network:{icon:'\u{1F4E1}',bg:'var(--redG)',color:'var(--red)',title:'Erreur reseau',msg:'Impossible de contacter l\'API Google. Verifie ta connexion internet.'},
-    api:    {icon:'\u{2699}\u{FE0F}',bg:'var(--redG)',color:'var(--red)',title:'Erreur API Google',msg:detail||'L\'API Gemini a retourne une erreur inattendue.'},
+    nokey:  {icon:'\u{1F511}',bg:'var(--orgG)',color:'var(--org)',title:'Cle API manquante',msg:'Ajoute ta cle API Groq dans Reglages > IA — Analyse repas. Cree un compte gratuit sur <b>console.groq.com</b>.'},
+    badkey: {icon:'\u{1F6AB}',bg:'var(--redG)',color:'var(--red)',title:'Cle API invalide',msg:'La cle API Groq est incorrecte. Verifie-la dans Reglages > IA. Elle commence par <b>gsk_</b>.'},
+    quota:  {icon:'\u{23F3}',bg:'var(--orgG)',color:'var(--org)',title:'Quota depasse',msg:'Limite de requetes atteinte. Reessaie dans 1-2 minutes.'},
+    network:{icon:'\u{1F4E1}',bg:'var(--redG)',color:'var(--red)',title:'Erreur reseau',msg:'Impossible de contacter Groq. Verifie ta connexion internet.'},
+    api:    {icon:'\u{2699}\u{FE0F}',bg:'var(--redG)',color:'var(--red)',title:'Erreur API',msg:detail||'L\'API a retourne une erreur inattendue.'},
     parse:  {icon:'\u{1F372}',bg:'var(--accG)',color:'var(--acc2)',title:'Analyse impossible',msg:'L\'IA n\'a pas pu identifier le repas. Ajoute une description plus detaillee ou une meilleure photo.'},
     empty:  {icon:'\u{1F4DD}',bg:'var(--orgG)',color:'var(--org)',title:'Rien a analyser',msg:'Prends une photo du repas et/ou decris-le en texte.'}
   };
@@ -1033,53 +1033,36 @@ async function aiAnalyze(){
   if(!desc&&!aiImageB64){aiShowErr('empty');return}
   $('aiErr').style.display='none';$('aiLoading').style.display='block';$('aiActions').style.display='none';$('aiResult').style.display='none';
 
-  const prompt='Tu es un nutritionniste expert. Analyse ce repas et retourne UNIQUEMENT un JSON valide (pas de markdown, pas de texte autour).\n'+
-    'Format exact: [{"nom":"Nom aliment","qte":150,"kcal":250,"prot":20,"gluc":30,"lip":8,"fib":3},...]\n'+
-    'Estime les quantites si non precisees. Chaque aliment separement. Valeurs pour la quantite estimee, PAS pour 100g.\n'+
-    (desc?'Description du repas: '+desc:'Analyse la photo du repas.');
+  const sysPrompt='Tu es un nutritionniste expert. Analyse le repas et retourne UNIQUEMENT un JSON valide (pas de markdown, pas de texte autour). Format exact: [{"nom":"Nom aliment","qte":150,"kcal":250,"prot":20,"gluc":30,"lip":8,"fib":3},...]. Estime les quantites si non precisees. Chaque aliment separement. Valeurs pour la quantite estimee, PAS pour 100g.';
+  const userText=desc||'Analyse la photo du repas.';
 
-  const parts=[];
-  if(aiImageB64){
-    const b64=aiImageB64.split(',')[1];
-    parts.push({inline_data:{mime_type:'image/jpeg',data:b64}});
-  }
-  parts.push({text:prompt});
+  const content=[];
+  if(aiImageB64)content.push({type:'image_url',image_url:{url:aiImageB64}});
+  content.push({type:'text',text:userText});
 
   let r;
   try{
-    r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+encodeURIComponent(key),{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({contents:[{parts}],generationConfig:{temperature:0.3,maxOutputTokens:2048}})
+    r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({model:'meta-llama/llama-4-scout-17b-16e-instruct',messages:[{role:'system',content:sysPrompt},{role:'user',content}],temperature:0.3,max_tokens:2048})
     });
   }catch(e){aiShowErr('network');return}
 
   if(!r.ok){
-    let gMsg='';try{const j=await r.json();gMsg=j.error&&j.error.message||''}catch{try{gMsg=await r.text()}catch{}}
-    const gLow=(gMsg||'').toLowerCase();
-    if(r.status===400&&(gLow.includes('api_key')||gLow.includes('api key')))aiShowErr('badkey');
-    else if(r.status===401||r.status===403){
-      if(gLow.includes('enabled')||gLow.includes('enable'))aiShowErr('api','L\'API Generative Language n\'est pas activee sur ton projet Google Cloud. Va sur <b>console.cloud.google.com</b> > APIs > active "Generative Language API".<br><br><span style="font-size:.62rem;opacity:.7">'+gMsg.slice(0,150)+'</span>');
-      else aiShowErr('badkey');
-    }
-    else if(r.status===429){
-      if(gLow.includes('enable')||gLow.includes('billing')||gLow.includes('project'))aiShowErr('api','Ton projet Google Cloud n\'est pas configure correctement. Recree une cle depuis <b>aistudio.google.com</b> (bouton "Get API Key") — c\'est le plus simple.<br><br><span style="font-size:.62rem;opacity:.7">'+gMsg.slice(0,150)+'</span>');
-      else aiShowErr('api','Quota depasse (429). Attends 1-2 minutes puis reessaie.<br><br><span style="font-size:.6rem;opacity:.7">Detail Google: '+gMsg.slice(0,200)+'</span>');
-    }
-    else if(r.status>=500)aiShowErr('api','Les serveurs Google sont temporairement indisponibles (erreur '+r.status+'). Reessaie dans un instant.');
-    else aiShowErr('api','Erreur HTTP '+r.status+(gMsg?' — '+gMsg.slice(0,120):''));
+    let msg='';try{const j=await r.json();msg=j.error&&j.error.message||JSON.stringify(j.error)||''}catch{}
+    if(r.status===401)aiShowErr('badkey');
+    else if(r.status===429)aiShowErr('quota');
+    else if(r.status>=500)aiShowErr('api','Serveurs Groq temporairement indisponibles. Reessaie dans un instant.');
+    else aiShowErr('api','Erreur '+r.status+(msg?' — '+msg.slice(0,150):''));
     return;
   }
 
   let d;
-  try{d=await r.json()}catch{aiShowErr('api','Reponse invalide du serveur.');return}
+  try{d=await r.json()}catch{aiShowErr('api','Reponse invalide.');return}
 
-  const txt=d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0]&&d.candidates[0].content.parts[0].text||'';
-  if(!txt){
-    const reason=d.candidates&&d.candidates[0]&&d.candidates[0].finishReason;
-    if(reason==='SAFETY')aiShowErr('parse','L\'IA a refuse d\'analyser cette image (filtre de securite). Essaie avec une description texte.');
-    else aiShowErr('parse');
-    return;
-  }
+  const txt=d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content||'';
+  if(!txt){aiShowErr('parse');return}
 
   try{
     let json=txt;const jm=txt.match(/\[[\s\S]*\]/);if(jm)json=jm[0];
