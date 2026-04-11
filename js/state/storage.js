@@ -1,0 +1,20 @@
+let curDate=new Date().toISOString().slice(0,10),selFood=null,curMeal=0,curSplit='';
+let curVolume={};
+let chartW=null,chartC=null,chartM=null,chartP=null,chartRing=null,chartWPal=null,chartWPh=null;
+let currentUser=null,firebaseReady=false;
+
+const $=id=>document.getElementById(id);
+const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}};
+const sv=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const getLog=()=>ld("nt_log",{});const getW=()=>ld("nt_weights",[]);const getWk=()=>ld("nt_workouts",[]);
+const getSteps=()=>ld("nt_steps",{});const getPh=()=>ld("nt_phase","A");
+const getTg=()=>ld("nt_targets",{kcal:2200,prot:150,gluc:250,lip:75,fib:30});
+const getPW=()=>ld("nt_pw",75);const getSG=()=>ld("nt_sg",10000);const getH=()=>ld("nt_height",175);
+const getWater=()=>ld("nt_water",{});const getFavs=()=>ld("nt_favs",[]);const getRecent=()=>ld("nt_recent",[]);
+const getRecipes=()=>ld("nt_recipes",{});
+const getBarcodes=()=>ld("nt_barcodes",{});
+const getSavedMeals=()=>ld("nt_savedmeals",[]);
+const getAllFoods=()=>{const r=getRecipes(),bc=getBarcodes(),bf={};Object.keys(bc).forEach(e=>{const p=bc[e];bf[p.name]=[p.kcal,p.p,p.g,p.l,p.f||0]});return{...FOODS,...r,...bf}};
+const dayLog=d=>(getLog()[d||curDate])||[];
+const dayTotals=d=>{const items=dayLog(d);let t={kcal:0,p:0,g:0,l:0,f:0};items.forEach(i=>{t.kcal+=i.kcal;t.p+=i.p;t.g+=i.g;t.l+=i.l;t.f+=(i.f||0)});return t};
+const fmtD=d=>{const p=d.split('-');return p[2]+'/'+p[1]};
