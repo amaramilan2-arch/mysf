@@ -695,7 +695,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 
 <div class="mo" id="aiMo"><div class="modal" style="max-height:90vh;overflow-y:auto">
   <h3>&#x2728; Analyse IA</h3>
-  <div style="font-size:.72rem;color:var(--t2);margin-bottom:14px;line-height:1.5">Prends une photo du plat et/ou decris-le. L'IA estime le total calorique.</div>
+  <div style="font-size:.72rem;color:var(--t2);margin-bottom:14px;line-height:1.5">Une photo et/ou quelques mots suffisent (ex: "une pomme", "steak puree"). L'IA fait une estimation rapide.</div>
   <div id="aiPhotoWrap" style="margin-bottom:12px">
     <div id="aiPreview" style="display:none;position:relative;margin-bottom:10px;border-radius:18px;overflow:hidden">
       <img id="aiImg" style="width:100%;max-height:260px;object-fit:cover;display:block">
@@ -1156,7 +1156,7 @@ async function aiAnalyze(){
   if(!desc&&!aiImageB64){aiShowErr('empty');return}
   $('aiErr').style.display='none';$('aiLoading').style.display='block';$('aiActions').style.display='none';$('aiResult').style.display='none';
 
-  const sysPrompt='Tu es un nutritionniste expert. Analyse le repas complet (photo et/ou description) et retourne UNIQUEMENT un objet JSON valide (sans markdown, sans texte autour). Agrege TOUS les aliments en UN SEUL total. Format exact: {"nom":"Nom du repas","kcal":850,"prot":35,"gluc":90,"lip":30,"fib":8}. Valeurs entieres pour le repas entier, PAS pour 100g. Sois precis dans l\'estimation des portions visibles.';
+  const sysPrompt='Tu es un assistant nutrition qui aide a tracker rapidement les calories en francais. L\'utilisateur decrit un repas en langage naturel, parfois avec des fautes de frappe ou peu de details. Ton role: identifier le plat et donner une estimation rapide et fiable. Retourne UNIQUEMENT un objet JSON (pas de markdown, pas de texte autour). Format: {"nom":"Nom court du plat","kcal":650,"prot":25,"gluc":80,"lip":22,"fib":6}. Regles strictes: (1) Corrige les fautes de frappe automatiquement (ex: "noisr"->"noix", "poul"->"poulet", "steck"->"steak"). (2) Si la quantite n\'est pas precisee, utilise une portion standard realiste (ex: 1 pomme=150g, 1 banane=120g, 1 assiette de pates=250g cuits, 1 tranche de pain=35g, 1 verre de lait=200ml). (3) Agrege TOUS les aliments en UN SEUL total pour le repas complet. (4) Utilise les valeurs nutritionnelles moyennes standard des tables Ciqual/USDA. (5) Les valeurs sont pour la quantite indiquee ou estimee, PAS pour 100g. (6) Sois rapide, direct et confiant. Ne demande jamais plus de details. (7) Arrondis a des valeurs rondes (pas de decimales).';
   const userText=desc||'Analyse la photo du repas et donne le total calorique.';
 
   const content=[];
@@ -1168,7 +1168,7 @@ async function aiAnalyze(){
     r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-      body:JSON.stringify({model:'meta-llama/llama-4-scout-17b-16e-instruct',messages:[{role:'system',content:sysPrompt},{role:'user',content}],temperature:0.3,max_tokens:2048})
+      body:JSON.stringify({model:'meta-llama/llama-4-scout-17b-16e-instruct',messages:[{role:'system',content:sysPrompt},{role:'user',content}],temperature:0.2,max_tokens:512})
     });
   }catch(e){aiShowErr('network');return}
 
@@ -1206,10 +1206,10 @@ function aiShowResult(it){
     '<div style="background:var(--s1);border-radius:20px;padding:22px 18px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden">'+
       '<div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,var(--accG),transparent 65%);pointer-events:none"></div>'+
       '<div style="position:relative">'+
-        '<div style="font-size:.62rem;color:var(--t2);text-transform:uppercase;letter-spacing:1px;font-weight:800;margin-bottom:6px">Total du repas</div>'+
+        '<div style="font-size:.62rem;color:var(--t2);text-transform:uppercase;letter-spacing:1px;font-weight:800;margin-bottom:6px">Estimation du repas</div>'+
         '<div style="font-size:.95rem;color:var(--t1);font-weight:700;margin-bottom:10px;line-height:1.2">'+nom+'</div>'+
-        '<div style="font-size:3rem;font-weight:800;color:var(--acc);letter-spacing:-2px;line-height:1;font-family:\'JetBrains Mono\',monospace">'+kcal+'</div>'+
-        '<div style="font-size:.7rem;color:var(--t2);margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:.8px">kcal</div>'+
+        '<div style="font-size:3rem;font-weight:800;color:var(--acc);letter-spacing:-2px;line-height:1;font-family:\'JetBrains Mono\',monospace">~'+kcal+'</div>'+
+        '<div style="font-size:.7rem;color:var(--t2);margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:.8px">kcal approx.</div>'+
         '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:16px">'+
           '<div style="background:var(--s2);border-radius:12px;padding:10px 4px"><div style="font-size:.55rem;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Prot</div><div style="font-size:.9rem;font-weight:800;color:#4AD295;margin-top:2px;font-family:\'JetBrains Mono\',monospace">'+p+'g</div></div>'+
           '<div style="background:var(--s2);border-radius:12px;padding:10px 4px"><div style="font-size:.55rem;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Gluc</div><div style="font-size:.9rem;font-weight:800;color:#6EC6FF;margin-top:2px;font-family:\'JetBrains Mono\',monospace">'+g+'g</div></div>'+
