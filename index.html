@@ -962,8 +962,8 @@ function renderCharts(){
   if(chartP)chartP.destroy();chartP=new Chart($('pCh').getContext('2d'),{type:'bar',data:{labels:p7lbl,datasets:[{data:p7dt.map(t=>Math.round(t.p)),backgroundColor:'rgba(108,92,231,.4)',borderRadius:6,borderSkipped:false},{data:p7dates.map(()=>tg.prot),type:'line',borderColor:'rgba(0,184,148,.4)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#52546A',font:{size:8}},grid:{display:false}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:false}}}});
   // Weight analysis section
   renderWeightAnalysis();
-  // History (enriched with tg vs act kcal)
-  const rv=[...ws].reverse().slice(0,20);
+  // History (enriched with tg vs act kcal) — full list, page scrolls naturally
+  const rv=[...ws].reverse();
   const rows=rv.map((w,i)=>{
     let ch='';const idx=ws.length-1-i;
     if(idx>=2){const a=((ws[idx].w-ws[idx-1].w)+(ws[idx-1].w-ws[idx-2].w))/2;ch=a<-0.05?'<span class="chip dn">\u2193</span>':a>0.05?'<span class="chip up">\u2191</span>':'<span class="chip st">\u2192</span>'}
@@ -1648,7 +1648,7 @@ function weightStats(){
   // Regularity (% of last 14 days with a weigh-in)
   const d14=new Date(now);d14.setDate(d14.getDate()-14);
   const w14=w.filter(x=>x.date>=d14.toISOString().slice(0,10));
-  const reg=Math.round(w14.length/14*100);
+  const reg=Math.min(100,Math.round(w14.length/14*100));
   return{cur,start,mn,mx,bmi,avg7,avg30,rate,estDays,total:+(cur-start).toFixed(1),reg,count:w.length}
 }
 // Unified recommendation logic based on phase + trend
