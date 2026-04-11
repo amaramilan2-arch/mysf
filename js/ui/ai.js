@@ -112,6 +112,8 @@ function aiAddAllToLog(){
   const it=aiTotal;
   if(!it)return;
   const log=getLog();if(!log[curDate])log[curDate]=[];
-  log[curDate].push({food:it.nom||'Repas IA',qty:0,kcal:Math.round(it.kcal||0),p:Math.round(it.prot||0),g:Math.round(it.gluc||0),l:Math.round(it.lip||0),f:Math.round(it.fib||0),meal:curMeal,id:Date.now()});
+  const name=it.nom||'Repas IA';
+  log[curDate].push({food:name,qty:0,kcal:Math.round(it.kcal||0),p:Math.round(it.prot||0),g:Math.round(it.gluc||0),l:Math.round(it.lip||0),f:Math.round(it.fib||0),meal:curMeal,id:Date.now()});
   sv("nt_log",log);$('aiMo').classList.remove('show');aiReset();renderMealsTab();if($('tab-home').classList.contains('active'))renderHome();
+  toast(name+' ajoute','success');
 }

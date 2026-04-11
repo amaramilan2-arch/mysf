@@ -6,7 +6,7 @@ function renderRecipes(){
   el.innerHTML=keys.map(k=>{const d=recipes[k];return '<div class="recipe-item"><div class="ri-name">'+k+'</div><div class="ri-macros mono">'+d[0]+' kcal | P'+d[1]+' G'+d[2]+' L'+d[3]+' Fib'+(d[4]||0)+' /100g</div><div class="ri-actions"><span class="ri-del" data-r="'+k+'">Supprimer</span></div></div>'}).join('');
   el.querySelectorAll('.ri-del').forEach(b=>b.addEventListener('click',function(){const r=getRecipes();delete r[this.dataset.r];sv("nt_recipes",r);renderRecipes()}));
 }
-function addRecipe(){const name=$('rcName').value.trim();if(!name)return;const k=+$('rcKcal').value||0,p=+$('rcProt').value||0,g=+$('rcGluc').value||0,l=+$('rcLip').value||0,f=+$('rcFib').value||0;const r=getRecipes();r[name]=[k,p,g,l,f];sv("nt_recipes",r);$('rcName').value='';$('rcKcal').value='';$('rcProt').value='';$('rcGluc').value='';$('rcLip').value='';$('rcFib').value='';renderRecipes()}
+function addRecipe(){const name=$('rcName').value.trim();if(!name){toast('Nom requis','error');return}const k=+$('rcKcal').value||0,p=+$('rcProt').value||0,g=+$('rcGluc').value||0,l=+$('rcLip').value||0,f=+$('rcFib').value||0;const r=getRecipes();r[name]=[k,p,g,l,f];sv("nt_recipes",r);$('rcName').value='';$('rcKcal').value='';$('rcProt').value='';$('rcGluc').value='';$('rcLip').value='';$('rcFib').value='';renderRecipes();toast(name+' enregistree','success')}
 
 // ===== SAVED MEALS =====
 function openSavedMeals(){renderSavedMealsList();$('smMo').classList.add('show')}

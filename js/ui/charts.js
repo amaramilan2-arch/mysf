@@ -177,7 +177,7 @@ function renderWeightAnalysis(){
 
 
 // ===== WEIGHT =====
-function saveWeight(){const inp=$('wIn');let v=inp.value.replace(',','.');const w=parseFloat(v);if(isNaN(w)||w<20||w>300){inp.style.borderColor='var(--red)';setTimeout(()=>inp.style.borderColor='',600);return}const ws=getW(),td=new Date().toISOString().slice(0,10),ex=ws.findIndex(e=>e.date===td),tgK=getTg().kcal,ph=getPh();if(ex>=0){ws[ex].w=w;ws[ex].tgKcal=tgK;ws[ex].phase=ph}else ws.push({date:td,w,tgKcal:tgK,phase:ph});ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);inp.value='';renderCharts()}
+function saveWeight(){const inp=$('wIn');let v=inp.value.replace(',','.');const w=parseFloat(v);if(isNaN(w)||w<20||w>300){inp.style.borderColor='var(--red)';setTimeout(()=>inp.style.borderColor='',600);toast('Poids invalide','error');return}const ws=getW(),td=new Date().toISOString().slice(0,10),ex=ws.findIndex(e=>e.date===td),tgK=getTg().kcal,ph=getPh();if(ex>=0){ws[ex].w=w;ws[ex].tgKcal=tgK;ws[ex].phase=ph}else ws.push({date:td,w,tgKcal:tgK,phase:ph});ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);inp.value='';renderCharts();toast('Poids enregistre '+w+' kg','success')}
 let editWDate='';
 function openWeightEdit(date,w){
   editWDate=date;
@@ -238,8 +238,9 @@ function saveWeightEdit(){
   closeWeightEdit();
   renderCharts();
   if($('tab-home').classList.contains('active'))renderHome();
+  toast('Pesee mise a jour','success');
 }
-function deleteWeight(){const ws=getW().filter(e=>e.date!==editWDate);sv("nt_weights",ws);closeWeightEdit();renderCharts();if($('tab-home').classList.contains('active'))renderHome()}
+function deleteWeight(){const ws=getW().filter(e=>e.date!==editWDate);sv("nt_weights",ws);closeWeightEdit();renderCharts();if($('tab-home').classList.contains('active'))renderHome();toast('Pesee supprimee','info')}
 function renderPhaseSelector(containerId,selected,onChange){
   const c=$(containerId);
   if(!c)return;
@@ -294,4 +295,5 @@ function saveWeightAdd(){
   closeWeightAdd();
   renderCharts();
   if($('tab-home').classList.contains('active'))renderHome();
+  toast('Pesee ajoutee '+w+' kg','success');
 }

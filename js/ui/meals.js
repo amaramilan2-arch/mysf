@@ -27,16 +27,17 @@ function initSearch(){const inp=$('fSr');inp.addEventListener('input',()=>search
 function searchFood(q){const res=$('fRs');if(!q){res.classList.remove('show');return}const lq=q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');const foods=getAllFoods();let m=Object.keys(foods).filter(f=>f.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(lq)).slice(0,14);if(!m.length){res.classList.remove('show');return}res.innerHTML='';m.forEach(f=>{const d=foods[f],div=document.createElement('div');div.className='sri';div.innerHTML='<span class="fn">'+f+'</span><span class="fm mono">'+d[0]+'kcal P'+d[1]+' G'+d[2]+' L'+d[3]+' F'+(d[4]||0)+'</span>';div.addEventListener('click',()=>selectFood(f));res.appendChild(div)});res.classList.add('show')}
 function selectFood(name){const foods=getAllFoods();if(!foods[name])return;selFood=name;$('fRs').classList.remove('show');$('fSr').value='';const d=foods[name];$('qN').textContent=name;$('qPr').textContent='Pour 100g: '+d[0]+' kcal | P'+d[1]+' G'+d[2]+' L'+d[3]+' Fib'+(d[4]||0);$('qIn').value='100';$('qMo').classList.add('show')}
 function closeQty(){$('qMo').classList.remove('show');selFood=null}
-function confirmFood(){if(!selFood)return;const foods=getAllFoods();const qty=parseFloat($('qIn').value);if(!qty||qty<=0)return;const d=foods[selFood],m=qty/100;const item={food:selFood,qty:Math.round(qty),kcal:Math.round(d[0]*m*10)/10,p:Math.round(d[1]*m*10)/10,g:Math.round(d[2]*m*10)/10,l:Math.round(d[3]*m*10)/10,f:Math.round((d[4]||0)*m*10)/10,meal:curMeal,id:Date.now()};const log=getLog();if(!log[curDate])log[curDate]=[];log[curDate].push(item);sv("nt_log",log);const rec=getRecent().filter(f=>f!==selFood);rec.unshift(selFood);sv("nt_recent",rec.slice(0,10));closeQty();renderMealsTab();if($('tab-home').classList.contains('active'))renderHome()}
-function rmFood(id){const log=getLog();if(log[curDate]){log[curDate]=log[curDate].filter(i=>i.id!==id);sv("nt_log",log);renderMealsTab();if($('tab-home').classList.contains('active'))renderHome()}}
+function confirmFood(){if(!selFood)return;const foods=getAllFoods();const qty=parseFloat($('qIn').value);if(!qty||qty<=0)return;const d=foods[selFood],m=qty/100;const item={food:selFood,qty:Math.round(qty),kcal:Math.round(d[0]*m*10)/10,p:Math.round(d[1]*m*10)/10,g:Math.round(d[2]*m*10)/10,l:Math.round(d[3]*m*10)/10,f:Math.round((d[4]||0)*m*10)/10,meal:curMeal,id:Date.now()};const log=getLog();if(!log[curDate])log[curDate]=[];log[curDate].push(item);sv("nt_log",log);const rec=getRecent().filter(f=>f!==selFood);rec.unshift(selFood);sv("nt_recent",rec.slice(0,10));const added=selFood;closeQty();renderMealsTab();if($('tab-home').classList.contains('active'))renderHome();toast(added+' ajoute','success')}
+function rmFood(id){const log=getLog();if(log[curDate]){log[curDate]=log[curDate].filter(i=>i.id!==id);sv("nt_log",log);renderMealsTab();if($('tab-home').classList.contains('active'))renderHome();toast('Aliment retire','info')}}
 function addManualEntry(){
   const name=$('manName').value.trim()||'Saisie manuelle';
   const kcal=+$('manKcal').value||0,p=+$('manP').value||0,g=+$('manG').value||0,l=+$('manL').value||0,f=+$('manF').value||0;
-  if(!kcal&&!p&&!g&&!l){$('manKcal').style.borderColor='var(--red)';setTimeout(()=>$('manKcal').style.borderColor='',600);return}
+  if(!kcal&&!p&&!g&&!l){$('manKcal').style.borderColor='var(--red)';setTimeout(()=>$('manKcal').style.borderColor='',600);toast('Saisie vide','error');return}
   const item={food:name,qty:0,kcal,p,g,l,f,meal:curMeal,id:Date.now()};
   const log=getLog();if(!log[curDate])log[curDate]=[];log[curDate].push(item);sv("nt_log",log);
   $('manMo').classList.remove('show');$('manName').value='';$('manKcal').value='';$('manP').value='';$('manG').value='';$('manL').value='';$('manF').value='';
   renderMealsTab();if($('tab-home').classList.contains('active'))renderHome();
+  toast(name+' ajoute','success');
 }
 function editFoodQty(id){
   const log=getLog(),items=log[curDate];if(!items)return;

@@ -12,7 +12,7 @@ function wire(){
   // Sport type tabs
   document.querySelectorAll('.sport-type-btn').forEach(b=>b.addEventListener('click',()=>{curSportType=b.dataset.st;curOtherSport='';renderSport()}));
   // Home weight
-  $('wHAdd').addEventListener('click',()=>{const v=parseFloat(($('wHIn').value||'').replace(',','.'));if(isNaN(v)||v<20||v>300){$('wHIn').style.borderColor='var(--red)';setTimeout(()=>$('wHIn').style.borderColor='',600);return}const ws=getW(),td=new Date().toISOString().slice(0,10),ex=ws.findIndex(e=>e.date===td),tgK=getTg().kcal,ph=getPh();if(ex>=0){ws[ex].w=v;ws[ex].tgKcal=tgK;ws[ex].phase=ph}else ws.push({date:td,w:v,tgKcal:tgK,phase:ph});ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);$('wHIn').value='';renderHome()});
+  $('wHAdd').addEventListener('click',()=>{const v=parseFloat(($('wHIn').value||'').replace(',','.'));if(isNaN(v)||v<20||v>300){$('wHIn').style.borderColor='var(--red)';setTimeout(()=>$('wHIn').style.borderColor='',600);toast('Poids invalide','error');return}const ws=getW(),td=new Date().toISOString().slice(0,10),ex=ws.findIndex(e=>e.date===td),tgK=getTg().kcal,ph=getPh();if(ex>=0){ws[ex].w=v;ws[ex].tgKcal=tgK;ws[ex].phase=ph}else ws.push({date:td,w:v,tgKcal:tgK,phase:ph});ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);$('wHIn').value='';renderHome();toast('Poids enregistre '+v+' kg','success')});
   // Water +/-
   $('wPlus').addEventListener('click',()=>{const w=getWater();w[curDate]=Math.min((w[curDate]||0)+1,12);sv("nt_water",w);renderHome()});
   $('wMinus').addEventListener('click',()=>{const w=getWater();w[curDate]=Math.max((w[curDate]||0)-1,0);sv("nt_water",w);renderHome()});
@@ -81,9 +81,9 @@ function wire(){
     try{rec.start();aiMicRec=rec}catch(e){st.style.display='block';st.style.color='var(--red)';st.textContent='Impossible de demarrer la dictee';aiMicRec=null}
   });
   // AI key save
-  $('aiKey').addEventListener('change',()=>{sv('nt_aikey',$('aiKey').value.trim());$('aiKeyStatus').textContent=$('aiKey').value.trim()?'Cle sauvegardee':'Aucune cle configuree'});
+  $('aiKey').addEventListener('change',()=>{sv('nt_aikey',$('aiKey').value.trim());$('aiKeyStatus').textContent=$('aiKey').value.trim()?'Cle sauvegardee':'Aucune cle configuree';if($('aiKey').value.trim())toast('Cle API sauvegardee','success')});
   // Settings
-  $('sSave').addEventListener('click',()=>{sv("nt_targets",{kcal:+$('sK').value||2200,prot:+$('sP').value||150,gluc:+$('sG').value||250,lip:+$('sL').value||75,fib:+$('sFib').value||30});sv("nt_pw",parseFloat(($('sPW').value||'75').replace(',','.'))||75);sv("nt_height",+$('sH').value||175);sv("nt_sg",+$('sSt').value||10000);const b=$('sSave');b.textContent='\u2713';b.classList.replace('btn-p','btn-s');setTimeout(()=>{b.textContent='Sauvegarder';b.classList.replace('btn-s','btn-p')},1200);if($('tab-home').classList.contains('active'))renderHome()});
+  $('sSave').addEventListener('click',()=>{sv("nt_targets",{kcal:+$('sK').value||2200,prot:+$('sP').value||150,gluc:+$('sG').value||250,lip:+$('sL').value||75,fib:+$('sFib').value||30});sv("nt_pw",parseFloat(($('sPW').value||'75').replace(',','.'))||75);sv("nt_height",+$('sH').value||175);sv("nt_sg",+$('sSt').value||10000);if($('tab-home').classList.contains('active'))renderHome();toast('Reglages sauvegardes','success')});
   $('sCalc').addEventListener('click',()=>{
     const pw=parseFloat(($('sW').value||'75').replace(',','.'))||75,h=+$('sH').value||175,sg=+$('sSt').value||10000,m=PH_MULT[getPh()];
     const actMult={sedentary:1.2,light:1.375,moderate:1.55,active:1.725,very_active:1.9};
