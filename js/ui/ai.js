@@ -1,5 +1,5 @@
 // ===== AI MEAL ANALYSIS =====
-let aiImageB64=null;
+let aiImageB64=null,aiTotal=null,aiMicRec=null;
 
 // Compress image to max 1024px JPEG before sending to API
 function compressImage(dataUrl,maxSize,quality){
@@ -20,7 +20,7 @@ function compressImage(dataUrl,maxSize,quality){
   });
 }
 
-function aiReset(){aiImageB64=null;$('aiImg').src='';$('aiPreview').style.display='none';$('aiPhotoLabel').style.display='flex';$('aiDesc').value='';$('aiResult').style.display='none';$('aiItems').innerHTML='';$('aiErr').style.display='none';$('aiLoading').style.display='none';$('aiActions').style.display='flex';$('aiAddActions').style.display='none'}
+function aiReset(){aiImageB64=null;aiTotal=null;$('aiImg').src='';$('aiPreview').style.display='none';$('aiPhotoLabel').style.display='flex';$('aiDesc').value='';$('aiResult').style.display='none';$('aiResult').innerHTML='';$('aiErr').style.display='none';$('aiLoading').style.display='none';$('aiActions').style.display='flex';$('aiAddActions').style.display='none';if(aiMicRec){try{aiMicRec.stop()}catch{}aiMicRec=null}$('aiMicStatus').style.display='none'}
 function aiShowErr(type,detail){
   const el=$('aiErr'),styles={
     nokey:  {icon:'\u{1F511}',bg:'var(--orgG)',color:'var(--org)',title:'Cle API manquante',msg:'Ajoute ta cle API Groq dans Reglages > IA — Analyse repas. Cree un compte gratuit sur <b>console.groq.com</b>.'},
@@ -44,8 +44,8 @@ async function aiAnalyze(){
   if(!desc&&!aiImageB64){aiShowErr('empty');return}
   $('aiErr').style.display='none';$('aiLoading').style.display='block';$('aiActions').style.display='none';$('aiResult').style.display='none';
 
-  const sysPrompt='Tu es un nutritionniste expert. Analyse le repas et retourne UNIQUEMENT un JSON valide (pas de markdown, pas de texte autour). Format exact: [{"nom":"Nom aliment","qte":150,"kcal":250,"prot":20,"gluc":30,"lip":8,"fib":3},...]. Estime les quantites si non precisees. Chaque aliment separement. Valeurs pour la quantite estimee, PAS pour 100g.';
-  const userText=desc||'Analyse la photo du repas.';
+  const sysPrompt='Tu es un assistant nutrition specialise dans la cuisine mondiale (francaise, maghrebine, africaine, asiatique, mediterraneenne, moyen-orientale, americaine, etc.). L\'utilisateur decrit un repas en langage naturel, en francais, parfois avec des fautes de frappe. Ton role: identifier le plat et donner une estimation nutritionnelle rapide et fiable. Retourne UNIQUEMENT un objet JSON (pas de markdown, pas de texte autour). Format: {"nom":"Nom du plat","kcal":650,"prot":25,"gluc":80,"lip":22,"fib":6}. REGLES: (1) IMPORTANT: quand un mot est accompagne d\'une origine geographique (ex: "X tunisien", "Y marocain", "Z libanais"), c\'est TOUJOURS le nom d\'un plat regional, JAMAIS un ingredient occidental - cherche le plat traditionnel correspondant (ex: "nwasser tunisien"=pates tunisiennes carrees avec sauce/viande, "couscous marocain", "tajine", "mloukhia", "brik", "chakchouka", "kafteji", "lablebi", "ojja", "harissa", "mechouia", etc.). Si tu ne reconnais pas exactement le plat regional, utilise les valeurs moyennes d\'un plat similaire de cette region (plat complet tunisien ~= 500-700 kcal pour une portion normale). (2) Pour les aliments courants sans origine, corrige les fautes evidentes (ex: "poul"->"poulet", "steck"->"steak"). (3) Si la quantite n\'est pas precisee, utilise une portion standard realiste (1 pomme=150g, 1 banane=120g, 1 assiette=300-400g, 1 tranche de pain=35g, 1 verre=200ml). (4) Agrege TOUT en UN SEUL total pour le repas complet. (5) Valeurs pour la portion reelle, PAS pour 100g. Arrondis. (6) Sois rapide, confiant, ne demande jamais plus de details. Ne refuse jamais d\'estimer.';
+  const userText=desc||'Analyse la photo du repas et donne le total calorique.';
 
   const content=[];
   if(aiImageB64)content.push({type:'image_url',image_url:{url:aiImageB64}});
@@ -56,7 +56,7 @@ async function aiAnalyze(){
     r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-      body:JSON.stringify({model:'meta-llama/llama-4-scout-17b-16e-instruct',messages:[{role:'system',content:sysPrompt},{role:'user',content}],temperature:0.3,max_tokens:2048})
+      body:JSON.stringify({model:'meta-llama/llama-4-scout-17b-16e-instruct',messages:[{role:'system',content:sysPrompt},{role:'user',content}],temperature:0.2,max_tokens:512})
     });
   }catch(e){aiShowErr('network');return}
 
@@ -76,40 +76,42 @@ async function aiAnalyze(){
   if(!txt){aiShowErr('parse');return}
 
   try{
-    let json=txt;const jm=txt.match(/\[[\s\S]*\]/);if(jm)json=jm[0];
-    const items=JSON.parse(json);
-    if(!Array.isArray(items)||!items.length){aiShowErr('parse');return}
-    aiShowResults(items);
+    let json=txt;
+    const om=txt.match(/\{[\s\S]*\}/);if(om)json=om[0];
+    const obj=JSON.parse(json);
+    if(!obj||typeof obj!=='object'||Array.isArray(obj)){aiShowErr('parse');return}
+    if(!obj.kcal&&!obj.prot&&!obj.gluc&&!obj.lip){aiShowErr('parse');return}
+    aiShowResult(obj);
   }catch{aiShowErr('parse')}
 }
 
-function aiShowResults(items){
+function aiShowResult(it){
+  aiTotal=it;
   $('aiLoading').style.display='none';$('aiResult').style.display='block';$('aiActions').style.display='none';$('aiAddActions').style.display='flex';
-  const el=$('aiItems');el.innerHTML='';
-  items.forEach((it,i)=>{
-    const div=document.createElement('div');
-    div.style.cssText='background:var(--s2);border:1px solid var(--s3);border-radius:12px;padding:10px 12px;margin-bottom:6px;font-size:.78rem';
-    div.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'+
-      '<strong style="flex:1">'+it.nom+'</strong>'+
-      '<span class="mono" style="color:var(--org);font-weight:700">'+Math.round(it.kcal)+' kcal</span></div>'+
-      '<div style="display:flex;gap:8px;font-size:.66rem;color:var(--t2)">'+
-      '<span>'+Math.round(it.qte||0)+'g</span>'+
-      '<span style="color:var(--acc)">P'+Math.round(it.prot||0)+'</span>'+
-      '<span style="color:var(--grn)">G'+Math.round(it.gluc||0)+'</span>'+
-      '<span style="color:var(--pnk)">L'+Math.round(it.lip||0)+'</span>'+
-      '<span style="color:var(--brn)">F'+Math.round(it.fib||0)+'</span></div>';
-    div.dataset.idx=i;
-    el.appendChild(div);
-  });
-  el._items=items;
+  const kcal=Math.round(it.kcal||0),p=Math.round(it.prot||0),g=Math.round(it.gluc||0),l=Math.round(it.lip||0),f=Math.round(it.fib||0);
+  const nom=it.nom||'Repas';
+  $('aiResult').innerHTML=
+    '<div style="background:var(--s1);border-radius:20px;padding:22px 18px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden">'+
+      '<div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,var(--accG),transparent 65%);pointer-events:none"></div>'+
+      '<div style="position:relative">'+
+        '<div style="font-size:.62rem;color:var(--t2);text-transform:uppercase;letter-spacing:1px;font-weight:800;margin-bottom:6px">Estimation du repas</div>'+
+        '<div style="font-size:.95rem;color:var(--t1);font-weight:700;margin-bottom:10px;line-height:1.2">'+nom+'</div>'+
+        '<div style="font-size:3rem;font-weight:800;color:var(--acc);letter-spacing:-2px;line-height:1;font-family:\'JetBrains Mono\',monospace">~'+kcal+'</div>'+
+        '<div style="font-size:.7rem;color:var(--t2);margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:.8px">kcal approx.</div>'+
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:16px">'+
+          '<div style="background:var(--s2);border-radius:12px;padding:10px 4px"><div style="font-size:.55rem;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Prot</div><div style="font-size:.9rem;font-weight:800;color:#4AD295;margin-top:2px;font-family:\'JetBrains Mono\',monospace">'+p+'g</div></div>'+
+          '<div style="background:var(--s2);border-radius:12px;padding:10px 4px"><div style="font-size:.55rem;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Gluc</div><div style="font-size:.9rem;font-weight:800;color:#6EC6FF;margin-top:2px;font-family:\'JetBrains Mono\',monospace">'+g+'g</div></div>'+
+          '<div style="background:var(--s2);border-radius:12px;padding:10px 4px"><div style="font-size:.55rem;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Lip</div><div style="font-size:.9rem;font-weight:800;color:#FD79A8;margin-top:2px;font-family:\'JetBrains Mono\',monospace">'+l+'g</div></div>'+
+          '<div style="background:var(--s2);border-radius:12px;padding:10px 4px"><div style="font-size:.55rem;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Fib</div><div style="font-size:.9rem;font-weight:800;color:#FFB347;margin-top:2px;font-family:\'JetBrains Mono\',monospace">'+f+'g</div></div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
 }
 
 function aiAddAllToLog(){
-  const items=$('aiItems')._items;
-  if(!items||!items.length)return;
+  const it=aiTotal;
+  if(!it)return;
   const log=getLog();if(!log[curDate])log[curDate]=[];
-  items.forEach(it=>{
-    log[curDate].push({food:it.nom||'Aliment IA',qty:Math.round(it.qte||0),kcal:Math.round(it.kcal||0),p:Math.round(it.prot||0),g:Math.round(it.gluc||0),l:Math.round(it.lip||0),f:Math.round(it.fib||0),meal:curMeal,id:Date.now()+Math.random()*1000|0});
-  });
+  log[curDate].push({food:it.nom||'Repas IA',qty:0,kcal:Math.round(it.kcal||0),p:Math.round(it.prot||0),g:Math.round(it.gluc||0),l:Math.round(it.lip||0),f:Math.round(it.fib||0),meal:curMeal,id:Date.now()});
   sv("nt_log",log);$('aiMo').classList.remove('show');aiReset();renderMealsTab();if($('tab-home').classList.contains('active'))renderHome();
 }

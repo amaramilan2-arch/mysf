@@ -65,6 +65,21 @@ function wire(){
     };
     reader.readAsDataURL(file);e.target.value='';
   });
+  // Voice dictation (Web Speech API)
+  $('aiMic').addEventListener('click',()=>{
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){const s=$('aiMicStatus');s.style.display='block';s.style.color='var(--red)';s.textContent='Dictee vocale non supportee sur ce navigateur.';return}
+    if(aiMicRec){try{aiMicRec.stop()}catch{}aiMicRec=null;return}
+    const rec=new SR();
+    rec.lang='fr-FR';rec.interimResults=true;rec.continuous=true;
+    const ta=$('aiDesc'),st=$('aiMicStatus'),btn=$('aiMic');
+    const baseText=ta.value?ta.value.replace(/\s+$/,'')+' ':'';
+    rec.onstart=()=>{st.style.display='block';st.style.color='var(--acc)';st.textContent='\u{1F399}\uFE0F Dictee en cours... (touche pour arreter)';btn.style.background='var(--acc)';btn.style.color='#0a0c14'};
+    rec.onresult=e=>{let interim='',final='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)final+=r[0].transcript;else interim+=r[0].transcript}ta.value=baseText+final+interim};
+    rec.onerror=ev=>{st.style.display='block';st.style.color='var(--red)';st.textContent='Erreur dictee: '+(ev.error==='not-allowed'?'microphone refuse':ev.error==='no-speech'?'aucune parole detectee':ev.error);btn.style.background='';btn.style.color='';aiMicRec=null};
+    rec.onend=()=>{btn.style.background='';btn.style.color='';if(aiMicRec===rec){aiMicRec=null;if(st.style.color!=='var(--red)'){st.textContent='Dictee terminee';setTimeout(()=>{if(!aiMicRec)st.style.display='none'},1500)}}};
+    try{rec.start();aiMicRec=rec}catch(e){st.style.display='block';st.style.color='var(--red)';st.textContent='Impossible de demarrer la dictee';aiMicRec=null}
+  });
   // AI key save
   $('aiKey').addEventListener('change',()=>{sv('nt_aikey',$('aiKey').value.trim());$('aiKeyStatus').textContent=$('aiKey').value.trim()?'Cle sauvegardee':'Aucune cle configuree'});
   // Settings

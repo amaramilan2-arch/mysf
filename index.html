@@ -6,11 +6,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0A0B0F">
+<meta name="theme-color" content="#0d0f14">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;MYSF&quot;,&quot;short_name&quot;:&quot;MYSF&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%230A0B0F&quot;,&quot;theme_color&quot;:&quot;%230A0B0F&quot;}">
+<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;MYSF&quot;,&quot;short_name&quot;:&quot;MYSF&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%230d0f14&quot;,&quot;theme_color&quot;:&quot;%230d0f14&quot;}">
 <title>MYSF — My Systeme Fluide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -62,10 +62,10 @@
   </div>
   <div class="cal-hero"><div class="cal-ring"><canvas id="cRing" width="168" height="168"></canvas><div class="cal-ctr"><div class="cv mono" id="cV">0</div><div class="cl">restantes</div></div></div><div class="cal-sub mono" id="cSub">0 / 0 kcal</div></div>
   <div class="macro-row">
-    <div class="mc"><div class="mc-l">Prot</div><div class="mc-v mono" id="hP">0</div><div class="mc-t mono" id="hPt"></div><div class="mc-bw"><div class="mc-b" id="hPb" style="background:var(--acc)"></div></div></div>
-    <div class="mc"><div class="mc-l">Gluc</div><div class="mc-v mono" id="hG">0</div><div class="mc-t mono" id="hGt"></div><div class="mc-bw"><div class="mc-b" id="hGb" style="background:var(--grn)"></div></div></div>
-    <div class="mc"><div class="mc-l">Lip</div><div class="mc-v mono" id="hL">0</div><div class="mc-t mono" id="hLt"></div><div class="mc-bw"><div class="mc-b" id="hLb" style="background:var(--pnk)"></div></div></div>
-    <div class="mc"><div class="mc-l">Fibres</div><div class="mc-v mono" id="hF">0</div><div class="mc-t mono" id="hFt"></div><div class="mc-bw"><div class="mc-b" id="hFb" style="background:var(--brn)"></div></div></div>
+    <div class="mc"><div class="mc-l">Proteines</div><div class="mc-bw"><div class="mc-b" id="hPb" style="background:#4AD295"></div></div><div class="mc-v mono"><span id="hP">0</span><span id="hPt"></span></div></div>
+    <div class="mc"><div class="mc-l">Glucides</div><div class="mc-bw"><div class="mc-b" id="hGb" style="background:#6EC6FF"></div></div><div class="mc-v mono"><span id="hG">0</span><span id="hGt"></span></div></div>
+    <div class="mc"><div class="mc-l">Lipides</div><div class="mc-bw"><div class="mc-b" id="hLb" style="background:#FD79A8"></div></div><div class="mc-v mono"><span id="hL">0</span><span id="hLt"></span></div></div>
+    <div class="mc"><div class="mc-l">Fibres</div><div class="mc-bw"><div class="mc-b" id="hFb" style="background:#FFB347"></div></div><div class="mc-v mono"><span id="hF">0</span><span id="hFt"></span></div></div>
   </div>
   <div class="info-row">
     <div class="info-card">
@@ -365,28 +365,29 @@
   <div class="acts"><button class="btn btn-o" type="button" id="manNo">Annuler</button><button class="btn btn-p" type="button" id="manOk">Ajouter</button></div>
 </div></div>
 
-<div class="mo" id="aiMo"><div class="modal" style="max-height:85vh;overflow-y:auto">
+<div class="mo" id="aiMo"><div class="modal" style="max-height:90vh;overflow-y:auto">
   <h3>&#x2728; Analyse IA</h3>
-  <div style="font-size:.7rem;color:var(--t3);margin-bottom:10px;line-height:1.5">Prends une photo du plat et/ou decris-le. L'IA estimera les macros.</div>
-  <div id="aiPhotoWrap" style="margin-bottom:10px">
-    <div id="aiPreview" style="display:none;position:relative;margin-bottom:8px;border-radius:12px;overflow:hidden;border:1px solid var(--s3)">
-      <img id="aiImg" style="width:100%;max-height:240px;object-fit:cover;display:block">
-      <button type="button" id="aiPhotoClear" style="position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;border:none;cursor:pointer">&#x2715;</button>
+  <div style="font-size:.72rem;color:var(--t2);margin-bottom:14px;line-height:1.5">Une photo et/ou quelques mots suffisent (ex: "une pomme", "steak puree"). L'IA fait une estimation rapide.</div>
+  <div id="aiPhotoWrap" style="margin-bottom:12px">
+    <div id="aiPreview" style="display:none;position:relative;margin-bottom:10px;border-radius:18px;overflow:hidden">
+      <img id="aiImg" style="width:100%;max-height:260px;object-fit:cover;display:block">
+      <button type="button" id="aiPhotoClear" style="position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;border:none;cursor:pointer">&#x2715;</button>
     </div>
-    <label style="display:flex;align-items:center;justify-content:center;gap:6px;padding:14px;border:2px dashed var(--s3);border-radius:12px;cursor:pointer;font-size:.75rem;color:var(--t2);font-weight:600;transition:.15s" id="aiPhotoLabel">
+    <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:16px;background:var(--s2);border-radius:16px;cursor:pointer;font-size:.82rem;color:var(--t1);font-weight:700;transition:.15s" id="aiPhotoLabel">
       &#x1F4F7; Prendre ou choisir une photo
       <input type="file" accept="image/*" capture="environment" id="aiPhotoIn" style="display:none">
     </label>
   </div>
-  <textarea class="inp" id="aiDesc" placeholder="Decris le repas... (ex: steak hache 150g, puree, salade verte)" rows="3" style="width:100%;margin-bottom:10px;resize:vertical;font-size:.82rem;line-height:1.5"></textarea>
-  <div id="aiResult" style="display:none;margin-bottom:10px">
-    <div class="stitle" style="margin-bottom:6px">Resultat</div>
-    <div id="aiItems"></div>
+  <div style="position:relative;margin-bottom:12px">
+    <textarea class="inp" id="aiDesc" placeholder="Decris le repas... (ex: steak hache 150g, puree, salade verte)" rows="3" style="width:100%;resize:vertical;font-size:.85rem;line-height:1.5;padding-right:54px"></textarea>
+    <button type="button" id="aiMic" aria-label="Dictee vocale" style="position:absolute;right:8px;bottom:8px;width:40px;height:40px;border-radius:50%;background:var(--s3);color:var(--t1);display:flex;align-items:center;justify-content:center;font-size:1.1rem;border:none;cursor:pointer;transition:.15s">&#x1F3A4;</button>
   </div>
-  <div id="aiErr" style="display:none;font-size:.72rem;margin-bottom:8px;padding:10px 12px;border-radius:10px;line-height:1.5"></div>
-  <div id="aiLoading" style="display:none;text-align:center;padding:16px">
-    <div style="font-size:.78rem;color:var(--t2);font-weight:600">&#x1F9E0; Analyse en cours...</div>
-    <div style="font-size:.65rem;color:var(--t3);margin-top:4px">Gemini analyse le repas</div>
+  <div id="aiMicStatus" style="display:none;font-size:.68rem;color:var(--acc);margin:-6px 4px 10px;font-weight:600"></div>
+  <div id="aiResult" style="display:none;margin-bottom:12px"></div>
+  <div id="aiErr" style="display:none;font-size:.75rem;margin-bottom:10px;padding:12px 14px;border-radius:14px;line-height:1.5"></div>
+  <div id="aiLoading" style="display:none;text-align:center;padding:20px">
+    <div style="font-size:.82rem;color:var(--t1);font-weight:700">&#x1F9E0; Analyse en cours...</div>
+    <div style="font-size:.68rem;color:var(--t2);margin-top:4px">L'IA analyse le repas</div>
   </div>
   <div class="acts" id="aiActions">
     <button class="btn btn-o" type="button" id="aiNo">Annuler</button>
@@ -394,7 +395,7 @@
   </div>
   <div class="acts" id="aiAddActions" style="display:none">
     <button class="btn btn-o" type="button" id="aiRetry">Recommencer</button>
-    <button class="btn btn-s" type="button" id="aiAddAll">Tout ajouter</button>
+    <button class="btn btn-s" type="button" id="aiAddAll">Ajouter</button>
   </div>
 </div></div>
 

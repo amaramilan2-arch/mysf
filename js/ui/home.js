@@ -7,13 +7,13 @@ function renderHome(){
   $('cV').textContent=rem;$('cV').style.color=t.kcal>tg.kcal?'var(--red)':'var(--t1)';
   $('cSub').textContent=Math.round(t.kcal)+' / '+tg.kcal+' kcal';
   if(chartRing)chartRing.destroy();const pct=tg.kcal?Math.min(100,Math.round(t.kcal/tg.kcal*100)):0,over=t.kcal>tg.kcal;
-  const ringBg=getTheme()==='light'?'#DFE1EA':'#25262F',ringFg=over?'#E74C3C':pct>85?'#F39C12':getTheme()==='light'?'#5F4DD0':'#6C5CE7';
+  const ringBg=getTheme()==='light'?'#E2E4ED':'#282d38',ringFg=over?'#FF6B6B':pct>85?'#FFB347':getTheme()==='light'?'#2DB77B':'#4AD295';
   chartRing=new Chart($('cRing').getContext('2d'),{type:'doughnut',data:{datasets:[{data:over?[100,0]:[pct,100-pct],backgroundColor:[ringFg,ringBg],borderWidth:0}]},options:{responsive:false,cutout:'82%',plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:600},events:[]}});
   const mp=Math.round(t.p),mg=Math.round(t.g),ml=Math.round(t.l),mf=Math.round(t.f);
-  $('hP').textContent=mp+'g';$('hPt').textContent='/'+tg.prot;$('hPb').style.width=Math.min(100,tg.prot?Math.round(t.p/tg.prot*100):0)+'%';
-  $('hG').textContent=mg+'g';$('hGt').textContent='/'+tg.gluc;$('hGb').style.width=Math.min(100,tg.gluc?Math.round(t.g/tg.gluc*100):0)+'%';
-  $('hL').textContent=ml+'g';$('hLt').textContent='/'+tg.lip;$('hLb').style.width=Math.min(100,tg.lip?Math.round(t.l/tg.lip*100):0)+'%';
-  $('hF').textContent=mf+'g';$('hFt').textContent='/'+(tg.fib||30);$('hFb').style.width=Math.min(100,(tg.fib||30)?Math.round(t.f/(tg.fib||30)*100):0)+'%';
+  $('hP').textContent=mp;$('hPt').textContent=' / '+tg.prot+' g';$('hPb').style.width=Math.min(100,tg.prot?Math.round(t.p/tg.prot*100):0)+'%';
+  $('hG').textContent=mg;$('hGt').textContent=' / '+tg.gluc+' g';$('hGb').style.width=Math.min(100,tg.gluc?Math.round(t.g/tg.gluc*100):0)+'%';
+  $('hL').textContent=ml;$('hLt').textContent=' / '+tg.lip+' g';$('hLb').style.width=Math.min(100,tg.lip?Math.round(t.l/tg.lip*100):0)+'%';
+  $('hF').textContent=mf;$('hFt').textContent=' / '+(tg.fib||30)+' g';$('hFb').style.width=Math.min(100,(tg.fib||30)?Math.round(t.f/(tg.fib||30)*100):0)+'%';
   const w=getWater(),wc=w[curDate]||0;$('wV').textContent=(wc*0.25).toFixed(1)+'L';
   const s=getSteps();$('sV').textContent=(s[curDate]||0).toLocaleString('fr-FR');
   // Weight home

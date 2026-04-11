@@ -35,11 +35,11 @@ function updateMacroPreview(){
   const diff=kcal-macroTotal;
   const pPct=macroTotal?Math.round(pK/macroTotal*100):0,gPct=macroTotal?Math.round(gK/macroTotal*100):0,lPct=macroTotal?Math.round(lK/macroTotal*100):0;
   let html='<div style="margin-bottom:6px"><div style="display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--s3)">';
-  html+='<div style="width:'+pPct+'%;background:#6C5CE7"></div>';
-  html+='<div style="width:'+gPct+'%;background:#00B894"></div>';
+  html+='<div style="width:'+pPct+'%;background:#4AD295"></div>';
+  html+='<div style="width:'+gPct+'%;background:#6EC6FF"></div>';
   html+='<div style="width:'+lPct+'%;background:#FD79A8"></div></div></div>';
-  html+='<div class="sum-row"><div class="sum-box"><div class="sl">Prot</div><div class="sv" style="color:#6C5CE7;font-size:.75rem">'+p+'g <span style="font-size:.55rem;color:var(--t3)">'+pK+' kcal ('+pPct+'%)</span></div></div>';
-  html+='<div class="sum-box"><div class="sl">Gluc</div><div class="sv" style="color:#00B894;font-size:.75rem">'+g+'g <span style="font-size:.55rem;color:var(--t3)">'+gK+' kcal ('+gPct+'%)</span></div></div>';
+  html+='<div class="sum-row"><div class="sum-box"><div class="sl">Prot</div><div class="sv" style="color:#4AD295;font-size:.75rem">'+p+'g <span style="font-size:.55rem;color:var(--t3)">'+pK+' kcal ('+pPct+'%)</span></div></div>';
+  html+='<div class="sum-box"><div class="sl">Gluc</div><div class="sv" style="color:#6EC6FF;font-size:.75rem">'+g+'g <span style="font-size:.55rem;color:var(--t3)">'+gK+' kcal ('+gPct+'%)</span></div></div>';
   html+='<div class="sum-box"><div class="sl">Lip</div><div class="sv" style="color:#FD79A8;font-size:.75rem">'+l+'g <span style="font-size:.55rem;color:var(--t3)">'+lK+' kcal ('+lPct+'%)</span></div></div></div>';
   if(Math.abs(diff)>10)html+='<div style="font-size:.65rem;margin-top:4px;color:'+(diff>0?'var(--org)':'var(--red)')+'">Macros = '+macroTotal+' kcal ('+(diff>0?diff+' kcal non repartis':Math.abs(diff)+' kcal en trop')+')</div>';
   else html+='<div style="font-size:.65rem;margin-top:4px;color:var(--grn)">Macros = '+macroTotal+' kcal &#x2713;</div>';
