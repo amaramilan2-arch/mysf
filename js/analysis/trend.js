@@ -167,6 +167,12 @@ function recommendAction(ph,tr,kcal){
       msg:'Sous-consommation (-'+(kcal-tr.avgAct)+' kcal) \u2014 maintiens '+kcal+' kcal',
       reason:'Tu manges en-dessous de ta cible PDM. Atteins d\'abord '+kcal+' kcal avant de monter.'};
   }
+  // Garde-fou phase F: si tu manges en-dessous de la cible, tu recrees un deficit involontaire
+  if(ph==='F'&&tr.avgAct>0&&tr.avgAct<kcal-100){
+    return{act:'maintenir',tp:'warn',
+      msg:'Sous-consommation (-'+(kcal-tr.avgAct)+' kcal) \u2014 tiens '+kcal+' kcal',
+      reason:'La remonte exige d\'atteindre la cible. Tu recrees un deficit non voulu, stabilise d\'abord.'};
+  }
   let act='maintenir',msg='',tp='info',reason='';
   if(ph==='A'){
     if(d==='down_fast'){act='maintenir';msg='Baisse rapide ('+r+' kg/sem) \u2014 maintiens '+kcal+' kcal';tp='warn';reason='Tu perds trop vite pour une pre-prep.'}
@@ -185,6 +191,12 @@ function recommendAction(ph,tr,kcal){
     else if(d==='stable'){act='maintenir';msg='Reverse stable \u2014 maintiens '+kcal+' kcal';tp='success';reason='Parfait, le metabolisme se reeduque.'}
     else if(d==='up'){act='maintenir';msg='Legere prise (+'+r+' kg/sem) \u2014 maintiens '+kcal+' kcal';tp='info';reason='Normal en reverse, surveille.'}
     else{act='-200';msg='Prise rapide (+'+r+' kg/sem) \u2014 baisse a '+newDn+' kcal (-200)';tp='warn';reason='Tu montes trop vite, ralentis.'}
+  }else if(ph==='F'){// REMONTE — remonter les kcal en continuant a perdre
+    if(d==='down_fast'){act='maintenir';msg='Baisse rapide ('+r+' kg/sem) \u2014 maintiens '+kcal+' kcal';tp='warn';reason='Tu descends encore vite malgre la remonte. Tiens le palier, ne remonte pas encore.'}
+    else if(d==='down'){act='maintenir';msg='Remonte efficace ('+r+' kg/sem) \u2014 maintiens '+kcal+' kcal';tp='success';reason='Parfait: tu remontes les kcal ET tu perds du poids. Continue sur ce palier.'}
+    else if(d==='stable'){act='+200';msg='Plateau atteint \u2014 monte a '+newUp+' kcal (+200)';tp='info';reason='Le metabolisme s\'est adapte au palier. Pousse encore pour relancer la perte plus haut en kcal.'}
+    else if(d==='up'){act='-200';msg='Legere prise (+'+r+' kg/sem) \u2014 baisse a '+newDn+' kcal (-200)';tp='warn';reason='Tu as depasse le plafond de remonte. Reviens au palier precedent.'}
+    else{act='-200';msg='Prise rapide (+'+r+' kg/sem) \u2014 baisse a '+newDn+' kcal (-200)';tp='danger';reason='Largement au-dessus du plafond, redescends.'}
   }else if(ph==='D'){// PDM
     if(d==='down_fast'||d==='down'){act='+200';msg='Poids baisse ('+r+' kg/sem) \u2014 monte a '+newUp+' kcal (+200)';tp='warn';reason='Pas de surplus, augmente.'}
     else if(d==='stable'){act='+200';msg='Stagnation en PDM \u2014 monte a '+newUp+' kcal (+200)';tp='warn';reason='Pas de prise, plus de calories necessaires.'}

@@ -147,6 +147,11 @@ function renderWeightAnalysis(){
     if(Math.abs(rRate)<0.2){rateMsg='Reverse stable. Poids bien controle.';rateCls='success'}
     else if(rRate<-0.2){rateMsg='Encore en perte. Ajoute +200kcal pour reverse.';rateCls='warn'}
     else{rateMsg='Legere prise OK en reverse. Surveille.';rateCls='info'}
+  }else if(ph==='F'){
+    if(rRate<-1){rateMsg='Baisse tres rapide ('+rRate+' kg/sem). Tiens le palier avant de remonter.';rateCls='warn'}
+    else if(rRate<-0.2){rateMsg='Remonte efficace ('+rRate+' kg/sem). Tu perds en remontant les kcal, parfait.';rateCls='success'}
+    else if(Math.abs(rRate)<0.2){rateMsg='Plateau atteint. C\'est le moment de remonter +200 kcal.';rateCls='info'}
+    else{rateMsg='Prise de poids en remonte (+'+rRate+' kg/sem). Redescends -200 kcal.';rateCls='danger'}
   }else{
     if(rRate<0){rateMsg='Tendance baisse ('+rRate+' kg/sem).';rateCls='success'}
     else if(rRate>0){rateMsg='Tendance hausse (+'+rRate+' kg/sem).';rateCls='warn'}
@@ -239,7 +244,7 @@ function renderPhaseSelector(containerId,selected,onChange){
   const c=$(containerId);
   if(!c)return;
   c.innerHTML='';
-  ['A','B','C','D','E'].forEach(k=>{
+  ['A','B','F','C','D','E'].forEach(k=>{
     const btn=document.createElement('div');
     btn.className='ph-btn'+(k===selected?' sel':'');
     btn.style.borderColor=k===selected?PHC[k]:'var(--s3)';
