@@ -25,7 +25,7 @@ function renderHome(){
   if(sk>1){$('skBar').style.display='flex';$('skV').textContent=sk}else $('skBar').style.display='none';
   renderAlert('hAlt');renderAnalysis('hAn');
   const items=dayLog(curDate),el=$('hMeals');
-  if(!items.length)el.innerHTML='<div class="empty">Aucun repas</div>';
+  if(!items.length)el.innerHTML='<div class="empty" data-ico="\u{1F37D}">Aucun repas aujourd\'hui</div>';
   else{const byM={};items.forEach(i=>{if(!byM[i.meal])byM[i.meal]=[];byM[i.meal].push(i)});el.innerHTML=Object.keys(byM).map(mi=>'<div class="hm-item"><span class="hn">'+MEALS[mi]+' ('+byM[mi].length+')</span><span class="hk mono">'+Math.round(byM[mi].reduce((s,i)=>s+i.kcal,0))+'</span></div>').join('')}
 }
 

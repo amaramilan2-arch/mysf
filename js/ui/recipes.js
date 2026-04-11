@@ -12,7 +12,7 @@ function addRecipe(){const name=$('rcName').value.trim();if(!name){toast('Nom re
 function openSavedMeals(){renderSavedMealsList();$('smMo').classList.add('show')}
 function renderSavedMealsList(){
   const meals=getSavedMeals(),el=$('smList');
-  if(!meals.length){el.innerHTML='<div class="empty" style="margin:10px 0">Aucun repas sauvegarde</div>';return}
+  if(!meals.length){el.innerHTML='<div class="empty" data-ico="\u2B50" style="margin:10px 0">Aucun repas sauvegarde</div>';return}
   el.innerHTML=meals.map((m,i)=>{
     const tk=m.items.reduce((s,x)=>s+x.kcal,0),tp=m.items.reduce((s,x)=>s+x.p,0),tg=m.items.reduce((s,x)=>s+x.g,0),tl=m.items.reduce((s,x)=>s+x.l,0);
     const detail=m.items.map(x=>x.food+' '+x.qty+'g').join(', ');

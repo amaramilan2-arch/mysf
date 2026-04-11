@@ -17,7 +17,7 @@ function renderMealTabs(){const c=$('mT');c.innerHTML='';MEALS.forEach((m,i)=>{c
 function renderMealsList(){
   const items=dayLog(),c=$('mC'),foods=getAllFoods();
   c.innerHTML=MEALS.map((name,idx)=>{const mi=items.filter(i=>i.meal===idx),mk=mi.reduce((s,i)=>s+i.kcal,0);
-    return '<div class="m-section card"><div class="m-header"><h3>'+name+'</h3><span class="mk mono">'+Math.round(mk)+'</span></div>'+(mi.length?mi.map(i=>'<div class="mi"><span class="mn" data-eid="'+i.id+'" style="cursor:pointer">'+i.food+'</span><span class="mf mono">'+(i.qty?i.qty+'g\u00B7':'')+Math.round(i.kcal)+'</span><span class="md" data-id="'+i.id+'">\u00D7</span></div>').join(''):'<div class="empty">Vide</div>')+'</div>'}).join('');
+    return '<div class="m-section card"><div class="m-header"><h3>'+name+'</h3><span class="mk mono">'+Math.round(mk)+'</span></div>'+(mi.length?mi.map(i=>'<div class="mi"><span class="mn" data-eid="'+i.id+'" style="cursor:pointer">'+i.food+'</span><span class="mf mono">'+(i.qty?i.qty+'g\u00B7':'')+Math.round(i.kcal)+'</span><span class="md" data-id="'+i.id+'">\u00D7</span></div>').join(''):'<div class="empty mini">Vide</div>')+'</div>'}).join('');
   c.querySelectorAll('.md').forEach(el=>el.addEventListener('click',function(){rmFood(+this.dataset.id)}));
   c.querySelectorAll('.mn[data-eid]').forEach(el=>el.addEventListener('click',function(){editFoodQty(+this.dataset.eid)}));
 }

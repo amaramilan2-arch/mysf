@@ -385,9 +385,24 @@
   <div id="aiMicStatus" style="display:none;font-size:.68rem;color:var(--acc);margin:-6px 4px 10px;font-weight:600"></div>
   <div id="aiResult" style="display:none;margin-bottom:12px"></div>
   <div id="aiErr" style="display:none;font-size:.75rem;margin-bottom:10px;padding:12px 14px;border-radius:14px;line-height:1.5"></div>
-  <div id="aiLoading" style="display:none;text-align:center;padding:20px">
-    <div style="font-size:.82rem;color:var(--t1);font-weight:700">&#x1F9E0; Analyse en cours...</div>
-    <div style="font-size:.68rem;color:var(--t2);margin-top:4px">L'IA analyse le repas</div>
+  <div id="aiLoading" style="display:none;padding:4px 0 8px">
+    <div class="sk-card" style="margin:0">
+      <div class="sk-row">
+        <span class="skeleton sk-circle" style="width:42px;height:42px"></span>
+        <div class="sk-lines">
+          <span class="skeleton sk-line w60"></span>
+          <span class="skeleton sk-line w40" style="margin:0"></span>
+        </div>
+      </div>
+      <span class="skeleton sk-block" style="height:58px;margin-top:8px;margin-bottom:6px"></span>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+        <span class="skeleton" style="height:38px;border-radius:12px"></span>
+        <span class="skeleton" style="height:38px;border-radius:12px"></span>
+        <span class="skeleton" style="height:38px;border-radius:12px"></span>
+        <span class="skeleton" style="height:38px;border-radius:12px"></span>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:.68rem;color:var(--t2);margin-top:8px;font-weight:600">&#x1F9E0; Analyse en cours...</div>
   </div>
   <div class="acts" id="aiActions">
     <button class="btn btn-o" type="button" id="aiNo">Annuler</button>

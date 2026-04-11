@@ -151,7 +151,7 @@ function wire(){
   $('thDark').addEventListener('click',()=>{setTheme('dark');renderSettings()});
   $('thLight').addEventListener('click',()=>{setTheme('light');renderSettings()});
   // Cloud sync
-  $('cloudSaveBtn').addEventListener('click',async()=>{$('cloudSaveBtn').textContent='...';await cloudSave();$('cloudSaveBtn').textContent='\u2601 Sauvegarde !';showSyncStatus('\u2713 Donnees sauvegardees',true);setTimeout(()=>{$('cloudSaveBtn').textContent='\u2601 Sauvegarder cloud'},1500)});
-  $('cloudLoadBtn').addEventListener('click',async()=>{if(!confirm('Charger les donnees du cloud? (ecrase les donnees locales)'))return;$('cloudLoadBtn').textContent='...';const ok=await cloudLoad();if(ok){showSyncStatus('\u2713 Donnees chargees',true);location.reload()}else{showSyncStatus('Aucune donnee cloud',false);$('cloudLoadBtn').textContent='\u2B07 Charger cloud'}});
+  $('cloudSaveBtn').addEventListener('click',async()=>{$('cloudSaveBtn').textContent='...';toast('Sauvegarde en cours...','info',1500);await cloudSave();$('cloudSaveBtn').textContent='\u2601 Sauvegarde !';showSyncStatus('\u2713 Donnees sauvegardees',true);setTimeout(()=>{$('cloudSaveBtn').textContent='\u2601 Sauvegarder cloud'},1500)});
+  $('cloudLoadBtn').addEventListener('click',async()=>{if(!confirm('Charger les donnees du cloud? (ecrase les donnees locales)'))return;$('cloudLoadBtn').textContent='...';toast('Chargement cloud...','info',2000);const ok=await cloudLoad();if(ok){showSyncStatus('\u2713 Donnees chargees',true);location.reload()}else{showSyncStatus('Aucune donnee cloud',false);$('cloudLoadBtn').textContent='\u2B07 Charger cloud'}});
 }
 
