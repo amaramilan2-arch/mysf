@@ -9,7 +9,7 @@ function renderCharts(){
   if(!st)se.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:8px"><span class="wl">Aucune pesee</span></div>';
   else{se.style.gridTemplateColumns='1fr 1fr 1fr';se.innerHTML='<div><div class="wl">Actuel</div><div class="wv">'+st.cur+'</div></div><div><div class="wl">Objectif</div><div class="wv" style="color:var(--org)">'+getPW()+'</div></div><div><div class="wl">IMC</div><div class="wv" style="color:'+(st.bmi<18.5?'var(--org)':st.bmi>25?'var(--red)':'var(--grn)')+'">'+st.bmi+'</div></div><div><div class="wl">Moy 7j</div><div class="wv" style="color:var(--acc)">'+st.avg7+'</div></div><div><div class="wl">Rythme</div><div class="wv" style="color:'+(st.rate<0?'var(--grn)':st.rate>0?'var(--red)':'var(--acc)')+'">'+(st.rate>0?'+':'')+st.rate+'/sem</div></div><div><div class="wl">'+(st.estDays?'ETA objectif':'Regularite')+'</div><div class="wv" style="color:var(--org)">'+(st.estDays?'~'+st.estDays+'j':st.reg+'%')+'</div></div>'}
   // Weight range selector
-  mkRng('wRange',[{l:'7j',d:7},{l:'30j',d:30},{l:'90j',d:90},{l:'Tout',d:9999}],wRng,v=>{wRng=v});
+  mkRng('wRange',[{l:'7j',d:7},{l:'15j',d:15},{l:'30j',d:30},{l:'90j',d:90},{l:'Tout',d:9999}],wRng,v=>{wRng=v});
   // Weight chart with EMA + goal line
   if(chartW)chartW.destroy();
   const l=wRng>=9999?ws:ws.slice(-wRng);

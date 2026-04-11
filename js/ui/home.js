@@ -56,16 +56,28 @@ function renderAlert(cid){const el=$(cid);if(!el)return;const tr=trend72();if(!t
     renderHome();
   });
 }
-function buildAn(){const w=getW(),ph=getPh(),tg=getTg(),tr=trend72();const dates=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);dates.push(d.toISOString().slice(0,10))}const dt=dates.map(d=>dayTotals(d)),dwd=dt.filter(t=>t.kcal>0);const ac=dwd.length?Math.round(dwd.reduce((s,t)=>s+t.kcal,0)/dwd.length):0,ap=dwd.length?Math.round(dwd.reduce((s,t)=>s+t.p,0)/dwd.length):0;const rw=w.filter(x=>x.date>=dates[0]);let wc=0;if(rw.length>=2)wc=rw[rw.length-1].w-rw[0].w;
+function buildAn(){
+  const w=getW(),ph=getPh(),tg=getTg(),tr=trend72(),p=getPalier();
+  // Fenetre palier-scoped, capee a 14j pour rester ISO avec les autres graphes
+  const winDays=Math.min(14,palierDays(p)+1);
+  const dates=[];
+  for(let i=winDays-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);if(ds>=p.startDate)dates.push(ds)}
+  const dt=dates.map(d=>dayTotals(d)),dwd=dt.filter(t=>t.kcal>0);
+  const ac=dwd.length?Math.round(dwd.reduce((s,t)=>s+t.kcal,0)/dwd.length):0;
+  const ap=dwd.length?Math.round(dwd.reduce((s,t)=>s+t.p,0)/dwd.length):0;
+  // Evolution poids sur la meme fenetre
+  const firstDate=dates[0]||new Date().toISOString().slice(0,10);
+  const rw=w.filter(x=>x.date>=firstDate);
+  let wc=0;if(rw.length>=2)wc=rw[rw.length-1].w-rw[0].w;
   const kcal=tg.kcal,newUp=kcal+200,newDn=Math.max(1200,kcal-200);
-  if(!tr||w.length<1)return{v:'maintain',vt:'Pese-toi pour demarrer',vx:'Ajoute une pesee pour activer le suivi de palier.',va:'',ac,ap,wc,dwd:dwd.length,tr:null};
+  if(!tr||w.length<1)return{v:'maintain',vt:'Pese-toi pour demarrer',vx:'Ajoute une pesee pour activer le suivi de palier.',va:'',ac,ap,wc,dwd:dwd.length,winDays:dates.length,tr:null};
   const rec=recommendAction(ph,tr,kcal);
   let v='maintain',vt='',vx=rec.reason,va='';
   if(rec.act==='observer'){v='maintain';vt='OBSERVE LE PALIER ('+tr.daysOnPalier+'/'+tr.daysNeeded+'j)'}
   else if(rec.act==='+200'){v='increase';vt='+200 KCAL \u2192 '+newUp;va='Gluc: '+tg.gluc+'g \u2192 '+(tg.gluc+50)+'g'}
   else if(rec.act==='-200'){v='decrease';vt='-200 KCAL \u2192 '+newDn;va='Gluc: '+tg.gluc+'g \u2192 '+Math.max(0,tg.gluc-50)+'g'}
   else{v='maintain';vt='MAINTENIR '+kcal+' KCAL'}
-  return{v,vt,vx,va,ac,ap,wc,dwd:dwd.length,tr,rec};
+  return{v,vt,vx,va,ac,ap,wc,dwd:dwd.length,winDays:dates.length,tr,rec};
 }
 function renderAnalysis(cid){const el=$(cid);if(!el)return;const a=buildAn();if(!a){el.innerHTML='';return}
   const st=weightStats();let ah='';if(a.va){ah='<div class="ava mono">'+a.va+'</div>';if(a.v==='increase'||a.v==='decrease'){const d=a.v==='increase'?50:-50;ah+='<button type="button" class="btn btn-p btn-apply" data-delta="'+d+'">Appliquer</button>'}}
@@ -78,7 +90,7 @@ function renderAnalysis(cid){const el=$(cid);if(!el)return;const a=buildAn();if(
   let extra='';if(st&&st.count>=2){
     extra='<div class="an-g" style="margin-top:8px"><div class="an-s"><div class="al">Moy 7j</div><div class="av mono" style="color:var(--acc)">'+st.avg7+'</div></div><div class="an-s"><div class="al">Moy 30j</div><div class="av mono" style="color:var(--pur)">'+st.avg30+'</div></div><div class="an-s"><div class="al">Rythme</div><div class="av mono" style="color:'+(st.rate<0?'var(--grn)':st.rate>0?'var(--red)':'var(--acc)')+'">'+(st.rate>0?'+':'')+st.rate+'/sem</div></div><div class="an-s"><div class="al">'+(st.estDays?'Objectif':'Regularite')+'</div><div class="av mono" style="color:var(--org)">'+(st.estDays?'~'+st.estDays+'j':st.reg+'%')+'</div></div></div>';
   }
-  el.innerHTML='<div class="an"><h3>Analyse</h3><div class="an-v '+a.v+'"><div class="avt">'+(a.v==='increase'?'\u2B06 ':a.v==='decrease'?'\u2B07 ':'\u27A1 ')+a.vt+'</div><div>'+a.vx+'</div>'+trSub+ah+'</div><div class="an-g"><div class="an-s"><div class="al">Moy cal</div><div class="av mono" style="color:var(--org)">'+a.ac+'</div></div><div class="an-s"><div class="al">Moy prot</div><div class="av mono" style="color:var(--acc)">'+a.ap+'g</div></div><div class="an-s"><div class="al">Evol 7j</div><div class="av mono" style="color:'+(a.wc<0?'var(--grn)':a.wc>0?'var(--red)':'var(--acc)')+'">'+(a.wc>0?'+':'')+a.wc.toFixed(1)+'</div></div><div class="an-s"><div class="al">Trackes</div><div class="av mono">'+a.dwd+'/7</div></div></div>'+extra+'</div>';
+  el.innerHTML='<div class="an"><h3>Analyse</h3><div class="an-v '+a.v+'"><div class="avt">'+(a.v==='increase'?'\u2B06 ':a.v==='decrease'?'\u2B07 ':'\u27A1 ')+a.vt+'</div><div>'+a.vx+'</div>'+trSub+ah+'</div><div class="an-g"><div class="an-s"><div class="al">Moy cal '+a.winDays+'j</div><div class="av mono" style="color:var(--org)">'+a.ac+'</div></div><div class="an-s"><div class="al">Moy prot</div><div class="av mono" style="color:var(--acc)">'+a.ap+'g</div></div><div class="an-s"><div class="al">Evol '+a.winDays+'j</div><div class="av mono" style="color:'+(a.wc<0?'var(--grn)':a.wc>0?'var(--red)':'var(--acc)')+'">'+(a.wc>0?'+':'')+a.wc.toFixed(1)+'</div></div><div class="an-s"><div class="al">Trackes</div><div class="av mono">'+a.dwd+'/'+a.winDays+'</div></div></div>'+extra+'</div>';
   el.querySelectorAll('.btn-apply').forEach(b=>b.addEventListener('click',function(){const tg=getTg();tg.gluc=Math.max(0,tg.gluc+(+this.dataset.delta));tg.kcal=tg.prot*4+tg.gluc*4+tg.lip*9;sv("nt_targets",tg);renderHome()}))}
 
 function updateBadge(){const ph=getPh(),c=PHC[ph];$('phPill').style.cssText='color:'+c+';background:'+c+'10;border-color:'+c+'25';$('phPill').querySelector('.d').style.background=c;$('phLbl').textContent='Phase '+ph}
