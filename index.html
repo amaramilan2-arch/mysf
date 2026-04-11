@@ -221,6 +221,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .ws .wv{font-size:1rem;font-weight:700}
 .hi{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;background:var(--s2);border-radius:10px;margin-bottom:4px;font-size:.8rem;min-height:44px}
 .hi .hd{color:var(--t3);font-size:.68rem}.hi .hw{font-weight:600}
+.hi .hkc{font-size:.62rem;margin-left:6px;font-weight:600}
 .chip{padding:3px 7px;border-radius:6px;font-size:.58rem;font-weight:700}
 .chip.dn{background:var(--grnG);color:var(--grn)}.chip.up{background:var(--redG);color:var(--red)}.chip.st{background:var(--accG);color:var(--acc)}
 .rng-btn{padding:5px 10px;border-radius:6px;font-size:.62rem;font-weight:700;background:var(--s2);color:var(--t3);border:1px solid var(--s3);cursor:pointer;text-transform:uppercase;letter-spacing:.4px;transition:all .15s}
@@ -436,7 +437,11 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="ch"><h3><span class="cd" style="background:var(--pnk)"></span>Analyse poids</h3>
     <div id="wAnalysis"></div>
   </div>
-  <div class="stitle" style="margin-top:4px">Historique</div><div id="wHi"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;margin-bottom:4px">
+    <div class="stitle" style="margin:0">Historique</div>
+    <button type="button" class="btn btn-o btn-sm" id="wAddBtn" style="padding:5px 10px;font-size:.66rem">+ Ajouter</button>
+  </div>
+  <div id="wHi"></div>
 </div>
 
 <!-- MEALS -->
@@ -628,9 +633,23 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <button class="btn btn-o" type="button" id="phMC" style="width:100%;margin-top:8px">Fermer</button>
 </div></div>
 
+<div class="mo" id="wAddMo"><div class="modal">
+  <h3>&#x2795; Ajouter une entree</h3>
+  <div style="font-size:.7rem;color:var(--t3);margin-bottom:10px">Associe un poids a une date passee. Objectif et reel kcal sont optionnels.</div>
+  <div class="sg" style="margin-bottom:8px">
+    <div class="full"><label>Date</label><input type="date" class="inp" id="wAddDate"></div>
+    <div><label>Poids (kg)</label><input type="text" inputmode="decimal" class="inp" id="wAddW" placeholder="74.5"></div>
+    <div><label>Objectif kcal</label><input type="number" inputmode="numeric" class="inp" id="wAddTg" placeholder="auto"></div>
+    <div class="full"><label>Reel kcal (optionnel)</label><input type="number" inputmode="numeric" class="inp" id="wAddAct" placeholder="ex: 2100"></div>
+  </div>
+  <div style="font-size:.62rem;color:var(--t3);margin-bottom:10px;line-height:1.5">Si <strong>Reel kcal</strong> est rempli et que la journee n'a aucun repas, une entree d'import sera creee pour cette date.</div>
+  <div class="acts"><button class="btn btn-o" type="button" id="wAddNo">Annuler</button><button class="btn btn-p" type="button" id="wAddOk">Ajouter</button></div>
+</div></div>
+
 <div class="mo" id="wEditMo"><div class="modal">
   <h3>&#x270E; Modifier pesee</h3>
-  <div style="font-size:.7rem;color:var(--t3);margin-bottom:8px" id="wEditDate"></div>
+  <div style="font-size:.7rem;color:var(--t3);margin-bottom:4px" id="wEditDate"></div>
+  <div style="font-size:.66rem;color:var(--t2);margin-bottom:8px" id="wEditKcal"></div>
   <input type="text" inputmode="decimal" class="inp" id="wEditIn" placeholder="Poids (kg)" style="width:100%;margin-bottom:8px">
   <div class="acts"><button class="btn btn-d btn-sm" type="button" id="wEditDel">Supprimer</button><button class="btn btn-o" type="button" id="wEditNo">Annuler</button><button class="btn btn-p" type="button" id="wEditOk">Valider</button></div>
 </div></div>
@@ -921,8 +940,17 @@ function renderCharts(){
   if(chartP)chartP.destroy();chartP=new Chart($('pCh').getContext('2d'),{type:'bar',data:{labels:p7lbl,datasets:[{data:p7dt.map(t=>Math.round(t.p)),backgroundColor:'rgba(108,92,231,.4)',borderRadius:6,borderSkipped:false},{data:p7dates.map(()=>tg.prot),type:'line',borderColor:'rgba(0,184,148,.4)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#52546A',font:{size:8}},grid:{display:false}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:false}}}});
   // Weight analysis section
   renderWeightAnalysis();
-  // History
-  const rv=[...ws].reverse().slice(0,20);$('wHi').innerHTML=rv.map((w,i)=>{let ch='';const idx=ws.length-1-i;if(idx>=2){const a=((ws[idx].w-ws[idx-1].w)+(ws[idx-1].w-ws[idx-2].w))/2;ch=a<-0.05?'<span class="chip dn">\u2193</span>':a>0.05?'<span class="chip up">\u2191</span>':'<span class="chip st">\u2192</span>'}return '<div class="hi" data-wd="'+w.date+'" data-ww="'+w.w+'" style="cursor:pointer"><span class="hd">'+fmtD(w.date)+'</span>'+ch+'<span class="hw mono">'+w.w+' kg</span><span style="font-size:.55rem;color:var(--t3);margin-left:4px">&#x270E;</span></div>'}).join('');
+  // History (enriched with tg vs act kcal)
+  const rv=[...ws].reverse().slice(0,20);
+  const rows=rv.map((w,i)=>{
+    let ch='';const idx=ws.length-1-i;
+    if(idx>=2){const a=((ws[idx].w-ws[idx-1].w)+(ws[idx-1].w-ws[idx-2].w))/2;ch=a<-0.05?'<span class="chip dn">\u2193</span>':a>0.05?'<span class="chip up">\u2191</span>':'<span class="chip st">\u2192</span>'}
+    const en=enrichW(w),devPct=en.tgKcal>0?Math.abs(en.delta)/en.tgKcal:1;
+    const col=en.actKcal===0?'var(--t3)':devPct<0.05?'var(--grn)':devPct<0.15?'var(--org)':'var(--red)';
+    const kcalTxt=en.actKcal>0?(en.tgKcal+'\u2192'+en.actKcal):(en.tgKcal+'\u2192--');
+    return '<div class="hi" data-wd="'+w.date+'" data-ww="'+w.w+'" style="cursor:pointer"><span class="hd">'+fmtD(w.date)+'</span>'+ch+'<span class="hw mono">'+w.w+' kg</span><span class="hkc mono" style="color:'+col+'">'+kcalTxt+'</span><span style="font-size:.55rem;color:var(--t3);margin-left:4px">&#x270E;</span></div>';
+  }).join('');
+  $('wHi').innerHTML=rows;
   $('wHi').querySelectorAll('.hi[data-wd]').forEach(el=>el.addEventListener('click',function(){openWeightEdit(this.dataset.wd,this.dataset.ww)}));
 }
 function renderWeightAnalysis(){
@@ -931,23 +959,24 @@ function renderWeightAnalysis(){
   const ph=getPh(),pw=getPW(),tr=trend72();
   // Phase timeline
   let phInfo='Phase '+ph+' ('+PH_NAMES[ph]+') \u2014 x'+PH_MULT[ph];
-  // Rate analysis
+  // Rate analysis — prefer palier-restricted rate from trend72 when available
+  const rRate=(tr&&tr.dir!=='observing')?tr.rate:st.rate;
   let rateMsg='',rateCls='info';
   if(ph==='B'){
-    if(st.rate<-1){rateMsg='Perte rapide ('+st.rate+' kg/sem). Risque de perte musculaire, envisage de ralentir.';rateCls='warn'}
-    else if(st.rate<0){rateMsg='Deficit efficace ('+st.rate+' kg/sem). Rythme optimal entre -0.3 et -0.7.';rateCls='success'}
-    else if(st.rate>=0){rateMsg='Pas de perte cette semaine. Verifie ton intake ou ajuste -200kcal.';rateCls='danger'}
+    if(rRate<-1){rateMsg='Perte rapide ('+rRate+' kg/sem). Risque de perte musculaire, envisage de ralentir.';rateCls='warn'}
+    else if(rRate<0){rateMsg='Deficit efficace ('+rRate+' kg/sem). Rythme optimal entre -0.3 et -0.7.';rateCls='success'}
+    else if(rRate>=0){rateMsg='Pas de perte cette semaine. Verifie ton intake ou ajuste -200kcal.';rateCls='danger'}
   }else if(ph==='D'){
-    if(st.rate>0.5){rateMsg='Prise rapide (+'+st.rate+' kg/sem). Reduis de 100-200kcal pour eviter trop de gras.';rateCls='warn'}
-    else if(st.rate>0){rateMsg='PDM on track (+'+st.rate+' kg/sem). Vise +0.2 a +0.4 /sem.';rateCls='success'}
+    if(rRate>0.5){rateMsg='Prise rapide (+'+rRate+' kg/sem). Reduis de 100-200kcal pour eviter trop de gras.';rateCls='warn'}
+    else if(rRate>0){rateMsg='PDM on track (+'+rRate+' kg/sem). Vise +0.2 a +0.4 /sem.';rateCls='success'}
     else{rateMsg='Poids stable ou en baisse. Augmente de +200kcal.';rateCls='danger'}
   }else if(ph==='C'){
-    if(Math.abs(st.rate)<0.2){rateMsg='Reverse stable. Poids bien controle.';rateCls='success'}
-    else if(st.rate<-0.2){rateMsg='Encore en perte. Ajoute +200kcal pour reverse.';rateCls='warn'}
+    if(Math.abs(rRate)<0.2){rateMsg='Reverse stable. Poids bien controle.';rateCls='success'}
+    else if(rRate<-0.2){rateMsg='Encore en perte. Ajoute +200kcal pour reverse.';rateCls='warn'}
     else{rateMsg='Legere prise OK en reverse. Surveille.';rateCls='info'}
   }else{
-    if(st.rate<0){rateMsg='Tendance baisse ('+st.rate+' kg/sem).';rateCls='success'}
-    else if(st.rate>0){rateMsg='Tendance hausse (+'+st.rate+' kg/sem).';rateCls='warn'}
+    if(rRate<0){rateMsg='Tendance baisse ('+rRate+' kg/sem).';rateCls='success'}
+    else if(rRate>0){rateMsg='Tendance hausse (+'+rRate+' kg/sem).';rateCls='warn'}
     else{rateMsg='Poids stable.';rateCls='info'}
   }
   // Variance (consistency)
@@ -956,6 +985,11 @@ function renderWeightAnalysis(){
   const varMsg=variance<0.3?'Tres stable':'Fluctuations '+(variance<0.6?'normales':'importantes ('+variance.toFixed(1)+' kg)');
   const varCls=variance<0.3?'var(--grn)':variance<0.6?'var(--acc)':'var(--org)';
   let html='<div style="margin-bottom:8px"><span class="chip" style="background:'+PHC[ph]+'20;color:'+PHC[ph]+'">'+phInfo+'</span></div>';
+  if(tr&&tr.dir!=='observing'){
+    const parts=['Fenetre '+tr.window+'j','conf '+tr.confidence];
+    if(tr.adherence!==null)parts.push('adherence '+tr.adherence+'%');
+    html+='<div style="font-size:.62rem;color:var(--t3);margin-bottom:6px">'+parts.join(' \u00B7 ')+'</div>';
+  }
   html+='<div class="alt '+rateCls+'" style="margin-bottom:6px"><span>'+rateMsg+'</span></div>';
   html+='<div class="sum-row"><div class="sum-box"><div class="sl">Depart</div><div class="sv">'+st.start+'</div></div><div class="sum-box"><div class="sl">Min</div><div class="sv" style="color:var(--grn)">'+st.mn+'</div></div><div class="sum-box"><div class="sl">Max</div><div class="sv" style="color:var(--red)">'+st.mx+'</div></div><div class="sum-box"><div class="sl">Total</div><div class="sv" style="color:'+(st.total<0?'var(--grn)':'var(--red)')+'">'+(st.total>0?'+':'')+st.total+'</div></div></div>';
   html+='<div class="sum-row" style="margin-top:5px"><div class="sum-box"><div class="sl">Moy 30j</div><div class="sv" style="color:var(--pur)">'+st.avg30+'</div></div><div class="sum-box"><div class="sl">Pesees</div><div class="sv">'+st.count+'</div></div><div class="sum-box"><div class="sl">Regularite</div><div class="sv" style="color:var(--org)">'+st.reg+'%</div></div><div class="sum-box"><div class="sl">Fluctuation</div><div class="sv" style="color:'+varCls+'">'+variance.toFixed(1)+'</div></div></div>';
@@ -1360,7 +1394,35 @@ function getPalier(){
     p={kcal:tg.kcal,startDate:today};
     sv("nt_palier",p);
   }
+  // Auto-extend startDate backward across the most-recent consecutive run of matching tgKcal.
+  // Walk backward from the latest weigh-in; stop at the first entry with a *different* explicit tgKcal
+  // (so a 2400 -> 2200 -> 2400 history does not sweep in the old 2400 period).
+  // Legacy entries without tgKcal are skipped (neither included nor stopping the walk).
+  const ws=[...ld("nt_weights",[])].sort((a,b)=>a.date.localeCompare(b.date));
+  let earliest=p.startDate;
+  for(let i=ws.length-1;i>=0;i--){
+    const e=ws[i];
+    if(typeof e.tgKcal!=='number')continue;
+    if(e.tgKcal===p.kcal){
+      if(e.date<earliest)earliest=e.date;
+    }else{
+      break;
+    }
+  }
+  if(earliest!==p.startDate){
+    p.startDate=earliest;
+    sv("nt_palier",p);
+  }
   return p;
+}
+// Extend palier startDate backward when a backfilled pesée belongs to the same kcal palier.
+function extendPalierBackward(date,tgKcal){
+  if(!date||!/^\d{4}-\d{2}-\d{2}$/.test(date))return;
+  const p=getPalier();
+  if(tgKcal===p.kcal&&date<p.startDate){
+    p.startDate=date;
+    sv("nt_palier",p);
+  }
 }
 // Days elapsed since palier started (0 = same day)
 function palierDays(p){
@@ -1368,23 +1430,10 @@ function palierDays(p){
   const s=new Date(p.startDate);s.setHours(0,0,0,0);
   return Math.max(0,Math.floor((today-s)/86400000));
 }
-// Trend analysis RESTRICTED to current palier.
-// Requires >=3 weigh-ins AND >=3 days on palier before giving a real recommendation.
-// Returns {dir, rate, confidence, sampleSize, daysOnPalier, daysNeeded}
-function trend72(){
-  const w=getW();if(w.length<1)return null;
-  const p=getPalier();
-  const onPalier=w.filter(x=>x.date>=p.startDate);
-  const days=palierDays(p);
-  const MIN_DAYS=3,IDEAL_DAYS=5;
-  if(onPalier.length<3||days<MIN_DAYS){
-    return{dir:'observing',rate:0,confidence:'pending',sampleSize:onPalier.length,
-      daysOnPalier:days,daysNeeded:MIN_DAYS,idealDays:IDEAL_DAYS,palierKcal:p.kcal};
-  }
-  // Linear regression on palier data: y = slope*x + intercept
-  const t0=new Date(onPalier[0].date).getTime();
-  const pts=onPalier.map(pt=>({x:(new Date(pt.date).getTime()-t0)/86400000,y:pt.w}));
-  const n=pts.length,sx=pts.reduce((s,pt)=>s+pt.x,0),sy=pts.reduce((s,pt)=>s+pt.y,0);
+// Linear regression helper: returns {slope, intercept, r2, ssRes, n}
+function linReg(pts){
+  const n=pts.length;
+  const sx=pts.reduce((s,pt)=>s+pt.x,0),sy=pts.reduce((s,pt)=>s+pt.y,0);
   const sxx=pts.reduce((s,pt)=>s+pt.x*pt.x,0),sxy=pts.reduce((s,pt)=>s+pt.x*pt.y,0);
   const denom=n*sxx-sx*sx;
   const slope=denom!==0?(n*sxy-sx*sy)/denom:0;
@@ -1393,16 +1442,86 @@ function trend72(){
   const ssTot=pts.reduce((s,pt)=>s+(pt.y-meanY)*(pt.y-meanY),0);
   const ssRes=pts.reduce((s,pt)=>{const pred=slope*pt.x+intercept;return s+(pt.y-pred)*(pt.y-pred)},0);
   const r2=ssTot>0?1-ssRes/ssTot:0;
-  const rate=+(slope*7).toFixed(2);// kg/week
-  // Confidence: high if >=5 days AND >=5 pts AND r2>=0.5
-  const conf=days>=IDEAL_DAYS&&n>=5&&r2>=0.5?'high':days>=IDEAL_DAYS?'medium':'low';
+  return{slope,intercept,r2,ssRes,n};
+}
+// Trend analysis RESTRICTED to current palier.
+// Adaptive window 7/5/3j based on noise, kcal adherence downgrades confidence.
+function trend72(){
+  const w=getW();if(w.length<1)return null;
+  const p=getPalier();
+  const onPalierRaw=w.filter(x=>x.date>=p.startDate);
+  const days=palierDays(p);
+  const MIN_DAYS=3,IDEAL_DAYS=5;
+  if(onPalierRaw.length<3||days<MIN_DAYS){
+    return{dir:'observing',rate:0,confidence:'pending',sampleSize:onPalierRaw.length,
+      daysOnPalier:days,daysNeeded:MIN_DAYS,idealDays:IDEAL_DAYS,palierKcal:p.kcal,
+      window:0,avgAct:0,avgTg:p.kcal,adherence:null,trackedDays:0,r2:0};
+  }
+  const onPalier=onPalierRaw.map(enrichW);
+  // Adaptive window: try 7, 5, 3 — take up to s.w points, keep if we meet minN
+  const sizes=[{w:7,maxNoise:0.7,minN:5,conf:'high'},{w:5,maxNoise:1.0,minN:4,conf:'medium'},{w:3,maxNoise:Infinity,minN:3,conf:'low'}];
+  let chosen=null;
+  for(const s of sizes){
+    const slice=onPalier.slice(-s.w);
+    if(slice.length<s.minN)continue;
+    const t0=new Date(slice[0].date).getTime();
+    const pts=slice.map(pt=>({x:(new Date(pt.date).getTime()-t0)/86400000,y:pt.w}));
+    const lr=linReg(pts);
+    const residualStd=Math.sqrt(lr.ssRes/Math.max(1,lr.n));
+    const signalAmp=Math.max(0.2,Math.abs(lr.slope*s.w));
+    const noiseRatio=residualStd/signalAmp;
+    if(noiseRatio<s.maxNoise||s.w===3){
+      chosen={slice,pts,lr,window:s.w,confidence:s.conf,noiseRatio};break;
+    }
+  }
+  if(!chosen){
+    // Not enough clean data — fallback last 3
+    const slice=onPalier.slice(-3);
+    const t0=new Date(slice[0].date).getTime();
+    const pts=slice.map(pt=>({x:(new Date(pt.date).getTime()-t0)/86400000,y:pt.w}));
+    chosen={slice,pts,lr:linReg(pts),window:3,confidence:'low',noiseRatio:0};
+  }
+  const rate=+(chosen.lr.slope*7).toFixed(2);
+  // Adhérence sur la fenêtre retenue
+  const tracked=chosen.slice.filter(e=>e.actKcal>0);
+  const trackedDays=tracked.length;
+  let avgAct=0,avgTg=0,adherence=null;
+  if(trackedDays>=2){
+    avgAct=Math.round(tracked.reduce((s,e)=>s+e.actKcal,0)/trackedDays);
+    avgTg=Math.round(tracked.reduce((s,e)=>s+e.tgKcal,0)/trackedDays);
+    const avgDev=tracked.reduce((s,e)=>s+Math.abs(e.actKcal-e.tgKcal),0)/trackedDays;
+    adherence=avgTg>0?Math.round(100*(1-avgDev/avgTg)):null;
+  }else{
+    avgTg=chosen.slice.reduce((s,e)=>s+e.tgKcal,0)/chosen.slice.length;
+    avgTg=Math.round(avgTg);
+  }
+  // Downgrade confidence if adherence weak
+  let confidence=chosen.confidence;
+  if(adherence!==null&&adherence<85)confidence='low';
+  // Direction thresholds widen as confidence drops (plus conservative quand incertain)
+  const confMult={high:1.0,medium:1.25,low:1.6}[confidence]||1.25;
+  const tFast=0.8*confMult,tSlow=0.2*confMult;
+  // Signal/noise: si le changement observe reste dans le bruit, force stable
+  const residualStd=Math.sqrt(chosen.lr.ssRes/Math.max(1,chosen.lr.n));
+  const dayspan=Math.max(1,chosen.pts[chosen.pts.length-1].x-chosen.pts[0].x);
+  const signalAbs=Math.abs(chosen.lr.slope*dayspan);
+  const withinNoise=signalAbs<residualStd*1.5;
   let dir;
-  if(rate<=-0.5)dir='down_fast';
-  else if(rate<=-0.15)dir='down';
-  else if(rate<0.15)dir='stable';
-  else if(rate<0.5)dir='up';
+  if(withinNoise)dir='stable';
+  else if(rate<=-tFast)dir='down_fast';
+  else if(rate<=-tSlow)dir='down';
+  else if(rate<tSlow)dir='stable';
+  else if(rate<tFast)dir='up';
   else dir='up_fast';
-  return{dir,rate,confidence:conf,sampleSize:n,r2:+r2.toFixed(2),daysOnPalier:days,idealDays:IDEAL_DAYS,palierKcal:p.kcal};
+  return{dir,rate,confidence,window:chosen.window,sampleSize:chosen.lr.n,
+    r2:+chosen.lr.r2.toFixed(2),daysOnPalier:days,idealDays:IDEAL_DAYS,
+    palierKcal:p.kcal,avgAct,avgTg,adherence,trackedDays};
+}
+function enrichW(e){
+  const tg=getTg();
+  const tgKcal=(e&&typeof e.tgKcal==='number'&&e.tgKcal>0)?e.tgKcal:tg.kcal;
+  const actKcal=Math.round(dayTotals(e.date).kcal);
+  return{date:e.date,w:e.w,tgKcal,actKcal,delta:actKcal-tgKcal};
 }
 function weightStats(){
   const w=getW();if(!w.length)return null;
@@ -1437,6 +1556,24 @@ function recommendAction(ph,tr,kcal){
       msg:'Palier '+kcal+' kcal \u2014 observe encore ('+dn+'/'+dt+' jours)',
       tp:'info',
       reason:'Reste sur '+kcal+' kcal pendant au moins '+dt+' jours avant d\'ajuster. Tendance fiable a partir de '+tr.idealDays+' jours.'};
+  }
+  // Garde-fou: tracking incoherent -> on ne change pas de palier
+  if(tr.confidence==='low'&&tr.adherence!==null&&tr.adherence<85){
+    return{act:'observer',tp:'warn',
+      msg:'Tracking irregulier ('+tr.adherence+'% adherence) \u2014 stabilise avant d\'ajuster',
+      reason:'Moy reelle '+tr.avgAct+' kcal vs cible '+tr.avgTg+' kcal. Respecte la cible '+tr.idealDays+'j avant de decider un +/-200.'};
+  }
+  // Garde-fou phase B: si tu depasses la cible, tiens le palier
+  if(ph==='B'&&tr.avgAct>0&&tr.avgAct>kcal+100){
+    return{act:'maintenir',tp:'warn',
+      msg:'Depassement cible (+'+(tr.avgAct-kcal)+' kcal) \u2014 maintiens '+kcal+' kcal',
+      reason:'Tu manges au-dessus de ta cible deficit. Tiens le palier actuel avant de couper.'};
+  }
+  // Garde-fou phase D symetrique: si tu manges en-dessous, tiens le palier
+  if(ph==='D'&&tr.avgAct>0&&tr.avgAct<kcal-100){
+    return{act:'maintenir',tp:'warn',
+      msg:'Sous-consommation (-'+(kcal-tr.avgAct)+' kcal) \u2014 maintiens '+kcal+' kcal',
+      reason:'Tu manges en-dessous de ta cible PDM. Atteins d\'abord '+kcal+' kcal avant de monter.'};
   }
   let act='maintenir',msg='',tp='info',reason='';
   if(ph==='A'){
@@ -1474,11 +1611,18 @@ function renderAlert(cid){const el=$(cid);if(!el)return;const tr=trend72();if(!t
   // Confidence badge (only when >= 3 days on palier but still low)
   let confBadge='';
   if(tr.dir!=='observing'&&tr.confidence==='low')confBadge=' <span style="font-size:.55rem;color:var(--t3);margin-left:4px">(confiance basse, vise '+tr.idealDays+'j)</span>';
+  // Secondary line: window / confidence / adherence
+  let sub='';
+  if(tr.dir!=='observing'){
+    const parts=['Fenetre '+tr.window+'j','conf '+tr.confidence];
+    if(tr.adherence!==null)parts.push('adherence '+tr.adherence+'%');
+    sub='<span style="font-size:.58rem;color:var(--t3)">'+parts.join(' \u00B7 ')+'</span>';
+  }
   // Apply button only when an adjustment is recommended. Palier auto-resets on kcal change.
   let btn='';
   if(rec.act==='+200')btn=' <button type="button" class="btn btn-p btn-sm" style="margin-top:6px" id="alertApply" data-d="200">Appliquer +200</button>';
   else if(rec.act==='-200')btn=' <button type="button" class="btn btn-d btn-sm" style="margin-top:6px" id="alertApply" data-d="-200">Appliquer -200</button>';
-  el.innerHTML='<div class="alt '+rec.tp+'" style="flex-direction:column;align-items:stretch;gap:4px"><span>'+rec.msg+confBadge+'</span>'+btn+'</div>';
+  el.innerHTML='<div class="alt '+rec.tp+'" style="flex-direction:column;align-items:stretch;gap:4px"><span>'+rec.msg+confBadge+'</span>'+sub+btn+'</div>';
   const ab=$('alertApply');if(ab)ab.addEventListener('click',function(){
     const tg=getTg(),d=+this.dataset.d;
     tg.gluc=Math.max(0,tg.gluc+Math.round(d/4));
@@ -1501,19 +1645,62 @@ function buildAn(){const w=getW(),ph=getPh(),tg=getTg(),tr=trend72();const dates
 }
 function renderAnalysis(cid){const el=$(cid);if(!el)return;const a=buildAn();if(!a){el.innerHTML='';return}
   const st=weightStats();let ah='';if(a.va){ah='<div class="ava mono">'+a.va+'</div>';if(a.v==='increase'||a.v==='decrease'){const d=a.v==='increase'?50:-50;ah+='<button type="button" class="btn btn-p btn-apply" data-delta="'+d+'">Appliquer</button>'}}
+  let trSub='';
+  if(a.tr&&a.tr.dir!=='observing'){
+    const parts=['Fenetre '+a.tr.window+'j','conf '+a.tr.confidence];
+    if(a.tr.adherence!==null)parts.push('adherence '+a.tr.adherence+'%');
+    trSub='<div style="font-size:.6rem;color:var(--t3);margin-top:4px">'+parts.join(' \u00B7 ')+'</div>';
+  }
   let extra='';if(st&&st.count>=2){
     extra='<div class="an-g" style="margin-top:8px"><div class="an-s"><div class="al">Moy 7j</div><div class="av mono" style="color:var(--acc)">'+st.avg7+'</div></div><div class="an-s"><div class="al">Moy 30j</div><div class="av mono" style="color:var(--pur)">'+st.avg30+'</div></div><div class="an-s"><div class="al">Rythme</div><div class="av mono" style="color:'+(st.rate<0?'var(--grn)':st.rate>0?'var(--red)':'var(--acc)')+'">'+(st.rate>0?'+':'')+st.rate+'/sem</div></div><div class="an-s"><div class="al">'+(st.estDays?'Objectif':'Regularite')+'</div><div class="av mono" style="color:var(--org)">'+(st.estDays?'~'+st.estDays+'j':st.reg+'%')+'</div></div></div>';
   }
-  el.innerHTML='<div class="an"><h3>Analyse</h3><div class="an-v '+a.v+'"><div class="avt">'+(a.v==='increase'?'\u2B06 ':a.v==='decrease'?'\u2B07 ':'\u27A1 ')+a.vt+'</div><div>'+a.vx+'</div>'+ah+'</div><div class="an-g"><div class="an-s"><div class="al">Moy cal</div><div class="av mono" style="color:var(--org)">'+a.ac+'</div></div><div class="an-s"><div class="al">Moy prot</div><div class="av mono" style="color:var(--acc)">'+a.ap+'g</div></div><div class="an-s"><div class="al">Evol 7j</div><div class="av mono" style="color:'+(a.wc<0?'var(--grn)':a.wc>0?'var(--red)':'var(--acc)')+'">'+(a.wc>0?'+':'')+a.wc.toFixed(1)+'</div></div><div class="an-s"><div class="al">Trackes</div><div class="av mono">'+a.dwd+'/7</div></div></div>'+extra+'</div>';
+  el.innerHTML='<div class="an"><h3>Analyse</h3><div class="an-v '+a.v+'"><div class="avt">'+(a.v==='increase'?'\u2B06 ':a.v==='decrease'?'\u2B07 ':'\u27A1 ')+a.vt+'</div><div>'+a.vx+'</div>'+trSub+ah+'</div><div class="an-g"><div class="an-s"><div class="al">Moy cal</div><div class="av mono" style="color:var(--org)">'+a.ac+'</div></div><div class="an-s"><div class="al">Moy prot</div><div class="av mono" style="color:var(--acc)">'+a.ap+'g</div></div><div class="an-s"><div class="al">Evol 7j</div><div class="av mono" style="color:'+(a.wc<0?'var(--grn)':a.wc>0?'var(--red)':'var(--acc)')+'">'+(a.wc>0?'+':'')+a.wc.toFixed(1)+'</div></div><div class="an-s"><div class="al">Trackes</div><div class="av mono">'+a.dwd+'/7</div></div></div>'+extra+'</div>';
   el.querySelectorAll('.btn-apply').forEach(b=>b.addEventListener('click',function(){const tg=getTg();tg.gluc=Math.max(0,tg.gluc+(+this.dataset.delta));tg.kcal=tg.prot*4+tg.gluc*4+tg.lip*9;sv("nt_targets",tg);renderHome()}))}
 
 // ===== WEIGHT =====
-function saveWeight(){const inp=$('wIn');let v=inp.value.replace(',','.');const w=parseFloat(v);if(isNaN(w)||w<20||w>300){inp.style.borderColor='var(--red)';setTimeout(()=>inp.style.borderColor='',600);return}const ws=getW(),td=new Date().toISOString().slice(0,10),ex=ws.findIndex(e=>e.date===td);if(ex>=0)ws[ex].w=w;else ws.push({date:td,w});ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);inp.value='';renderCharts()}
+function saveWeight(){const inp=$('wIn');let v=inp.value.replace(',','.');const w=parseFloat(v);if(isNaN(w)||w<20||w>300){inp.style.borderColor='var(--red)';setTimeout(()=>inp.style.borderColor='',600);return}const ws=getW(),td=new Date().toISOString().slice(0,10),ex=ws.findIndex(e=>e.date===td),tgK=getTg().kcal;if(ex>=0){ws[ex].w=w;ws[ex].tgKcal=tgK}else ws.push({date:td,w,tgKcal:tgK});ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);inp.value='';renderCharts()}
 let editWDate='';
-function openWeightEdit(date,w){editWDate=date;$('wEditDate').textContent=fmtD(date);$('wEditIn').value=w;$('wEditMo').classList.add('show')}
+function openWeightEdit(date,w){editWDate=date;$('wEditDate').textContent=fmtD(date);const ws=getW(),cur=ws.find(e=>e.date===date);const en=cur?enrichW(cur):enrichW({date,w:+w});$('wEditKcal').textContent='Objectif palier : '+en.tgKcal+' kcal \u00B7 Reel ce jour : '+(en.actKcal>0?en.actKcal+' kcal':'--');$('wEditIn').value=w;$('wEditMo').classList.add('show')}
 function closeWeightEdit(){$('wEditMo').classList.remove('show');editWDate=''}
-function saveWeightEdit(){const v=parseFloat(($('wEditIn').value||'').replace(',','.'));if(isNaN(v)||v<20||v>300){$('wEditIn').style.borderColor='var(--red)';setTimeout(()=>$('wEditIn').style.borderColor='',600);return}const ws=getW(),idx=ws.findIndex(e=>e.date===editWDate);if(idx>=0)ws[idx].w=v;sv("nt_weights",ws);closeWeightEdit();renderCharts();if($('tab-home').classList.contains('active'))renderHome()}
+function saveWeightEdit(){const v=parseFloat(($('wEditIn').value||'').replace(',','.'));if(isNaN(v)||v<20||v>300){$('wEditIn').style.borderColor='var(--red)';setTimeout(()=>$('wEditIn').style.borderColor='',600);return}const ws=getW(),idx=ws.findIndex(e=>e.date===editWDate);if(idx>=0){ws[idx].w=v;if(typeof ws[idx].tgKcal!=='number')ws[idx].tgKcal=getTg().kcal;extendPalierBackward(ws[idx].date,ws[idx].tgKcal)}sv("nt_weights",ws);closeWeightEdit();renderCharts();if($('tab-home').classList.contains('active'))renderHome()}
 function deleteWeight(){const ws=getW().filter(e=>e.date!==editWDate);sv("nt_weights",ws);closeWeightEdit();renderCharts();if($('tab-home').classList.contains('active'))renderHome()}
+function openWeightAdd(){
+  const today=new Date().toISOString().slice(0,10);
+  $('wAddDate').value=today;
+  $('wAddW').value='';
+  $('wAddTg').value='';
+  $('wAddTg').placeholder=getTg().kcal+' (auto)';
+  $('wAddAct').value='';
+  $('wAddMo').classList.add('show');
+}
+function closeWeightAdd(){$('wAddMo').classList.remove('show')}
+function saveWeightAdd(){
+  const date=$('wAddDate').value;
+  const w=parseFloat(($('wAddW').value||'').replace(',','.'));
+  if(!date||!/^\d{4}-\d{2}-\d{2}$/.test(date)){$('wAddDate').style.borderColor='var(--red)';setTimeout(()=>$('wAddDate').style.borderColor='',600);return}
+  if(isNaN(w)||w<20||w>300){$('wAddW').style.borderColor='var(--red)';setTimeout(()=>$('wAddW').style.borderColor='',600);return}
+  const tgIn=parseInt($('wAddTg').value);
+  const tgKcal=(!isNaN(tgIn)&&tgIn>0)?tgIn:getTg().kcal;
+  const ws=getW(),idx=ws.findIndex(e=>e.date===date);
+  if(idx>=0){ws[idx].w=w;ws[idx].tgKcal=tgKcal}
+  else ws.push({date,w,tgKcal});
+  ws.sort((a,b)=>a.date.localeCompare(b.date));
+  sv("nt_weights",ws);
+  extendPalierBackward(date,tgKcal);
+  // Optional real kcal -> synthetic log entry if day empty
+  const actIn=parseInt($('wAddAct').value);
+  if(!isNaN(actIn)&&actIn>0){
+    const log=getLog();
+    const existing=log[date]||[];
+    if(!existing.length){
+      log[date]=[{id:Date.now()+Math.random(),food:'Import '+date,meal:1,qty:0,kcal:actIn,p:0,g:0,l:0,f:0}];
+      sv("nt_log",log);
+    }
+  }
+  closeWeightAdd();
+  renderCharts();
+  if($('tab-home').classList.contains('active'))renderHome();
+}
 
 // ===== SPORT =====
 function renderSport(){
@@ -1609,7 +1796,7 @@ function wire(){
   // Sport type tabs
   document.querySelectorAll('.sport-type-btn').forEach(b=>b.addEventListener('click',()=>{curSportType=b.dataset.st;curOtherSport='';renderSport()}));
   // Home weight
-  $('wHAdd').addEventListener('click',()=>{const v=parseFloat(($('wHIn').value||'').replace(',','.'));if(isNaN(v)||v<20||v>300){$('wHIn').style.borderColor='var(--red)';setTimeout(()=>$('wHIn').style.borderColor='',600);return}const ws=getW(),td=new Date().toISOString().slice(0,10),ex=ws.findIndex(e=>e.date===td);if(ex>=0)ws[ex].w=v;else ws.push({date:td,w:v});ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);$('wHIn').value='';renderHome()});
+  $('wHAdd').addEventListener('click',()=>{const v=parseFloat(($('wHIn').value||'').replace(',','.'));if(isNaN(v)||v<20||v>300){$('wHIn').style.borderColor='var(--red)';setTimeout(()=>$('wHIn').style.borderColor='',600);return}const ws=getW(),td=new Date().toISOString().slice(0,10),ex=ws.findIndex(e=>e.date===td),tgK=getTg().kcal;if(ex>=0){ws[ex].w=v;ws[ex].tgKcal=tgK}else ws.push({date:td,w:v,tgKcal:tgK});ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);$('wHIn').value='';renderHome()});
   // Water +/-
   $('wPlus').addEventListener('click',()=>{const w=getWater();w[curDate]=Math.min((w[curDate]||0)+1,12);sv("nt_water",w);renderHome()});
   $('wMinus').addEventListener('click',()=>{const w=getWater();w[curDate]=Math.max((w[curDate]||0)-1,0);sv("nt_water",w);renderHome()});
@@ -1624,6 +1811,11 @@ function wire(){
   $('wEditNo').addEventListener('click',closeWeightEdit);
   $('wEditOk').addEventListener('click',saveWeightEdit);
   $('wEditDel').addEventListener('click',()=>{if(confirm('Supprimer cette pesee ?'))deleteWeight()});
+  // Weight add (historique)
+  $('wAddBtn').addEventListener('click',openWeightAdd);
+  $('wAddMo').addEventListener('click',e=>{if(e.target===$('wAddMo'))closeWeightAdd()});
+  $('wAddNo').addEventListener('click',closeWeightAdd);
+  $('wAddOk').addEventListener('click',saveWeightAdd);
   // Manual entry
   $('manualBtn').addEventListener('click',()=>$('manMo').classList.add('show'));
   $('manMo').addEventListener('click',e=>{if(e.target===$('manMo'))$('manMo').classList.remove('show')});
