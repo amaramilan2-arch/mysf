@@ -4,18 +4,20 @@ function renderHome(){
   const h=new Date().getHours();$('hHi').textContent=(h<12?'Bonjour':h<18?'Bon apres-midi':'Bonsoir')+(currentUser?', '+currentUser.displayName.split(' ')[0]:'');
   $('hDt').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   const t=dayTotals(curDate),tg=getTg(),rem=Math.max(0,Math.round(tg.kcal-t.kcal));
-  $('cV').textContent=rem;$('cV').style.color=t.kcal>tg.kcal?'var(--red)':'var(--t1)';
+  tweenInt($('cV'),rem,520);$('cV').style.color=t.kcal>tg.kcal?'var(--red)':'var(--t1)';
   $('cSub').textContent=Math.round(t.kcal)+' / '+tg.kcal+' kcal';
-  if(chartRing)chartRing.destroy();const pct=tg.kcal?Math.min(100,Math.round(t.kcal/tg.kcal*100)):0,over=t.kcal>tg.kcal;
+  const pct=tg.kcal?Math.min(100,Math.round(t.kcal/tg.kcal*100)):0,over=t.kcal>tg.kcal;
   const ringBg=getTheme()==='light'?'#E2E4ED':'#282d38',ringFg=over?'#FF6B6B':pct>85?'#FFB347':getTheme()==='light'?'#2DB77B':'#4AD295';
-  chartRing=new Chart($('cRing').getContext('2d'),{type:'doughnut',data:{datasets:[{data:over?[100,0]:[pct,100-pct],backgroundColor:[ringFg,ringBg],borderWidth:0}]},options:{responsive:false,cutout:'82%',plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:600},events:[]}});
+  const ringData=over?[100,0]:[pct,100-pct];
+  if(chartRing){chartRing.data.datasets[0].data=ringData;chartRing.data.datasets[0].backgroundColor=[ringFg,ringBg];chartRing.update()}
+  else chartRing=new Chart($('cRing').getContext('2d'),{type:'doughnut',data:{datasets:[{data:ringData,backgroundColor:[ringFg,ringBg],borderWidth:0}]},options:{responsive:false,cutout:'82%',plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:700,easing:'easeOutCubic'},events:[]}});
   const mp=Math.round(t.p),mg=Math.round(t.g),ml=Math.round(t.l),mf=Math.round(t.f);
-  $('hP').textContent=mp;$('hPt').textContent=' / '+tg.prot+' g';$('hPb').style.width=Math.min(100,tg.prot?Math.round(t.p/tg.prot*100):0)+'%';
-  $('hG').textContent=mg;$('hGt').textContent=' / '+tg.gluc+' g';$('hGb').style.width=Math.min(100,tg.gluc?Math.round(t.g/tg.gluc*100):0)+'%';
-  $('hL').textContent=ml;$('hLt').textContent=' / '+tg.lip+' g';$('hLb').style.width=Math.min(100,tg.lip?Math.round(t.l/tg.lip*100):0)+'%';
-  $('hF').textContent=mf;$('hFt').textContent=' / '+(tg.fib||30)+' g';$('hFb').style.width=Math.min(100,(tg.fib||30)?Math.round(t.f/(tg.fib||30)*100):0)+'%';
+  tweenInt($('hP'),mp,450);$('hPt').textContent=' / '+tg.prot+' g';$('hPb').style.width=Math.min(100,tg.prot?Math.round(t.p/tg.prot*100):0)+'%';
+  tweenInt($('hG'),mg,450);$('hGt').textContent=' / '+tg.gluc+' g';$('hGb').style.width=Math.min(100,tg.gluc?Math.round(t.g/tg.gluc*100):0)+'%';
+  tweenInt($('hL'),ml,450);$('hLt').textContent=' / '+tg.lip+' g';$('hLb').style.width=Math.min(100,tg.lip?Math.round(t.l/tg.lip*100):0)+'%';
+  tweenInt($('hF'),mf,450);$('hFt').textContent=' / '+(tg.fib||30)+' g';$('hFb').style.width=Math.min(100,(tg.fib||30)?Math.round(t.f/(tg.fib||30)*100):0)+'%';
   const w=getWater(),wc=w[curDate]||0;$('wV').textContent=(wc*0.25).toFixed(1)+'L';
-  const s=getSteps();$('sV').textContent=(s[curDate]||0).toLocaleString('fr-FR');
+  const s=getSteps();tweenInt($('sV'),s[curDate]||0,450);
   // Weight home
   const ws=getW(),todayW=ws.find(x=>x.date===new Date().toISOString().slice(0,10));
   $('wHv').textContent=todayW?todayW.w+' kg':'--';

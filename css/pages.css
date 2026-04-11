@@ -18,7 +18,7 @@
 .mc .mc-v{font-size:.78rem;font-weight:700;color:var(--t2);font-family:'JetBrains Mono',monospace;text-align:right;white-space:nowrap}
 .mc .mc-t{display:none}
 .mc .mc-bw{grid-column:2;height:8px;background:var(--s2);border-radius:6px;overflow:hidden;order:2}
-.mc .mc-b{height:100%;border-radius:6px;transition:width .6s ease}
+.mc .mc-b{height:100%;border-radius:6px;transition:width var(--dur-slow) var(--ease-out);will-change:width}
 
 .info-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .info-card{display:flex;align-items:center;gap:10px;background:var(--s1);border:none;border-radius:20px;padding:14px 12px;box-shadow:var(--shadow);min-height:72px}
