@@ -648,9 +648,13 @@ input,textarea{-webkit-user-select:text;user-select:text}
 
 <div class="mo" id="wEditMo"><div class="modal">
   <h3>&#x270E; Modifier pesee</h3>
-  <div style="font-size:.7rem;color:var(--t3);margin-bottom:4px" id="wEditDate"></div>
-  <div style="font-size:.66rem;color:var(--t2);margin-bottom:8px" id="wEditKcal"></div>
-  <input type="text" inputmode="decimal" class="inp" id="wEditIn" placeholder="Poids (kg)" style="width:100%;margin-bottom:8px">
+  <div style="font-size:.7rem;color:var(--t3);margin-bottom:8px" id="wEditDate"></div>
+  <div class="sg" style="margin-bottom:8px">
+    <div class="full"><label>Poids (kg)</label><input type="text" inputmode="decimal" class="inp" id="wEditIn" placeholder="75.0"></div>
+    <div><label>Objectif kcal</label><input type="number" inputmode="numeric" class="inp" id="wEditTg" placeholder="auto"></div>
+    <div><label>Reel kcal</label><input type="number" inputmode="numeric" class="inp" id="wEditAct" placeholder="ex: 2100"></div>
+  </div>
+  <div style="font-size:.6rem;color:var(--t3);margin-bottom:10px;line-height:1.5" id="wEditHint"></div>
   <div class="acts"><button class="btn btn-d btn-sm" type="button" id="wEditDel">Supprimer</button><button class="btn btn-o" type="button" id="wEditNo">Annuler</button><button class="btn btn-p" type="button" id="wEditOk">Valider</button></div>
 </div></div>
 
@@ -1660,9 +1664,62 @@ function renderAnalysis(cid){const el=$(cid);if(!el)return;const a=buildAn();if(
 // ===== WEIGHT =====
 function saveWeight(){const inp=$('wIn');let v=inp.value.replace(',','.');const w=parseFloat(v);if(isNaN(w)||w<20||w>300){inp.style.borderColor='var(--red)';setTimeout(()=>inp.style.borderColor='',600);return}const ws=getW(),td=new Date().toISOString().slice(0,10),ex=ws.findIndex(e=>e.date===td),tgK=getTg().kcal;if(ex>=0){ws[ex].w=w;ws[ex].tgKcal=tgK}else ws.push({date:td,w,tgKcal:tgK});ws.sort((a,b)=>a.date.localeCompare(b.date));sv("nt_weights",ws);inp.value='';renderCharts()}
 let editWDate='';
-function openWeightEdit(date,w){editWDate=date;$('wEditDate').textContent=fmtD(date);const ws=getW(),cur=ws.find(e=>e.date===date);const en=cur?enrichW(cur):enrichW({date,w:+w});$('wEditKcal').textContent='Objectif palier : '+en.tgKcal+' kcal \u00B7 Reel ce jour : '+(en.actKcal>0?en.actKcal+' kcal':'--');$('wEditIn').value=w;$('wEditMo').classList.add('show')}
+function openWeightEdit(date,w){
+  editWDate=date;
+  $('wEditDate').textContent=fmtD(date);
+  const ws=getW(),cur=ws.find(e=>e.date===date);
+  const en=cur?enrichW(cur):enrichW({date,w:+w});
+  $('wEditIn').value=w;
+  $('wEditTg').value=en.tgKcal;
+  $('wEditAct').value=en.actKcal>0?en.actKcal:'';
+  // Detect if the real kcal comes from a single synthetic import entry (safe to overwrite)
+  // or from real meals logged (we refuse to overwrite to avoid data loss).
+  const dayItems=dayLog(date);
+  const isSyntheticImport=dayItems.length===1&&typeof dayItems[0].food==='string'&&dayItems[0].food.indexOf('Import ')===0;
+  let hint='';
+  if(dayItems.length===0)hint='Aucun repas trackes pour ce jour. Saisir un reel kcal creera une entree d\'import.';
+  else if(isSyntheticImport)hint='Entree d\'import existante \u2014 la valeur sera mise a jour.';
+  else hint=dayItems.length+' repas trackes ce jour \u2014 le reel kcal est verrouille (edite via l\'onglet Repas).';
+  $('wEditHint').textContent=hint;
+  $('wEditAct').disabled=(dayItems.length>0&&!isSyntheticImport);
+  $('wEditMo').classList.add('show');
+}
 function closeWeightEdit(){$('wEditMo').classList.remove('show');editWDate=''}
-function saveWeightEdit(){const v=parseFloat(($('wEditIn').value||'').replace(',','.'));if(isNaN(v)||v<20||v>300){$('wEditIn').style.borderColor='var(--red)';setTimeout(()=>$('wEditIn').style.borderColor='',600);return}const ws=getW(),idx=ws.findIndex(e=>e.date===editWDate);if(idx>=0){ws[idx].w=v;if(typeof ws[idx].tgKcal!=='number')ws[idx].tgKcal=getTg().kcal;extendPalierBackward(ws[idx].date,ws[idx].tgKcal)}sv("nt_weights",ws);closeWeightEdit();renderCharts();if($('tab-home').classList.contains('active'))renderHome()}
+function saveWeightEdit(){
+  const v=parseFloat(($('wEditIn').value||'').replace(',','.'));
+  if(isNaN(v)||v<20||v>300){$('wEditIn').style.borderColor='var(--red)';setTimeout(()=>$('wEditIn').style.borderColor='',600);return}
+  const ws=getW(),idx=ws.findIndex(e=>e.date===editWDate);
+  if(idx>=0){
+    ws[idx].w=v;
+    const tgIn=parseInt($('wEditTg').value);
+    ws[idx].tgKcal=(!isNaN(tgIn)&&tgIn>0)?tgIn:(typeof ws[idx].tgKcal==='number'?ws[idx].tgKcal:getTg().kcal);
+    extendPalierBackward(ws[idx].date,ws[idx].tgKcal);
+  }
+  sv("nt_weights",ws);
+  // Real kcal: overwrite synthetic import if present, otherwise create one when day empty
+  if(!$('wEditAct').disabled){
+    const actIn=parseInt($('wEditAct').value);
+    const log=getLog();
+    const dayItems=log[editWDate]||[];
+    const isSyntheticImport=dayItems.length===1&&typeof dayItems[0].food==='string'&&dayItems[0].food.indexOf('Import ')===0;
+    if(!isNaN(actIn)&&actIn>0){
+      if(isSyntheticImport){
+        dayItems[0].kcal=actIn;
+        log[editWDate]=dayItems;
+      }else if(dayItems.length===0){
+        log[editWDate]=[{id:Date.now()+Math.random(),food:'Import '+editWDate,meal:1,qty:0,kcal:actIn,p:0,g:0,l:0,f:0}];
+      }
+      sv("nt_log",log);
+    }else if($('wEditAct').value===''&&isSyntheticImport){
+      // Clearing the field removes the synthetic import
+      delete log[editWDate];
+      sv("nt_log",log);
+    }
+  }
+  closeWeightEdit();
+  renderCharts();
+  if($('tab-home').classList.contains('active'))renderHome();
+}
 function deleteWeight(){const ws=getW().filter(e=>e.date!==editWDate);sv("nt_weights",ws);closeWeightEdit();renderCharts();if($('tab-home').classList.contains('active'))renderHome()}
 function openWeightAdd(){
   const today=new Date().toISOString().slice(0,10);
