@@ -10,6 +10,10 @@
 --r:14px;--r2:20px;
 --shadow:0 2px 12px rgba(0,0,0,.25);
 --phA:#4AD295;--phB:#FD79A8;--phC:#A29BFE;--phD:#FFB347;--phE:#6C5CE7;
+--ease-out:cubic-bezier(.22,1,.36,1);
+--ease-spring:cubic-bezier(.34,1.56,.64,1);
+--ease-smooth:cubic-bezier(.4,0,.2,1);
+--dur-fast:150ms;--dur-base:220ms;--dur-slow:320ms;
 }
 [data-theme="light"]{
 --bg:#F5F6FA;--s1:#FFFFFF;--s2:#F0F1F6;--s3:#E2E4ED;--s4:#CED1DC;
