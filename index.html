@@ -138,12 +138,14 @@
 <!-- MEALS -->
 <div class="tp" id="tab-meals">
   <div class="dn"><button type="button" id="dP">&#x276E;</button><span class="dd" id="cDt">Aujourd'hui</span><button type="button" id="dN">&#x276F;</button></div>
-  <div style="display:flex;gap:6px;align-items:stretch;position:relative;z-index:30">
-    <div class="sw" style="flex:1"><span class="si">&#x1F50D;</span><input type="text" id="fSr" placeholder="Rechercher un aliment..." autocomplete="off"><div class="sr" id="fRs"></div></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px">
     <button type="button" class="btn btn-icon btn-sm" id="aiBtn" title="Analyser avec IA" style="background:linear-gradient(135deg,var(--cyan),var(--acc));color:#fff;font-size:.82rem">&#x2728;</button>
     <button type="button" class="btn btn-s btn-icon btn-sm" id="scanBtn" title="Scanner code-barres">&#x1F4F7;</button>
     <button type="button" class="btn btn-p btn-icon btn-sm" id="manualBtn" title="Saisie manuelle">+</button>
     <button type="button" class="btn btn-o btn-icon btn-sm" id="smBtn" title="Repas sauvegardes">&#x2B50;</button>
+  </div>
+  <div style="position:relative;z-index:30">
+    <div class="sw"><span class="si">&#x1F50D;</span><input type="text" id="fSr" placeholder="Rechercher un aliment..." autocomplete="off"><div class="sr" id="fRs"></div></div>
   </div>
   <div class="fav-s" id="favS"></div>
   <div class="msum" id="mSm"></div>
