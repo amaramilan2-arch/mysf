@@ -5,7 +5,8 @@ let currentUser=null,firebaseReady=false;
 
 const $=id=>document.getElementById(id);
 const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}};
-const sv=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let _syncT=null;
+const sv=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));if(currentUser){clearTimeout(_syncT);_syncT=setTimeout(()=>{_syncT=null;if(typeof cloudSave==='function')cloudSave()},2000)}};
 const getLog=()=>ld("nt_log",{});const getW=()=>ld("nt_weights",[]);const getWk=()=>ld("nt_workouts",[]);
 const getSteps=()=>ld("nt_steps",{});const getPh=()=>ld("nt_phase","A");
 const getTg=()=>ld("nt_targets",{kcal:2200,prot:150,gluc:250,lip:75,fib:30});
