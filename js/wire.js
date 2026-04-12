@@ -83,7 +83,7 @@ function wire(){
   // AI key save
   $('aiKey').addEventListener('change',()=>{sv('nt_aikey',$('aiKey').value.trim());$('aiKeyStatus').textContent=$('aiKey').value.trim()?'Cle sauvegardee':'Aucune cle configuree';if($('aiKey').value.trim())toast('Cle API sauvegardee','success')});
   // Settings
-  $('sSave').addEventListener('click',()=>{sv("nt_targets",{kcal:+$('sK').value||2200,prot:+$('sP').value||150,gluc:+$('sG').value||250,lip:+$('sL').value||75,fib:+$('sFib').value||30});sv("nt_pw",parseFloat(($('sPW').value||'75').replace(',','.'))||75);sv("nt_height",+$('sH').value||175);sv("nt_sg",+$('sSt').value||10000);if($('tab-home').classList.contains('active'))renderHome();toast('Reglages sauvegardes','success')});
+  $('sSave').addEventListener('click',()=>{sv("nt_targets",{kcal:+$('sK').value||2200,prot:+$('sP').value||150,gluc:+$('sG').value||250,lip:+$('sL').value||75,fib:+$('sFib').value||30});sv("nt_pw",parseFloat(($('sPW').value||'75').replace(',','.'))||75);sv("nt_height",+$('sH').value||175);sv("nt_sg",+$('sSt').value||10000);if(currentUser)cloudSave();if($('tab-home').classList.contains('active'))renderHome();toast('Reglages sauvegardes','success')});
   $('sCalc').addEventListener('click',()=>{
     const pw=parseFloat(($('sW').value||'75').replace(',','.'))||75,h=+$('sH').value||175,sg=+$('sSt').value||10000,m=PH_MULT[getPh()];
     const actMult={sedentary:1.2,light:1.375,moderate:1.55,active:1.725,very_active:1.9};
