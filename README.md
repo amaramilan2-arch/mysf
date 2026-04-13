@@ -255,6 +255,6 @@ En cas de doute, ouvre une issue avant de merger.
 
 ## Licence
 
-Ce projet est distribué sous licence **MIT**. Voir le fichier [`LICENSE`](./LICENSE) pour le texte complet.
+**Tous droits réservés — © 2026 MYSF — My Systeme Fluide.**
 
-En pratique : tu peux utiliser, copier, modifier, fusionner, publier, distribuer, sous-licencier et vendre des copies du logiciel, à la seule condition de conserver la notice de copyright et d'inclure la licence dans les copies substantielles.
+Ce projet n'est distribué sous aucune licence open source. Aucune autorisation d'utilisation, de copie, de modification, de fusion, de publication, de distribution, de sous-licence ou de vente n'est accordée. Toute utilisation du code, en tout ou en partie, est strictement interdite sans l'accord écrit préalable de l'auteur.
