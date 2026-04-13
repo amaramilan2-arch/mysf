@@ -75,7 +75,7 @@ function buildAn(){
   if(!tr||w.length<1)return{v:'maintain',vt:'Pese-toi pour demarrer',vx:'Ajoute une pesee pour activer le suivi de palier.',va:'',ac,ap,wc,dwd:dwd.length,winDays:dates.length,tr:null};
   const rec=recommendAction(ph,tr,kcal);
   let v='maintain',vt='',vx=rec.reason,va='';
-  if(rec.act==='observer'){v='maintain';vt='OBSERVE LE PALIER ('+tr.daysOnPalier+'/'+tr.daysNeeded+'j)'}
+  if(rec.act==='observer'){v='maintain';vt=tr.dir==='observing'?'OBSERVE LE PALIER ('+tr.daysOnPalier+'/'+tr.daysNeeded+'j)':rec.msg}
   else if(rec.act==='+200'){v='increase';vt='+200 KCAL \u2192 '+newUp;va='Gluc: '+tg.gluc+'g \u2192 '+(tg.gluc+50)+'g'}
   else if(rec.act==='-200'){v='decrease';vt='-200 KCAL \u2192 '+newDn;va='Gluc: '+tg.gluc+'g \u2192 '+Math.max(0,tg.gluc-50)+'g'}
   else{v='maintain';vt='MAINTENIR '+kcal+' KCAL'}

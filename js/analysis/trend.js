@@ -30,6 +30,7 @@ function trend72(){
       window:0,avgAct:0,avgTg:p.kcal,adherence:null,trackedDays:0,r2:0};
   }
   const onPalier=onPalierRaw.map(enrichW);
+  const today=new Date().toISOString().slice(0,10);
   // Adaptive window: try 7, 5, 3 — take up to s.w points, keep if we meet minN
   const sizes=[{w:7,maxNoise:0.7,minN:5,conf:'high'},{w:5,maxNoise:1.0,minN:4,conf:'medium'},{w:3,maxNoise:Infinity,minN:3,conf:'low'}];
   let chosen=null;
@@ -54,8 +55,9 @@ function trend72(){
     chosen={slice,pts,lr:linReg(pts),window:3,confidence:'low',noiseRatio:0};
   }
   const rate=+(chosen.lr.slope*7).toFixed(2);
-  // Adhérence sur la fenêtre retenue
-  const tracked=chosen.slice.filter(e=>e.actKcal>0);
+  // Adhérence sur la fenêtre retenue — on exclut le jour en cours (actKcal partiel
+  // fausse la moyenne tant que la journée n'est pas terminée).
+  const tracked=chosen.slice.filter(e=>e.actKcal>0&&e.date!==today);
   const trackedDays=tracked.length;
   let avgAct=0,avgTg=0,adherence=null;
   if(trackedDays>=2){
@@ -86,7 +88,7 @@ function trend72(){
   else if(rate<tFast)dir='up';
   else dir='up_fast';
   return{dir,rate,confidence,window:chosen.window,sampleSize:chosen.lr.n,
-    r2:+chosen.lr.r2.toFixed(2),daysOnPalier:days,idealDays:IDEAL_DAYS,
+    r2:+chosen.lr.r2.toFixed(2),daysOnPalier:days,daysNeeded:MIN_DAYS,idealDays:IDEAL_DAYS,
     palierKcal:p.kcal,avgAct,avgTg,adherence,trackedDays};
 }
 function enrichW(e){
