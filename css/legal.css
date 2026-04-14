@@ -1,0 +1,29 @@
+body.legal{background:var(--bg);color:var(--t1);font-family:'Inter',sans-serif;max-width:760px;margin:0 auto;padding:0 18px 60px;line-height:1.65;min-height:100dvh;-webkit-user-select:text;user-select:text}
+body.legal *{-webkit-user-select:text;user-select:text}
+.legal-wrap{padding-top:max(24px,env(safe-area-inset-top));padding-bottom:40px}
+.legal-back{display:inline-block;font-size:.78rem;color:var(--t2);text-decoration:none;padding:10px 14px;border-radius:20px;background:var(--s2);margin-bottom:22px;font-weight:600;transition:.15s}
+.legal-back:hover,.legal-back:active{background:var(--s3);color:var(--acc)}
+.legal h1{font-size:2.4rem;margin-bottom:4px;line-height:1}
+.legal-sub{font-size:.8rem;color:var(--t2);text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:4px}
+.legal-date{font-size:.72rem;color:var(--t3);margin-bottom:32px;font-style:italic}
+.legal section{margin-bottom:26px;background:var(--s1);border-radius:18px;padding:20px 22px;box-shadow:var(--shadow)}
+.legal h2{font-size:1rem;font-weight:800;color:var(--t1);margin-bottom:10px;letter-spacing:-.1px;padding-bottom:8px;border-bottom:1px solid var(--s3)}
+.legal p{font-size:.84rem;color:var(--t2);margin-bottom:10px}
+.legal p:last-child{margin-bottom:0}
+.legal ul{list-style:none;padding:0;margin:0 0 10px}
+.legal ul li{font-size:.82rem;color:var(--t2);padding:6px 0 6px 18px;position:relative;line-height:1.55}
+.legal ul li::before{content:'';position:absolute;left:0;top:14px;width:6px;height:6px;border-radius:50%;background:var(--acc)}
+.legal strong{color:var(--t1);font-weight:700}
+.legal code{background:var(--s2);color:var(--acc);padding:2px 7px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.76rem}
+.legal a{color:var(--acc);text-decoration:none;border-bottom:1px solid var(--accG);transition:.15s}
+.legal a:hover,.legal a:active{border-color:var(--acc)}
+.legal-footer{margin-top:32px;padding:22px 18px;text-align:center;font-size:.78rem;color:var(--t3);border-top:1px solid var(--s3)}
+.legal-footer a{color:var(--t2);font-weight:600;text-decoration:none;transition:.15s;margin:0 4px}
+.legal-footer a:hover,.legal-footer a:active{color:var(--acc)}
+.legal-footer .sep{color:var(--t3);margin:0 6px}
+@media(max-width:600px){
+  .legal h1{font-size:1.8rem}
+  .legal section{padding:16px 18px}
+  .legal h2{font-size:.92rem}
+  .legal p,.legal ul li{font-size:.8rem}
+}
