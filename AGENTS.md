@@ -4,7 +4,7 @@ Guide pour toute personne (humaine ou IA) qui contribue à ce projet. Lis-le ava
 
 ## Contexte
 
-**mysf** est une app web mobile-first de suivi nutritionnel et pondéral, avec :
+**Kripy** est une app web mobile-first de suivi nutritionnel et pondéral, avec :
 - analyse de tendance pondérale adaptative (palier = kcal + phase)
 - analyse de repas par photo (Groq / Llama 4 Scout) et dictée vocale
 - scan de code-barres (OpenFoodFacts)

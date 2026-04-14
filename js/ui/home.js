@@ -7,7 +7,7 @@ function renderHome(){
   tweenInt($('cV'),rem,520);$('cV').style.color=t.kcal>tg.kcal?'var(--red)':'var(--t1)';
   $('cSub').textContent=Math.round(t.kcal)+' / '+tg.kcal+' kcal';
   const pct=tg.kcal?Math.min(100,Math.round(t.kcal/tg.kcal*100)):0,over=t.kcal>tg.kcal;
-  const ringBg=getTheme()==='light'?'#E2E4ED':'#282d38',ringFg=over?'#FF6B6B':pct>85?'#FFB347':getTheme()==='light'?'#2DB77B':'#4AD295';
+  const ringBg=getTheme()==='light'?'#DFE2EA':'#2A2B31',ringFg=over?'#FF6B6B':pct>85?'#FFB347':getTheme()==='light'?'#2DB77B':'#6AEFAF';
   const ringData=over?[100,0]:[pct,100-pct];
   if(chartRing){chartRing.data.datasets[0].data=ringData;chartRing.data.datasets[0].backgroundColor=[ringFg,ringBg];chartRing.update()}
   else chartRing=new Chart($('cRing').getContext('2d'),{type:'doughnut',data:{datasets:[{data:ringData,backgroundColor:[ringFg,ringBg],borderWidth:0}]},options:{responsive:false,cutout:'82%',plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:700,easing:'easeOutCubic'},events:[]}});

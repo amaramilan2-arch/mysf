@@ -1,4 +1,4 @@
-# MYSF — My Systeme Fluide
+# Kripy — Precision Lab
 
 Application web **mobile-first** de suivi nutritionnel, pondéral et sportif, pensée pour les personnes qui gèrent leur poids sur la durée et qui enchaînent plusieurs phases (sèche, prise de masse, reverse diet, reset…). 100 % statique, aucune installation, aucune dépendance à builder.
 
@@ -8,7 +8,7 @@ Application web **mobile-first** de suivi nutritionnel, pondéral et sportif, pe
 
 ## Sommaire
 
-- [C'est quoi MYSF ?](#cest-quoi-mysf-)
+- [C'est quoi Kripy ?](#cest-quoi-kripy-)
 - [Quel problème ça résout ?](#quel-problème-ça-résout-)
 - [Fonctionnalités](#fonctionnalités)
 - [Architecture technique](#architecture-technique)
@@ -20,9 +20,9 @@ Application web **mobile-first** de suivi nutritionnel, pondéral et sportif, pe
 
 ---
 
-## C'est quoi MYSF ?
+## C'est quoi Kripy ?
 
-MYSF est une **webapp autonome** (HTML + CSS + JS vanilla, zéro bundler) qui tient dans une seule page `index.html` et fonctionne aussi bien depuis un navigateur mobile que comme application installée (PWA standalone). Elle se décompose en 6 onglets :
+Kripy est une **webapp autonome** (HTML + CSS + JS vanilla, zéro bundler) qui tient dans une seule page `index.html` et fonctionne aussi bien depuis un navigateur mobile que comme application installée (PWA standalone). Elle se décompose en 6 onglets :
 
 1. **Accueil** — tableau de bord du jour (calories restantes, macros, eau, pas, alertes tendance)
 2. **Repas** — ajout d'aliments par recherche, photo IA, dictée vocale ou code-barres
@@ -44,7 +44,7 @@ Les applis de tracking classiques (MyFitnessPal & co) ont quatre limites récurr
 3. **Elles enferment les données** dans leur cloud, avec pub et abonnement premium.
 4. **Elles sont lourdes** : écrans chargés, temps de chargement, formulaires à rallonge sur mobile.
 
-MYSF répond à ça par quatre partis pris :
+Kripy répond à ça par quatre partis pris :
 
 ### 1. Notion de **palier** (kcal + phase + date de démarrage)
 
@@ -63,7 +63,7 @@ Phases disponibles :
 
 ### 2. **Analyse de tendance adaptative** (régression linéaire 72 j)
 
-Plutôt que de te montrer ton poids brut (qui fluctue de ±1 kg par jour selon l'eau, le sel, le cycle, etc.), MYSF calcule une **tendance** via régression linéaire sur une fenêtre glissante, et la compare à l'évolution *attendue* pour ta phase. Le module `analysis/trend.js` produit :
+Plutôt que de te montrer ton poids brut (qui fluctue de ±1 kg par jour selon l'eau, le sel, le cycle, etc.), Kripy calcule une **tendance** via régression linéaire sur une fenêtre glissante, et la compare à l'évolution *attendue* pour ta phase. Le module `analysis/trend.js` produit :
 
 - la pente pondérale réelle (kg/semaine)
 - l'écart avec l'objectif théorique de la phase
@@ -189,8 +189,8 @@ Aucune installation de dépendances n'est nécessaire. Il suffit de servir le do
 ### Avec Python
 
 ```bash
-git clone https://github.com/amaramilan2-arch/mysf.git
-cd mysf
+git clone https://github.com/amaramilan2-arch/mysf.git kripy
+cd kripy
 python3 -m http.server 8765
 ```
 
@@ -255,6 +255,6 @@ En cas de doute, ouvre une issue avant de merger.
 
 ## Licence
 
-**Tous droits réservés — © 2026 MYSF — My Systeme Fluide.**
+**Tous droits réservés — © 2026 Kripy — Precision Lab.**
 
 Ce projet n'est distribué sous aucune licence open source. Aucune autorisation d'utilisation, de copie, de modification, de fusion, de publication, de distribution, de sous-licence ou de vente n'est accordée. Toute utilisation du code, en tout ou en partie, est strictement interdite sans l'accord écrit préalable de l'auteur.

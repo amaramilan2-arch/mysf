@@ -1,45 +1,211 @@
+/* ============================================================
+   Kripy — Kinetic Lab Design System
+   Tonal Architecture · Deep Tech · Data-First
+   ============================================================ */
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
 :root{
---bg:#0d0f14;--s1:#171a21;--s2:#1e222b;--s3:#282d38;--s4:#343a47;
---acc:#4AD295;--acc2:#6EEAB0;--accG:rgba(74,210,149,.1);
---grn:#6EC6FF;--grnG:rgba(110,198,255,.1);
---org:#FFB347;--orgG:rgba(255,179,71,.1);
---red:#FF6B6B;--redG:rgba(255,107,107,.1);
---pur:#A29BFE;--pnk:#FD79A8;--cyan:#6EC6FF;--yel:#FFD93D;--brn:#E17055;
---t1:#EFF1F5;--t2:#8B8FA3;--t3:#505568;
---r:14px;--r2:20px;
---shadow:0 2px 12px rgba(0,0,0,.25);
---phA:#4AD295;--phB:#FD79A8;--phC:#A29BFE;--phD:#FFB347;--phE:#6C5CE7;
---ease-out:cubic-bezier(.22,1,.36,1);
---ease-spring:cubic-bezier(.34,1.56,.64,1);
---ease-smooth:cubic-bezier(.4,0,.2,1);
---dur-fast:150ms;--dur-base:220ms;--dur-slow:320ms;
+  /* ── Tonal Architecture (dark-first) ── */
+  --bg:#121317;                 /* surface / Level 0 — obsidian base          */
+  --s1:#1A1B20;                 /* surface-container-low / Level 1            */
+  --s2:#1F1F24;                 /* surface-container / Level 2 — std cards    */
+  --s3:#2A2B31;                 /* surface-container-high                     */
+  --s4:#343439;                 /* surface-container-highest / Level 3        */
+  --s0:#0E0F12;                 /* surface-container-lowest (even rows)       */
+
+  /* ── Primary (Emerald LED) with engineered gradient ── */
+  --acc:#6AEFAF;                /* primary                                    */
+  --acc2:#4AD295;               /* primary-container                          */
+  --accG:rgba(106,239,175,.10); /* halo overlay                               */
+  --surface-tint:#58DEA0;       /* tonal tint / ambient glow                  */
+  --outline-variant:rgba(61,74,65,.20); /* ghost border (use sparingly)       */
+
+  /* ── Accent LEDs (pop against dark surface) ── */
+  --grn:#6AEFAF;                --grnG:rgba(106,239,175,.10);
+  --cyan:#4DD0E1;               --cyanG:rgba(77,208,225,.10);
+  --pnk:#FF6B9D;                --pnkG:rgba(255,107,157,.10);
+  --pur:#9F9BFF;                --purG:rgba(159,155,255,.10);
+  --yel:#FFD93D;                --yelG:rgba(255,217,61,.10);
+  --org:#FFB347;                --orgG:rgba(255,179,71,.10);
+  --red:#FF6B6B;                --redG:rgba(255,107,107,.10);
+  --brn:#E17055;
+
+  /* ── Text (never pure white — halatuation kills readability) ── */
+  --t1:#F5F7FA;
+  --t2:#9AA0AB;
+  --t3:#5A5E6B;
+
+  /* ── Radius ── */
+  --r:14px;
+  --r2:18px;
+  --r3:24px;
+
+  /* ── Elevation via tonal shift + optional glow, never black shadows ── */
+  --shadow:0 0 0 0 transparent;
+  --glow:0 0 32px 0 rgba(88,222,160,.06);
+  --glow-soft:0 0 24px 0 rgba(88,222,160,.04);
+
+  /* ── Gradient signatures ── */
+  --grad-primary:linear-gradient(135deg,#6AEFAF 0%,#4AD295 100%);
+  --grad-primary-soft:linear-gradient(135deg,rgba(106,239,175,.22),rgba(74,210,149,.06));
+  --grad-glass:linear-gradient(180deg,rgba(31,31,36,.92),rgba(31,31,36,.78));
+
+  /* ── Phase accents ── */
+  --phA:#6AEFAF;
+  --phB:#FF6B9D;
+  --phC:#9F9BFF;
+  --phD:#FFB347;
+  --phE:#6C5CE7;
+  --phF:#4DD0E1;
+
+  /* ── Motion ── */
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --ease-smooth:cubic-bezier(.4,0,.2,1);
+  --dur-fast:150ms;
+  --dur-base:220ms;
+  --dur-slow:320ms;
+
+  /* ── Layout ── */
+  --gutter:24px;
 }
+
+/* ── Light theme (inverted tonal architecture, still low-chroma) ── */
 [data-theme="light"]{
---bg:#F5F6FA;--s1:#FFFFFF;--s2:#F0F1F6;--s3:#E2E4ED;--s4:#CED1DC;
---acc:#2DB77B;--acc2:#1E9A64;--accG:rgba(45,183,123,.1);
---grn:#4BA8E0;--grnG:rgba(75,168,224,.08);
---org:#E5982D;--orgG:rgba(229,152,45,.08);
---red:#E05252;--redG:rgba(224,82,82,.08);
---pur:#7C71D8;--pnk:#E0608E;--cyan:#4BA8E0;--yel:#D4AD1C;--brn:#C85D45;
---t1:#1A1D2E;--t2:#6B6F85;--t3:#9B9FB5;
---shadow:0 2px 12px rgba(0,0,0,.06);
---phA:#2DB77B;--phB:#E0608E;--phC:#7C71D8;--phD:#E5982D;--phE:#5F4DD0;
+  --bg:#F7F8FA;
+  --s1:#F1F2F6;
+  --s2:#E8EAF0;
+  --s3:#DFE2EA;
+  --s4:#CFD3DD;
+  --s0:#FDFDFE;
+  --acc:#2DB77B;
+  --acc2:#1E9A64;
+  --accG:rgba(45,183,123,.10);
+  --surface-tint:#2DB77B;
+  --outline-variant:rgba(61,74,65,.14);
+  --grn:#2DB77B;   --grnG:rgba(45,183,123,.10);
+  --cyan:#2E9FB5; --cyanG:rgba(46,159,181,.10);
+  --pnk:#D9447A;  --pnkG:rgba(217,68,122,.10);
+  --pur:#6E69D0;  --purG:rgba(110,105,208,.10);
+  --yel:#C5A21E;  --yelG:rgba(197,162,30,.10);
+  --org:#D68524;  --orgG:rgba(214,133,36,.10);
+  --red:#D64A4A;  --redG:rgba(214,74,74,.10);
+  --t1:#1A1D2E;
+  --t2:#5A6071;
+  --t3:#9AA0AD;
+  --grad-primary:linear-gradient(135deg,#2DB77B 0%,#1E9A64 100%);
+  --grad-primary-soft:linear-gradient(135deg,rgba(45,183,123,.18),rgba(30,154,100,.04));
+  --grad-glass:linear-gradient(180deg,rgba(232,234,240,.92),rgba(232,234,240,.78));
+  --glow:0 0 32px 0 rgba(45,183,123,.08);
+  --phA:#2DB77B;
+  --phB:#D9447A;
+  --phC:#6E69D0;
+  --phD:#D68524;
+  --phE:#5F4DD0;
+  --phF:#2E9FB5;
 }
-html{font-size:14px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);max-width:430px;margin:0 auto;min-height:100dvh;min-height:-webkit-fill-available;overflow-x:hidden;-webkit-tap-highlight-color:transparent;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
-@supports(padding:env(safe-area-inset-top)){.hdr{padding-top:max(10px,env(safe-area-inset-top))}}
-input,select,textarea,button{font-family:inherit;font-size:16px;color:inherit;border:none;outline:none;background:none}
-input[type="number"],input[type="text"],textarea,select{-webkit-appearance:none;appearance:none;font-size:16px}
-input:focus-visible,select:focus-visible,textarea:focus-visible{box-shadow:0 0 0 2px var(--acc),0 0 0 4px var(--accG);border-radius:12px}
-button{cursor:pointer;-webkit-tap-highlight-color:transparent}
-button:focus-visible{box-shadow:0 0 0 3px var(--accG);outline:2px solid var(--acc);outline-offset:2px}
-::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:var(--t3);border-radius:2px}
+
+html{
+  font-size:14px;
+  -webkit-text-size-adjust:100%;
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--t1);
+  max-width:430px;
+  margin:0 auto;
+  min-height:100dvh;
+  min-height:-webkit-fill-available;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+  transition:background var(--dur-slow) var(--ease-out),color var(--dur-slow) var(--ease-out);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  padding-left:env(safe-area-inset-left);
+  padding-right:env(safe-area-inset-right);
+  letter-spacing:-0.005em;
+}
+
+@supports(padding:env(safe-area-inset-top)){
+  .hdr{padding-top:max(14px,env(safe-area-inset-top))}
+}
+
+input,select,textarea,button{
+  font-family:inherit;
+  font-size:16px;
+  color:inherit;
+  border:none;
+  outline:none;
+  background:none;
+}
+
+input[type="number"],input[type="text"],textarea,select{
+  -webkit-appearance:none;
+  appearance:none;
+  font-size:16px;
+}
+
+/* No border-box focus ring — use inline underline accent on inputs */
+input:focus-visible,select:focus-visible,textarea:focus-visible{
+  box-shadow:inset 0 -1px 0 0 var(--acc);
+  border-radius:var(--r);
+}
+
+button{
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+
+button:focus-visible{
+  outline:1px solid var(--acc);
+  outline-offset:2px;
+  box-shadow:0 0 0 3px var(--accG);
+}
+
+::-webkit-scrollbar{width:2px;height:2px}
+::-webkit-scrollbar-thumb{background:var(--s4);border-radius:2px}
+
 @media(max-width:374px){html{font-size:13px}}
 
-.brand{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:1.5px}
-.brand-g{background:linear-gradient(135deg,var(--acc),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.mono{font-family:'JetBrains Mono',monospace}
+/* ── Typography primitives ── */
+.brand{
+  font-family:'Space Grotesk','Inter',sans-serif;
+  font-weight:700;
+  letter-spacing:-0.02em;
+}
+.brand-g{
+  background:var(--grad-primary);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.mono{
+  font-family:'JetBrains Mono','Space Grotesk',ui-monospace,monospace;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum","ss01";
+  letter-spacing:-0.01em;
+}
+
+/* Editorial headline rhythm */
+.headline-lg{
+  font-family:'Inter',sans-serif;
+  font-weight:800;
+  font-size:2rem;
+  letter-spacing:-0.02em;
+  line-height:1.05;
+}
+.display-lg{
+  font-family:'JetBrains Mono','Space Grotesk',monospace;
+  font-weight:700;
+  font-size:3.5rem;
+  line-height:0.95;
+  letter-spacing:-0.03em;
+}
+
+/* Prevent selection on chrome (but keep it on form fields) */
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 input,textarea{-webkit-user-select:text;user-select:text}
-

@@ -15,10 +15,10 @@ function renderCharts(){
   const l=wRng>=9999?ws:ws.slice(-wRng);
   if(l.length){
     const pw=getPW(),wData=l.map(w=>w.w),emaData=l.length>=3?ema(wData,Math.min(7,l.length)):null;
-    const datasets=[{label:'Poids',data:wData,borderColor:'#4AD295',backgroundColor:'rgba(74,210,149,.08)',fill:true,tension:.35,pointRadius:l.length>60?1:3,pointBackgroundColor:'#6EEAB0',borderWidth:2.5}];
+    const datasets=[{label:'Poids',data:wData,borderColor:'#6AEFAF',backgroundColor:'rgba(106,239,175,.08)',fill:true,tension:.35,pointRadius:l.length>60?1:3,pointBackgroundColor:'#6AEFAF',borderWidth:2.5}];
     if(emaData)datasets.push({label:'Tendance (EMA)',data:emaData.map(v=>+v.toFixed(1)),borderColor:'#FFB347',borderWidth:2,pointRadius:0,tension:.4,fill:false,borderDash:[]});
-    if(pw>0)datasets.push({label:'Objectif',data:l.map(()=>pw),borderColor:'rgba(243,156,18,.5)',borderDash:[6,4],pointRadius:0,borderWidth:1.5,fill:false});
-    chartW=new Chart($('wCh').getContext('2d'),{type:'line',data:{labels:l.map(w=>fmtD(w.date)),datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{x:{ticks:{color:'#52546A',font:{size:7},maxTicksLimit:l.length>60?5:7},grid:{color:'rgba(37,38,47,.6)'}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:true,position:'bottom',labels:{color:'#9395A5',font:{size:8},padding:8,usePointStyle:true,pointStyleWidth:8}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+' kg'}}}}})
+    if(pw>0)datasets.push({label:'Objectif',data:l.map(()=>pw),borderColor:'rgba(255,179,71,.5)',borderDash:[6,4],pointRadius:0,borderWidth:1.5,fill:false});
+    chartW=new Chart($('wCh').getContext('2d'),{type:'line',data:{labels:l.map(w=>fmtD(w.date)),datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{x:{ticks:{color:'#5A5E6B',font:{family:'JetBrains Mono',size:8},maxTicksLimit:l.length>60?5:7},grid:{color:'rgba(42,43,49,.5)'}},y:{ticks:{color:'#5A5E6B',font:{family:'JetBrains Mono',size:8}},grid:{color:'rgba(42,43,49,.5)'}}},plugins:{legend:{display:true,position:'bottom',labels:{color:'#9AA0AB',font:{family:'JetBrains Mono',size:9},padding:10,usePointStyle:true,pointStyleWidth:8}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+' kg'}}}}})
   }
   // Palier trend chart (current kcal+phase palier only)
   renderPalierChart();
@@ -32,8 +32,8 @@ function renderCharts(){
   const dayTg=dates.map(d=>targetForDate(d));
   // Calorie chart with deficit/surplus coloring
   if(chartC)chartC.destroy();
-  const calColors=dt.map((t,i)=>t.kcal>0?(t.kcal>dayTg[i]?'rgba(231,76,60,.5)':'rgba(0,184,148,.5)'):'rgba(82,84,106,.2)');
-  chartC=new Chart($('cCh').getContext('2d'),{type:'bar',data:{labels:lbls,datasets:[{data:dt.map(t=>Math.round(t.kcal)),backgroundColor:calColors,borderRadius:6,borderSkipped:false},{data:dayTg,type:'line',borderColor:'rgba(243,156,18,.6)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false,stepped:true,label:'Objectif'}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#52546A',font:{size:cRng>14?6:8},maxTicksLimit:cRng>14?8:14},grid:{display:false}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:false}}}});
+  const calColors=dt.map((t,i)=>t.kcal>0?(t.kcal>dayTg[i]?'rgba(255,107,107,.55)':'rgba(106,239,175,.55)'):'rgba(90,94,107,.2)');
+  chartC=new Chart($('cCh').getContext('2d'),{type:'bar',data:{labels:lbls,datasets:[{data:dt.map(t=>Math.round(t.kcal)),backgroundColor:calColors,borderRadius:6,borderSkipped:false},{data:dayTg,type:'line',borderColor:'rgba(255,179,71,.6)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false,stepped:true,label:'Objectif'}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#5A5E6B',font:{family:'JetBrains Mono',size:cRng>14?7:8},maxTicksLimit:cRng>14?8:14},grid:{display:false}},y:{ticks:{color:'#5A5E6B',font:{family:'JetBrains Mono',size:8}},grid:{color:'rgba(42,43,49,.5)'}}},plugins:{legend:{display:false}}}});
   // Calorie summary — moyennes et comptages basés sur la cible du jour, pas la cible courante
   const trackedPairs=dt.map((t,i)=>({t,tg:dayTg[i]})).filter(x=>x.t.kcal>0);
   const avgK=trackedPairs.length?Math.round(trackedPairs.reduce((s,x)=>s+x.t.kcal,0)/trackedPairs.length):0;
@@ -48,14 +48,14 @@ function renderCharts(){
   const ag=mTracked.length?mTracked.reduce((s,t)=>s+t.g,0)/mTracked.length:0;
   const al=mTracked.length?mTracked.reduce((s,t)=>s+t.l,0)/mTracked.length:0;
   if(chartM)chartM.destroy();
-  chartM=new Chart($('mCh').getContext('2d'),{type:'doughnut',data:{labels:['Prot','Gluc','Lip'],datasets:[{data:[Math.round(ap),Math.round(ag),Math.round(al)],backgroundColor:['#4AD295','#6EC6FF','#FD79A8'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:false}}}});
+  chartM=new Chart($('mCh').getContext('2d'),{type:'doughnut',data:{labels:['Prot','Gluc','Lip'],datasets:[{data:[Math.round(ap),Math.round(ag),Math.round(al)],backgroundColor:['#6AEFAF','#4DD0E1','#FF6B9D'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false}}}});
   // Macro legend + averages
   const totalG=ap+ag+al,ppct=totalG?Math.round(ap/totalG*100):0,gpct=totalG?Math.round(ag/totalG*100):0,lpct=totalG?Math.round(al/totalG*100):0;
-  $('macroLeg').innerHTML='<div style="font-size:.7rem;line-height:2"><div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4AD295;margin-right:4px"></span>Prot <strong>'+ppct+'%</strong></div><div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6EC6FF;margin-right:4px"></span>Gluc <strong>'+gpct+'%</strong></div><div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FD79A8;margin-right:4px"></span>Lip <strong>'+lpct+'%</strong></div></div>';
-  $('macroAvg').innerHTML='<div class="sum-row"><div class="sum-box"><div class="sl">Prot moy</div><div class="sv" style="color:#4AD295">'+Math.round(ap)+'g</div></div><div class="sum-box"><div class="sl">Obj</div><div class="sv" style="color:var(--t3)">'+tg.prot+'g</div></div><div class="sum-box"><div class="sl">Gluc moy</div><div class="sv" style="color:#6EC6FF">'+Math.round(ag)+'g</div></div><div class="sum-box"><div class="sl">Lip moy</div><div class="sv" style="color:#FD79A8">'+Math.round(al)+'g</div></div></div>';
+  $('macroLeg').innerHTML='<div style="font-size:.68rem;line-height:2;font-family:\'JetBrains Mono\',monospace"><div><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#6AEFAF;box-shadow:0 0 8px #6AEFAF;margin-right:6px"></span>Prot <strong>'+ppct+'%</strong></div><div><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#4DD0E1;box-shadow:0 0 8px #4DD0E1;margin-right:6px"></span>Gluc <strong>'+gpct+'%</strong></div><div><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#FF6B9D;box-shadow:0 0 8px #FF6B9D;margin-right:6px"></span>Lip <strong>'+lpct+'%</strong></div></div>';
+  $('macroAvg').innerHTML='<div class="sum-row"><div class="sum-box"><div class="sl">Prot moy</div><div class="sv" style="color:#6AEFAF">'+Math.round(ap)+'g</div></div><div class="sum-box"><div class="sl">Obj</div><div class="sv" style="color:var(--t3)">'+tg.prot+'g</div></div><div class="sum-box"><div class="sl">Gluc moy</div><div class="sv" style="color:#4DD0E1">'+Math.round(ag)+'g</div></div><div class="sum-box"><div class="sl">Lip moy</div><div class="sv" style="color:#FF6B9D">'+Math.round(al)+'g</div></div></div>';
   // Proteins chart
   const p7dates=getDates(7),p7dt=p7dates.map(d=>dayTotals(d)),p7lbl=p7dates.map(d=>fmtD(d));
-  if(chartP)chartP.destroy();chartP=new Chart($('pCh').getContext('2d'),{type:'bar',data:{labels:p7lbl,datasets:[{data:p7dt.map(t=>Math.round(t.p)),backgroundColor:'rgba(74,210,149,.45)',borderRadius:6,borderSkipped:false},{data:p7dates.map(()=>tg.prot),type:'line',borderColor:'rgba(255,179,71,.5)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#52546A',font:{size:8}},grid:{display:false}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:false}}}});
+  if(chartP)chartP.destroy();chartP=new Chart($('pCh').getContext('2d'),{type:'bar',data:{labels:p7lbl,datasets:[{data:p7dt.map(t=>Math.round(t.p)),backgroundColor:'rgba(106,239,175,.55)',borderRadius:6,borderSkipped:false},{data:p7dates.map(()=>tg.prot),type:'line',borderColor:'rgba(255,179,71,.5)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#5A5E6B',font:{family:'JetBrains Mono',size:8}},grid:{display:false}},y:{ticks:{color:'#5A5E6B',font:{family:'JetBrains Mono',size:8}},grid:{color:'rgba(42,43,49,.5)'}}},plugins:{legend:{display:false}}}});
   // Weight analysis section
   renderWeightAnalysis();
   // History (enriched with tg vs act kcal) — full list, page scrolls naturally
@@ -95,10 +95,10 @@ function renderPalierChart(){
   chartWPal=new Chart($('wChPal').getContext('2d'),{
     type:'line',
     data:{labels:pts.map(pt=>fmtD(pt.date)),datasets:[
-      {label:'Poids',data:pts.map(pt=>pt.w),borderColor:'#00CEC9',backgroundColor:'rgba(0,206,201,.08)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#00CEC9',borderWidth:2.2},
-      {label:'R\u00e9gression',data:regLine,borderColor:'rgba(0,206,201,.6)',borderDash:[5,4],pointRadius:0,borderWidth:1.5,fill:false}
+      {label:'Poids',data:pts.map(pt=>pt.w),borderColor:'#4DD0E1',backgroundColor:'rgba(77,208,225,.08)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#4DD0E1',borderWidth:2.2},
+      {label:'R\u00e9gression',data:regLine,borderColor:'rgba(77,208,225,.6)',borderDash:[5,4],pointRadius:0,borderWidth:1.5,fill:false}
     ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+' kg'}}},scales:{x:{ticks:{color:'#52546A',font:{size:7},maxTicksLimit:6},grid:{display:false}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.5)'}}}}
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+' kg'}}},scales:{x:{ticks:{color:'#5A5E6B',font:{family:'JetBrains Mono',size:8},maxTicksLimit:6},grid:{display:false}},y:{ticks:{color:'#5A5E6B',font:{family:'JetBrains Mono',size:8}},grid:{color:'rgba(42,43,49,.5)'}}}}
   });
 }
 function renderPhaseChart(){
@@ -116,7 +116,7 @@ function renderPhaseChart(){
   const regLine=regPts.map(pp=>+(lr.slope*pp.x+lr.intercept).toFixed(2));
   // Color each point by the palier it belongs to (different kcal levels within the phase)
   const kcalLevels=[...new Set(pts.map(e=>e.tgKcal))];
-  const palette=['#FDCB6E','#FD79A8','#A29BFE','#00B894','#E17055','#6C5CE7'];
+  const palette=['#FFD93D','#FF6B9D','#9F9BFF','#6AEFAF','#FFB347','#4DD0E1'];
   const colorFor=k=>palette[kcalLevels.indexOf(k)%palette.length];
   const pointColors=pts.map(e=>colorFor(e.tgKcal));
   const spanDays=Math.max(1,(new Date(pt.endDate)-new Date(pt.startDate))/86400000);
@@ -124,10 +124,10 @@ function renderPhaseChart(){
   chartWPh=new Chart($('wChPh').getContext('2d'),{
     type:'line',
     data:{labels:pts.map(e=>fmtD(e.date)),datasets:[
-      {label:'Poids',data:pts.map(e=>e.w),borderColor:'#FDCB6E',backgroundColor:'rgba(253,203,110,.06)',fill:true,tension:.25,pointRadius:3,pointBackgroundColor:pointColors,pointBorderColor:pointColors,borderWidth:2},
-      {label:'R\u00e9gression',data:regLine,borderColor:'rgba(253,203,110,.55)',borderDash:[5,4],pointRadius:0,borderWidth:1.5,fill:false}
+      {label:'Poids',data:pts.map(e=>e.w),borderColor:'#FFD93D',backgroundColor:'rgba(255,217,61,.06)',fill:true,tension:.25,pointRadius:3,pointBackgroundColor:pointColors,pointBorderColor:pointColors,borderWidth:2},
+      {label:'R\u00e9gression',data:regLine,borderColor:'rgba(255,217,61,.55)',borderDash:[5,4],pointRadius:0,borderWidth:1.5,fill:false}
     ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const e=pts[ctx.dataIndex];return ctx.dataset.label+': '+ctx.parsed.y+' kg'+(e&&e.tgKcal?' ('+e.tgKcal+' kcal)':'')}}}},scales:{x:{ticks:{color:'#52546A',font:{size:7},maxTicksLimit:7},grid:{display:false}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.5)'}}}}
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const e=pts[ctx.dataIndex];return ctx.dataset.label+': '+ctx.parsed.y+' kg'+(e&&e.tgKcal?' ('+e.tgKcal+' kcal)':'')}}}},scales:{x:{ticks:{color:'#5A5E6B',font:{family:'JetBrains Mono',size:8},maxTicksLimit:7},grid:{display:false}},y:{ticks:{color:'#5A5E6B',font:{family:'JetBrains Mono',size:8}},grid:{color:'rgba(42,43,49,.5)'}}}}
   });
 }
 function renderWeightAnalysis(){

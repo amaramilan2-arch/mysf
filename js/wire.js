@@ -102,7 +102,7 @@ function wire(){
   $('applyPct').addEventListener('click',applyPct);
   // Live macro preview on input change
   ['sK','sP','sG','sL','sFib'].forEach(id=>$(id).addEventListener('input',updateMacroPreview));
-  $('sExp').addEventListener('click',()=>{const d={log:getLog(),weights:getW(),workouts:getWk(),steps:getSteps(),water:getWater(),recipes:getRecipes(),savedmeals:getSavedMeals(),phase:getPh(),targets:getTg()};const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mysf_'+curDate+'.json';a.click()});
+  $('sExp').addEventListener('click',()=>{const d={log:getLog(),weights:getW(),workouts:getWk(),steps:getSteps(),water:getWater(),recipes:getRecipes(),savedmeals:getSavedMeals(),phase:getPh(),targets:getTg()};const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='kripy_'+curDate+'.json';a.click()});
   $('sRst').addEventListener('click',()=>{if(confirm('Tout supprimer?')){localStorage.clear();location.reload()}});
   // Import tabs
   let curImpTab='weight';
