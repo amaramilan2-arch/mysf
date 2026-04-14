@@ -28,14 +28,18 @@ function renderCharts(){
   mkRng('cRange',[{l:'7j',d:7},{l:'14j',d:14},{l:'30j',d:30}],cRng,v=>{cRng=v});
   const tg=getTg(),dates=getDates(cRng);
   const dt=dates.map(d=>dayTotals(d)),lbls=dates.map(d=>fmtD(d));
+  // Cible par jour (palier actif à cette date) — évite de comparer d'anciens jours au palier courant
+  const dayTg=dates.map(d=>targetForDate(d));
   // Calorie chart with deficit/surplus coloring
   if(chartC)chartC.destroy();
-  const calColors=dt.map(t=>t.kcal>0?(t.kcal>tg.kcal?'rgba(231,76,60,.5)':'rgba(0,184,148,.5)'):'rgba(82,84,106,.2)');
-  chartC=new Chart($('cCh').getContext('2d'),{type:'bar',data:{labels:lbls,datasets:[{data:dt.map(t=>Math.round(t.kcal)),backgroundColor:calColors,borderRadius:6,borderSkipped:false},{data:dates.map(()=>tg.kcal),type:'line',borderColor:'rgba(243,156,18,.6)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false,label:'Objectif'}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#52546A',font:{size:cRng>14?6:8},maxTicksLimit:cRng>14?8:14},grid:{display:false}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:false}}}});
-  // Calorie summary
-  const tracked=dt.filter(t=>t.kcal>0),avgK=tracked.length?Math.round(tracked.reduce((s,t)=>s+t.kcal,0)/tracked.length):0;
-  const deficit=tg.kcal-avgK,defCol=deficit>0?'var(--grn)':deficit<0?'var(--red)':'var(--acc)';
-  const overDays=tracked.filter(t=>t.kcal>tg.kcal).length,underDays=tracked.filter(t=>t.kcal<=tg.kcal&&t.kcal>0).length;
+  const calColors=dt.map((t,i)=>t.kcal>0?(t.kcal>dayTg[i]?'rgba(231,76,60,.5)':'rgba(0,184,148,.5)'):'rgba(82,84,106,.2)');
+  chartC=new Chart($('cCh').getContext('2d'),{type:'bar',data:{labels:lbls,datasets:[{data:dt.map(t=>Math.round(t.kcal)),backgroundColor:calColors,borderRadius:6,borderSkipped:false},{data:dayTg,type:'line',borderColor:'rgba(243,156,18,.6)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false,stepped:true,label:'Objectif'}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#52546A',font:{size:cRng>14?6:8},maxTicksLimit:cRng>14?8:14},grid:{display:false}},y:{ticks:{color:'#52546A',font:{size:8}},grid:{color:'rgba(37,38,47,.6)'}}},plugins:{legend:{display:false}}}});
+  // Calorie summary — moyennes et comptages basés sur la cible du jour, pas la cible courante
+  const trackedPairs=dt.map((t,i)=>({t,tg:dayTg[i]})).filter(x=>x.t.kcal>0);
+  const avgK=trackedPairs.length?Math.round(trackedPairs.reduce((s,x)=>s+x.t.kcal,0)/trackedPairs.length):0;
+  const avgTg=trackedPairs.length?Math.round(trackedPairs.reduce((s,x)=>s+x.tg,0)/trackedPairs.length):tg.kcal;
+  const deficit=avgTg-avgK,defCol=deficit>0?'var(--grn)':deficit<0?'var(--red)':'var(--acc)';
+  const overDays=trackedPairs.filter(x=>x.t.kcal>x.tg).length,underDays=trackedPairs.filter(x=>x.t.kcal<=x.tg).length;
   $('calSummary').innerHTML='<div class="sum-row"><div class="sum-box"><div class="sl">Moy/jour</div><div class="sv" style="color:var(--org)">'+avgK+'</div></div><div class="sum-box"><div class="sl">Deficit/Surplus</div><div class="sv" style="color:'+defCol+'">'+(deficit>0?'-':'+')+ Math.abs(deficit)+'</div></div><div class="sum-box"><div class="sl">Sous obj.</div><div class="sv" style="color:var(--grn)">'+underDays+'j</div></div><div class="sum-box"><div class="sl">Au-dessus</div><div class="sv" style="color:var(--red)">'+overDays+'j</div></div></div>';
   // Macro range selector
   mkRng('mRange',[{l:'7j',d:7},{l:'14j',d:14},{l:'30j',d:30}],mRng,v=>{mRng=v});
