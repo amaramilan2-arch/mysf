@@ -1,13 +1,24 @@
 // ===== CHARTS =====
 let wRng=30,cRng=7,mRng=7;
 function ema(data,span){const k=2/(span+1);let r=[data[0]];for(let i=1;i<data.length;i++)r.push(data[i]*k+r[i-1]*(1-k));return r}
-function mkRng(cid,vals,cur,cb){const el=$(cid);el.innerHTML='';vals.forEach(v=>{const b=document.createElement('button');b.type='button';b.className='rng-btn'+(v.d===cur?' sel':'');b.textContent=v.l;b.addEventListener('click',()=>{cb(v.d);renderCharts()});el.appendChild(b)})}
+function mkRng(cid,vals,cur,cb){const el=$(cid);el.innerHTML='';vals.forEach(v=>{const b=document.createElement('button');b.type='button';b.className='stat-rng-btn'+(v.d===cur?' sel':'');b.textContent=v.l;b.addEventListener('click',()=>{cb(v.d);renderCharts()});el.appendChild(b)})}
 function getDates(n){const dates=[];for(let i=n-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);dates.push(d.toISOString().slice(0,10))}return dates}
 function renderCharts(){
   const ws=getW(),se=$('wSt'),st=weightStats();
-  // Weight stats - 2 rows
-  if(!st)se.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:8px"><span class="wl">Aucune pesee</span></div>';
-  else{se.style.gridTemplateColumns='1fr 1fr 1fr';se.innerHTML='<div><div class="wl">Actuel</div><div class="wv">'+st.cur+'</div></div><div><div class="wl">Objectif</div><div class="wv" style="color:var(--org)">'+getPW()+'</div></div><div><div class="wl">IMC</div><div class="wv" style="color:'+(st.bmi<18.5?'var(--org)':st.bmi>25?'var(--red)':'var(--grn)')+'">'+st.bmi+'</div></div><div><div class="wl">Moy 7j</div><div class="wv" style="color:var(--acc)">'+st.avg7+'</div></div><div><div class="wl">Rythme</div><div class="wv" style="color:'+(st.rate<0?'var(--grn)':st.rate>0?'var(--red)':'var(--acc)')+'">'+(st.rate>0?'+':'')+st.rate+'/sem</div></div><div><div class="wl">'+(st.estDays?'ETA objectif':'Regularite')+'</div><div class="wv" style="color:var(--org)">'+(st.estDays?'~'+st.estDays+'j':st.reg+'%')+'</div></div>'}
+  // Weight metrics - 6 cards in a grid
+  if(!st){
+    se.innerHTML='<div class="stat-metric stat-metric-empty">Aucune pesee</div>';
+  }else{
+    const bmiCol=st.bmi<18.5?'var(--org)':st.bmi>25?'var(--red)':'var(--acc)';
+    const rateCol=st.rate<0?'var(--acc)':st.rate>0?'var(--red)':'var(--m3-on-surface-variant)';
+    se.innerHTML=
+      '<div class="stat-metric"><span class="stat-metric-l">Actuel</span><span class="stat-metric-v">'+st.cur+'<span class="stat-metric-u">kg</span></span></div>'+
+      '<div class="stat-metric"><span class="stat-metric-l">Objectif</span><span class="stat-metric-v" style="color:var(--org)">'+getPW()+'<span class="stat-metric-u">kg</span></span></div>'+
+      '<div class="stat-metric"><span class="stat-metric-l">IMC</span><span class="stat-metric-v" style="color:'+bmiCol+'">'+st.bmi+'</span></div>'+
+      '<div class="stat-metric"><span class="stat-metric-l">Moy 7j</span><span class="stat-metric-v" style="color:var(--acc)">'+st.avg7+'<span class="stat-metric-u">kg</span></span></div>'+
+      '<div class="stat-metric"><span class="stat-metric-l">Rythme</span><span class="stat-metric-v" style="color:'+rateCol+'">'+(st.rate>0?'+':'')+st.rate+'<span class="stat-metric-u">/sem</span></span></div>'+
+      '<div class="stat-metric"><span class="stat-metric-l">'+(st.estDays?'ETA':'Regularite')+'</span><span class="stat-metric-v" style="color:var(--org)">'+(st.estDays?'~'+st.estDays+'<span class="stat-metric-u">j</span>':st.reg+'<span class="stat-metric-u">%</span>')+'</span></div>';
+  }
   // Weight range selector
   mkRng('wRange',[{l:'7j',d:7},{l:'15j',d:15},{l:'30j',d:30},{l:'90j',d:90},{l:'Tout',d:9999}],wRng,v=>{wRng=v});
   // Weight chart with EMA + goal line
@@ -58,19 +69,29 @@ function renderCharts(){
   if(chartP)chartP.destroy();chartP=new Chart($('pCh').getContext('2d'),{type:'bar',data:{labels:p7lbl,datasets:[{data:p7dt.map(t=>Math.round(t.p)),backgroundColor:'rgba(106,239,175,.55)',borderRadius:6,borderSkipped:false},{data:p7dates.map(()=>tg.prot),type:'line',borderColor:'rgba(255,179,71,.5)',borderDash:[5,5],pointRadius:0,borderWidth:2,fill:false}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#5A5E6B',font:{family:'JetBrains Mono',size:8}},grid:{display:false}},y:{ticks:{color:'#5A5E6B',font:{family:'JetBrains Mono',size:8}},grid:{color:'rgba(42,43,49,.5)'}}},plugins:{legend:{display:false}}}});
   // Weight analysis section
   renderWeightAnalysis();
-  // History (enriched with tg vs act kcal) — full list, page scrolls naturally
+  // History table (Date / Phase / Poids / Trend)
   const rv=[...ws].reverse();
   const rows=rv.map((w,i)=>{
-    let ch='';const idx=ws.length-1-i;
-    if(idx>=2){const a=((ws[idx].w-ws[idx-1].w)+(ws[idx-1].w-ws[idx-2].w))/2;ch=a<-0.05?'<span class="chip dn">\u2193</span>':a>0.05?'<span class="chip up">\u2191</span>':'<span class="chip st">\u2192</span>'}
-    const en=enrichW(w),devPct=en.tgKcal>0?Math.abs(en.delta)/en.tgKcal:1;
-    const col=en.actKcal===0?'var(--t3)':devPct<0.05?'var(--grn)':devPct<0.15?'var(--org)':'var(--red)';
-    const kcalTxt=en.actKcal>0?(en.tgKcal+'\u2192'+en.actKcal):(en.tgKcal+'\u2192--');
-    const phDot='<span class="ph-dot" title="Phase '+en.phase+'" style="background:'+PHC[en.phase]+'"></span>';
-    return '<div class="hi" data-wd="'+w.date+'" data-ww="'+w.w+'" style="cursor:pointer"><span class="hd">'+fmtD(w.date)+phDot+'</span>'+ch+'<span class="hw mono">'+w.w+' kg</span><span class="hkc mono" style="color:'+col+'">'+kcalTxt+'</span><span style="font-size:.55rem;color:var(--t3);margin-left:4px">&#x270E;</span></div>';
+    const idx=ws.length-1-i;
+    let trendIco='trending_flat',trendVal='0.0',trendCls='flat',diff=0;
+    if(idx>=1){
+      diff=+(ws[idx].w-ws[idx-1].w).toFixed(1);
+      if(diff<-0.05){trendIco='trending_down';trendCls='down';trendVal=diff.toString()}
+      else if(diff>0.05){trendIco='trending_up';trendCls='up';trendVal='+'+diff}
+      else{trendVal=diff.toFixed(1)}
+    }
+    const en=enrichW(w);
+    const phCol=PHC[en.phase]||'#6AEFAF';
+    const dateParts=fmtD(w.date).split(' ');
+    return '<button type="button" class="stat-wh-row" data-wd="'+w.date+'" data-ww="'+w.w+'">'+
+      '<span class="stat-wh-date">'+fmtD(w.date)+'</span>'+
+      '<span class="stat-wh-phase"><span class="stat-wh-dot" style="background:'+phCol+';box-shadow:0 0 8px '+phCol+'"></span><span class="stat-wh-phase-l">'+en.phase+'</span></span>'+
+      '<span class="stat-wh-weight">'+w.w+'<span class="stat-wh-unit">kg</span></span>'+
+      '<span class="stat-wh-trend '+trendCls+'"><span class="material-symbols-outlined">'+trendIco+'</span><span class="stat-wh-trend-v">'+trendVal+'</span></span>'+
+    '</button>';
   }).join('');
-  $('wHi').innerHTML=rows;
-  $('wHi').querySelectorAll('.hi[data-wd]').forEach(el=>el.addEventListener('click',function(){openWeightEdit(this.dataset.wd,this.dataset.ww)}));
+  $('wHi').innerHTML=rows||'<div class="stat-wh-empty">Aucune pesee enregistree</div>';
+  $('wHi').querySelectorAll('.stat-wh-row[data-wd]').forEach(el=>el.addEventListener('click',function(){openWeightEdit(this.dataset.wd,this.dataset.ww)}));
 }
 function renderPalierChart(){
   const p=getPalier(),ws=getW();

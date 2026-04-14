@@ -697,7 +697,388 @@
   min-height:46px;
 }
 
-/* ── CHARTS ───────────────────────────────────────────── */
+/* ── STATS v2 (Analytics Engine) ──────────────────────── */
+
+/* Dashboard header */
+.stat-head{
+  display:flex;flex-direction:column;
+  margin:4px 0 24px;
+  gap:6px;
+  min-width:0;
+}
+.stat-head h1{
+  font-family:'Inter',sans-serif;
+  font-size:1.9rem;
+  font-weight:900;
+  letter-spacing:-0.035em;
+  line-height:1.05;
+  color:var(--t1);
+}
+.stat-head p{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.66rem;
+  font-weight:700;
+  color:var(--acc);
+  text-transform:uppercase;
+  letter-spacing:.2em;
+}
+
+/* Quick add weight input */
+.stat-add{margin-bottom:16px}
+.stat-add-wrap{
+  position:relative;
+  display:flex;align-items:center;
+  background:var(--s3);
+  border-radius:14px;
+  padding:4px 4px 4px 44px;
+  transition:background var(--dur-fast) var(--ease-out),box-shadow var(--dur-fast) var(--ease-out);
+}
+.stat-add-wrap:focus-within{
+  background:var(--s4);
+  box-shadow:inset 0 0 0 1px var(--acc);
+}
+.stat-add-ico{
+  position:absolute;
+  left:14px;top:50%;
+  transform:translateY(-50%);
+  color:var(--m3-on-surface-variant);
+  font-size:20px!important;
+  pointer-events:none;
+}
+.stat-add-in{
+  flex:1;
+  background:transparent;
+  border:none;
+  padding:14px 6px;
+  color:var(--t1);
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.92rem;
+  font-weight:600;
+  font-variant-numeric:tabular-nums;
+  min-height:48px;
+  min-width:0;
+}
+.stat-add-in::placeholder{
+  color:color-mix(in srgb,var(--m3-on-surface-variant) 50%,transparent);
+  font-weight:500;
+}
+.stat-add-btn{
+  width:44px;height:44px;
+  flex-shrink:0;
+  background:var(--grad-primary);
+  border:none;
+  border-radius:10px;
+  color:#121317;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:transform var(--dur-fast) var(--ease-out),filter var(--dur-fast) var(--ease-out);
+}
+.stat-add-btn:active{transform:scale(.94);filter:brightness(.94)}
+.stat-add-btn .material-symbols-outlined{font-size:22px}
+
+/* Metrics grid (6 cards : Actuel / Objectif / IMC / Moy 7j / Rythme / ETA) */
+.stat-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-bottom:20px;
+}
+.stat-metric{
+  display:flex;flex-direction:column;
+  gap:4px;
+  background:var(--s2);
+  border-radius:14px;
+  padding:14px 12px 15px;
+  min-width:0;
+}
+.stat-metric-l{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.56rem;
+  font-weight:700;
+  color:var(--m3-on-surface-variant);
+  text-transform:uppercase;
+  letter-spacing:.14em;
+}
+.stat-metric-v{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.15rem;
+  font-weight:800;
+  color:var(--t1);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-0.025em;
+  display:inline-flex;align-items:baseline;
+  line-height:1;
+}
+.stat-metric-u{
+  font-size:.58rem;
+  font-weight:500;
+  color:var(--m3-on-surface-variant);
+  margin-left:2px;
+  letter-spacing:0;
+}
+.stat-metric-empty{
+  grid-column:1/-1;
+  text-align:center;
+  padding:18px;
+  color:var(--m3-on-surface-variant);
+  font-family:'Inter',sans-serif;
+  font-size:.78rem;
+  font-weight:500;
+}
+
+/* Stat card (analytics container) */
+.stat-card{
+  background:var(--s1);
+  border-radius:18px;
+  padding:22px 20px;
+  margin-bottom:16px;
+  border:none;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--outline-variant) 60%,transparent);
+}
+.stat-card-big{
+  padding:24px 22px;
+}
+.stat-card-head{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+}
+.stat-card-title{
+  flex:1;min-width:0;
+}
+.stat-card-title h3{
+  font-family:'Inter',sans-serif;
+  font-size:1rem;
+  font-weight:800;
+  letter-spacing:-0.02em;
+  color:var(--t1);
+  display:flex;align-items:center;gap:8px;
+}
+.stat-card-title p{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.66rem;
+  font-weight:500;
+  color:var(--m3-on-surface-variant);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-top:4px;
+}
+.stat-card-title .stat-meta{
+  text-transform:none;
+  letter-spacing:.02em;
+  font-size:.62rem;
+}
+
+/* Dot indicator in section title */
+.stat-dot{
+  display:inline-block;
+  width:8px;height:8px;
+  border-radius:50%;
+  box-shadow:0 0 10px currentColor;
+  flex-shrink:0;
+}
+
+/* Range segmented control */
+.stat-range{
+  display:flex;gap:2px;
+  background:var(--s4);
+  border-radius:10px;
+  padding:3px;
+  flex-shrink:0;
+}
+.stat-rng-btn{
+  padding:7px 11px;
+  border-radius:8px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.6rem;
+  font-weight:700;
+  background:transparent;
+  color:color-mix(in srgb,var(--m3-on-surface-variant) 65%,transparent);
+  border:none;
+  cursor:pointer;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  transition:all var(--dur-fast) var(--ease-out);
+  min-height:30px;
+}
+.stat-rng-btn:hover{color:var(--t1)}
+.stat-rng-btn.sel{
+  background:var(--s2);
+  color:var(--t1);
+}
+
+/* Chart wrap */
+.stat-chart-wrap{
+  position:relative;
+  width:100%;
+  min-width:0;
+}
+
+/* Macros donut body */
+.stat-macros-body{
+  display:flex;align-items:center;gap:20px;
+  margin-bottom:16px;
+}
+.stat-donut-wrap{
+  position:relative;
+  width:140px;height:140px;
+  flex-shrink:0;
+}
+.stat-donut-wrap canvas{
+  width:100%!important;
+  height:100%!important;
+}
+.stat-macro-leg{
+  flex:1;min-width:0;
+  display:flex;flex-direction:column;
+  gap:8px;
+}
+.stat-macro-leg>div{
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.72rem;
+  font-weight:600;
+  color:var(--m3-on-surface-variant);
+}
+
+/* Stats summary (cal summary, macro avg — reuses .sum-row/.sum-box but restyled container) */
+.stat-summary{
+  margin-top:16px;
+}
+.stat-summary .sum-row{gap:8px}
+.stat-summary .sum-box{
+  background:var(--s2);
+  padding:12px 10px;
+}
+
+/* Weight history table */
+.stat-wh{
+  background:var(--s2);
+  border-radius:14px;
+  padding:8px 14px 10px;
+  overflow:hidden;
+}
+.stat-wh-head{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr;
+  gap:8px;
+  padding:10px 6px 12px;
+  border-bottom:1px solid color-mix(in srgb,var(--outline-variant) 50%,transparent);
+  margin-bottom:4px;
+}
+.stat-wh-head span{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.52rem;
+  font-weight:700;
+  color:var(--m3-on-surface-variant);
+  text-transform:uppercase;
+  letter-spacing:.16em;
+}
+.stat-wh-head .right{text-align:right}
+.stat-wh-body{
+  display:flex;flex-direction:column;
+  gap:2px;
+}
+.stat-wh-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr;
+  gap:8px;
+  align-items:center;
+  padding:14px 6px;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  text-align:left;
+  border-radius:10px;
+  transition:background var(--dur-fast) var(--ease-out);
+  min-height:54px;
+}
+.stat-wh-row:hover{background:var(--s3)}
+.stat-wh-row:active{background:var(--s4)}
+.stat-wh-date{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.74rem;
+  font-weight:600;
+  color:var(--t1);
+  font-variant-numeric:tabular-nums;
+}
+.stat-wh-phase{
+  display:flex;align-items:center;gap:8px;
+  min-width:0;
+}
+.stat-wh-dot{
+  display:inline-block;
+  width:8px;height:8px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+.stat-wh-phase-l{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.58rem;
+  font-weight:600;
+  color:var(--m3-on-surface-variant);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+.stat-wh-weight{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.88rem;
+  font-weight:800;
+  color:var(--t1);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-0.01em;
+  display:inline-flex;align-items:baseline;
+}
+.stat-wh-unit{
+  font-size:.56rem;
+  font-weight:500;
+  color:var(--m3-on-surface-variant);
+  margin-left:2px;
+}
+.stat-wh-trend{
+  display:flex;align-items:center;justify-content:flex-end;gap:4px;
+  color:var(--m3-on-surface-variant);
+}
+.stat-wh-trend .material-symbols-outlined{font-size:16px}
+.stat-wh-trend-v{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.66rem;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+.stat-wh-trend.down{color:var(--acc)}
+.stat-wh-trend.up{color:var(--red)}
+.stat-wh-trend.flat{color:var(--m3-on-surface-variant)}
+.stat-wh-empty{
+  padding:32px 16px;
+  text-align:center;
+  font-family:'Inter',sans-serif;
+  font-size:.78rem;
+  font-weight:500;
+  color:var(--m3-on-surface-variant);
+}
+
+/* Export/Add button in card header */
+.stat-export-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 14px;
+  background:transparent;
+  border:none;
+  border-radius:10px;
+  color:var(--acc);
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.62rem;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:background var(--dur-fast) var(--ease-out);
+  flex-shrink:0;
+}
+.stat-export-btn:hover{background:var(--s3)}
+.stat-export-btn .material-symbols-outlined{font-size:16px}
+
+/* ── Legacy charts classes (compat) ─────────────────── */
 .ch{
   background:var(--s1);
   border-radius:var(--r2);

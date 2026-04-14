@@ -164,44 +164,133 @@
 
 <!-- CHARTS -->
 <div class="tp" id="tab-charts">
-  <div class="ch"><h3><span class="cd" style="background:var(--acc)"></span>Poids global</h3>
-    <div class="irow"><input type="text" inputmode="decimal" class="inp" id="wIn" placeholder="Poids (kg)"><button class="btn btn-p btn-icon" type="button" id="wAdd" aria-label="Ajouter poids">+</button></div>
-    <div class="ws" id="wSt"></div>
-    <div style="display:flex;gap:4px;margin-bottom:8px" id="wRange"></div>
-    <div class="chw" style="height:220px"><canvas id="wCh"></canvas></div>
-  </div>
-  <div class="ch"><h3><span class="cd" style="background:var(--cyan)"></span>Tendance palier</h3>
-    <div id="wPalMeta" style="font-size:.62rem;color:var(--t3);margin-bottom:6px"></div>
-    <div class="chw" style="height:150px"><canvas id="wChPal"></canvas></div>
-  </div>
-  <div class="ch"><h3><span class="cd" style="background:var(--yel)"></span>Tendance phase</h3>
-    <div id="wPhMeta" style="font-size:.62rem;color:var(--t3);margin-bottom:6px"></div>
-    <div class="chw" style="height:150px"><canvas id="wChPh"></canvas></div>
-  </div>
-  <div class="ch"><h3><span class="cd" style="background:var(--org)"></span>Bilan calorique</h3>
-    <div style="display:flex;gap:4px;margin-bottom:8px" id="cRange"></div>
-    <div class="chw"><canvas id="cCh"></canvas></div>
-    <div id="calSummary" style="margin-top:8px"></div>
-  </div>
-  <div class="ch"><h3><span class="cd" style="background:var(--pur)"></span>Macros</h3>
-    <div style="display:flex;gap:4px;margin-bottom:8px" id="mRange"></div>
-    <div style="display:flex;gap:10px;align-items:center">
-      <div class="chw" style="height:180px;flex:1"><canvas id="mCh"></canvas></div>
-      <div id="macroLeg" style="flex:0 0 auto"></div>
+  <!-- Dashboard header -->
+  <section class="stat-head">
+    <h1>Stats</h1>
+    <p>Biometric data stream &middot; analyse de tendance</p>
+  </section>
+
+  <!-- Quick add weight -->
+  <section class="stat-add">
+    <div class="stat-add-wrap">
+      <span class="material-symbols-outlined stat-add-ico">monitor_weight</span>
+      <input type="text" inputmode="decimal" class="stat-add-in" id="wIn" placeholder="Ajouter un poids (kg)">
+      <button type="button" class="stat-add-btn" id="wAdd" aria-label="Ajouter">
+        <span class="material-symbols-outlined">add</span>
+      </button>
     </div>
-    <div id="macroAvg" style="margin-top:8px"></div>
-  </div>
-  <div class="ch"><h3><span class="cd" style="background:var(--grn)"></span>Proteines</h3>
-    <div class="chw"><canvas id="pCh"></canvas></div>
-  </div>
-  <div class="ch"><h3><span class="cd" style="background:var(--pnk)"></span>Analyse poids</h3>
+  </section>
+
+  <!-- Weight metrics grid -->
+  <section class="stat-metrics" id="wSt"></section>
+
+  <!-- Poids global -->
+  <section class="stat-card stat-card-big">
+    <div class="stat-card-head">
+      <div class="stat-card-title">
+        <h3>Poids global</h3>
+        <p>Weight projection &middot; EMA &middot; objectif</p>
+      </div>
+      <div class="stat-range" id="wRange"></div>
+    </div>
+    <div class="stat-chart-wrap" style="height:240px"><canvas id="wCh"></canvas></div>
+  </section>
+
+  <!-- Tendance palier -->
+  <section class="stat-card">
+    <div class="stat-card-head">
+      <div class="stat-card-title">
+        <h3><span class="stat-dot" style="background:#4DD0E1"></span>Tendance palier</h3>
+        <p class="stat-meta" id="wPalMeta"></p>
+      </div>
+    </div>
+    <div class="stat-chart-wrap" style="height:160px"><canvas id="wChPal"></canvas></div>
+  </section>
+
+  <!-- Tendance phase -->
+  <section class="stat-card">
+    <div class="stat-card-head">
+      <div class="stat-card-title">
+        <h3><span class="stat-dot" style="background:#FFD93D"></span>Tendance phase</h3>
+        <p class="stat-meta" id="wPhMeta"></p>
+      </div>
+    </div>
+    <div class="stat-chart-wrap" style="height:160px"><canvas id="wChPh"></canvas></div>
+  </section>
+
+  <!-- Bilan calorique -->
+  <section class="stat-card">
+    <div class="stat-card-head">
+      <div class="stat-card-title">
+        <h3><span class="stat-dot" style="background:#FFB347"></span>Bilan calorique</h3>
+        <p>Target vs reel kcal</p>
+      </div>
+      <div class="stat-range" id="cRange"></div>
+    </div>
+    <div class="stat-chart-wrap" style="height:200px"><canvas id="cCh"></canvas></div>
+    <div id="calSummary" class="stat-summary"></div>
+  </section>
+
+  <!-- Macros -->
+  <section class="stat-card">
+    <div class="stat-card-head">
+      <div class="stat-card-title">
+        <h3><span class="stat-dot" style="background:#9F9BFF"></span>Macros</h3>
+        <p>Repartition moyenne</p>
+      </div>
+      <div class="stat-range" id="mRange"></div>
+    </div>
+    <div class="stat-macros-body">
+      <div class="stat-donut-wrap"><canvas id="mCh"></canvas></div>
+      <div id="macroLeg" class="stat-macro-leg"></div>
+    </div>
+    <div id="macroAvg" class="stat-summary"></div>
+  </section>
+
+  <!-- Proteines -->
+  <section class="stat-card">
+    <div class="stat-card-head">
+      <div class="stat-card-title">
+        <h3><span class="stat-dot" style="background:#6AEFAF"></span>Proteines</h3>
+        <p>7 derniers jours</p>
+      </div>
+    </div>
+    <div class="stat-chart-wrap" style="height:180px"><canvas id="pCh"></canvas></div>
+  </section>
+
+  <!-- Analyse poids -->
+  <section class="stat-card">
+    <div class="stat-card-head">
+      <div class="stat-card-title">
+        <h3><span class="stat-dot" style="background:#FF6B9D"></span>Analyse poids</h3>
+        <p>Trend 72 jours</p>
+      </div>
+    </div>
     <div id="wAnalysis"></div>
-  </div>
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;margin-bottom:4px">
-    <div class="stitle" style="margin:0">Historique</div>
-    <button type="button" class="btn btn-o btn-sm" id="wAddBtn" style="padding:5px 10px;font-size:.66rem">+ Ajouter</button>
-  </div>
-  <div id="wHi"></div>
+  </section>
+
+  <!-- Weight history -->
+  <section class="stat-card">
+    <div class="stat-card-head">
+      <div class="stat-card-title">
+        <h3>Journal des pesees</h3>
+        <p>Weight history log</p>
+      </div>
+      <button type="button" class="stat-export-btn" id="wAddBtn">
+        <span class="material-symbols-outlined">add</span>
+        Ajouter
+      </button>
+    </div>
+    <div class="stat-wh">
+      <div class="stat-wh-head">
+        <span>Date</span>
+        <span>Phase</span>
+        <span>Poids</span>
+        <span class="right">Tendance</span>
+      </div>
+      <div id="wHi" class="stat-wh-body"></div>
+    </div>
+  </section>
 </div>
 
 <!-- MEALS -->
