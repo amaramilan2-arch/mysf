@@ -206,20 +206,55 @@
 
 <!-- MEALS -->
 <div class="tp" id="tab-meals">
-  <div class="dn"><button type="button" id="dP">&#x276E;</button><span class="dd" id="cDt">Aujourd'hui</span><button type="button" id="dN">&#x276F;</button></div>
-  <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px">
-    <button type="button" class="btn btn-icon btn-sm" id="aiBtn" title="Analyser avec IA" style="background:linear-gradient(135deg,var(--cyan),var(--acc));color:#062028;font-size:.82rem">&#x2728;</button>
-    <button type="button" class="btn btn-s btn-icon btn-sm" id="scanBtn" title="Scanner code-barres">&#x1F4F7;</button>
-    <button type="button" class="btn btn-p btn-icon btn-sm" id="manualBtn" title="Saisie manuelle">+</button>
-    <button type="button" class="btn btn-o btn-icon btn-sm" id="smBtn" title="Repas sauvegardes">&#x2B50;</button>
-  </div>
-  <div style="position:relative;z-index:30">
-    <div class="sw"><span class="si">&#x1F50D;</span><input type="text" id="fSr" placeholder="Rechercher un aliment..." autocomplete="off"><div class="sr" id="fRs"></div></div>
-  </div>
-  <div class="fav-s" id="favS"></div>
-  <div class="msum" id="mSm"></div>
-  <div class="mt" id="mT"></div>
-  <div id="mC"></div>
+  <!-- Date navigator -->
+  <nav class="meal-dn">
+    <button type="button" class="meal-dn-btn" id="dP" aria-label="Jour precedent"><span class="material-symbols-outlined">chevron_left</span></button>
+    <div class="meal-dn-c">
+      <span class="meal-dn-l" id="cDtL">Aujourd'hui</span>
+      <span class="meal-dn-d" id="cDt">--</span>
+    </div>
+    <button type="button" class="meal-dn-btn" id="dN" aria-label="Jour suivant"><span class="material-symbols-outlined">chevron_right</span></button>
+  </nav>
+
+  <!-- Daily summary bento grid -->
+  <section class="meal-bento" id="mSm"></section>
+
+  <!-- Search + scan barcode -->
+  <section class="meal-search-row">
+    <div class="sw meal-sw">
+      <span class="material-symbols-outlined si">search</span>
+      <input type="text" id="fSr" placeholder="Chercher un aliment..." autocomplete="off">
+      <div class="sr" id="fRs"></div>
+    </div>
+    <button type="button" class="meal-icon-btn" id="scanBtn" aria-label="Scanner code-barres">
+      <span class="material-symbols-outlined">barcode_scanner</span>
+    </button>
+  </section>
+
+  <!-- Quick action chips -->
+  <section class="meal-chips">
+    <button type="button" class="meal-chip" id="aiBtn">
+      <span class="material-symbols-outlined meal-chip-ico chip-ai">auto_awesome</span>
+      <span>Analyse IA</span>
+    </button>
+    <button type="button" class="meal-chip" id="smBtn">
+      <span class="material-symbols-outlined meal-chip-ico chip-fav">star</span>
+      <span>Favoris</span>
+    </button>
+    <button type="button" class="meal-chip" id="manualBtn">
+      <span class="material-symbols-outlined meal-chip-ico chip-add">add</span>
+      <span>Manuel</span>
+    </button>
+  </section>
+
+  <!-- Recent/favourite foods horizontal strip -->
+  <div class="fav-s meal-fav-s" id="favS"></div>
+
+  <!-- Meal tabs -->
+  <div class="mt meal-tabs" id="mT"></div>
+
+  <!-- Meal content area -->
+  <div class="meal-list" id="mC"></div>
 </div>
 
 <!-- RECIPES -->
