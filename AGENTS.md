@@ -86,7 +86,7 @@ Le DS de Kripy s'inspire des outils dev haut de gamme (Linear, Raycast). **Deep 
 
 **Règle no-line** : pour séparer deux blocs, shift le token de surface (ex: `--s2` imbriqué dans `--s1`). Les bordures 1px classiques sont interdites. En dernier recours, utiliser `--outline-variant` (20% d'opacité) comme ghost border.
 
-**Règle des rangées paires** : dans une liste (`.hm-item`, `.mi`, `.hi`, `.whi`, `.vol-item`, `.recipe-item`), les éléments `:nth-child(even)` utilisent `--s0` pour alterner sans divider.
+**Règle des rangées paires** : dans une liste (`.hm-item`, `.mi`, `.hi`, `.whi`, `.vol-item`, `.rc-item`), les éléments `:nth-child(even)` utilisent `--s0` pour alterner sans divider.
 
 ### Primary & LED accents
 

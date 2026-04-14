@@ -1072,45 +1072,278 @@
   color:#0A1410;
 }
 
-/* ── RECIPES ──────────────────────────────────────────── */
-.recipe-item{
+/* ── RECIPES v2 ───────────────────────────────────────── */
+
+/* Page header */
+.rcp-head{
+  display:flex;flex-direction:column;
+  margin:8px 0 28px;
+  gap:6px;
+  min-width:0;
+}
+.rcp-title{
+  font-family:'Inter',sans-serif;
+  font-size:2rem;
+  font-weight:900;
+  letter-spacing:-0.035em;
+  line-height:1.05;
+  color:var(--t1);
+}
+.rcp-sub{
+  font-family:'Inter',sans-serif;
+  font-size:.82rem;
+  color:var(--m3-on-surface-variant);
+  font-weight:500;
+  line-height:1.5;
+  margin-top:2px;
+}
+
+/* Create form card */
+.rcp-form{
+  background:var(--s1);
+  border-radius:18px;
+  padding:24px 22px;
+  margin-bottom:36px;
+  display:flex;flex-direction:column;
+  gap:16px;
+  box-shadow:inset 0 0 0 1px rgba(61,74,65,.05);
+}
+.rcp-form-l{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.66rem;
+  font-weight:700;
+  color:var(--acc);
+  text-transform:uppercase;
+  letter-spacing:.2em;
+  margin:0 0 4px;
+}
+.rcp-f{
+  display:flex;flex-direction:column;
+  gap:6px;
+  min-width:0;
+}
+.rcp-label{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.56rem;
+  font-weight:500;
+  color:var(--m3-on-surface-variant);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  margin-left:4px;
+}
+.rcp-in{
+  width:100%;
+  background:var(--s4);
+  border:none;
+  border-radius:12px;
+  padding:13px 16px;
+  color:var(--t1);
+  font-family:'Inter',sans-serif;
+  font-size:.9rem;
+  font-weight:500;
+  transition:background var(--dur-fast) var(--ease-out),box-shadow var(--dur-fast) var(--ease-out);
+  min-height:46px;
+}
+.rcp-in::placeholder{
+  color:rgba(188,202,191,.3);
+  font-weight:500;
+}
+.rcp-in:focus{
+  background:var(--s4);
+  box-shadow:inset 0 0 0 1px var(--acc);
+}
+.rcp-in-mono{
+  font-family:'Space Grotesk',sans-serif;
+  font-variant-numeric:tabular-nums;
+}
+.rcp-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+.rcp-grid .rcp-in{
+  padding:13px 10px;
+  text-align:left;
+}
+.rcp-cta{
+  width:100%;
+  background:var(--grad-primary);
+  color:#121317;
+  border:none;
+  border-radius:12px;
+  padding:15px 20px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.78rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(74,210,149,.2);
+  transition:transform var(--dur-fast) var(--ease-out),filter var(--dur-fast) var(--ease-out);
+  margin-top:4px;
+  min-height:50px;
+}
+.rcp-cta:active{transform:scale(.98);filter:brightness(.94)}
+
+/* Recipe list */
+.rcp-list-wrap{
+  display:flex;flex-direction:column;
+  gap:12px;
+}
+.rcp-list-head{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:4px;
+}
+.rcp-list-l{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.66rem;
+  font-weight:700;
+  color:var(--m3-on-surface-variant);
+  text-transform:uppercase;
+  letter-spacing:.2em;
+  margin:0;
+}
+.rcp-list-count{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.58rem;
+  font-weight:500;
+  color:rgba(188,202,191,.55);
+  background:var(--s2);
+  padding:4px 10px;
+  border-radius:6px;
+  letter-spacing:.1em;
+}
+
+/* Recipe card */
+.rc-item{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;
   background:var(--s2);
   border-radius:14px;
   padding:16px 18px;
-  margin-bottom:8px;
-  border:none;
+  border-left:4px solid rgba(106,239,175,.4);
+  transition:background var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out);
 }
-.recipe-item:nth-child(even){background:var(--s0)}
-.recipe-item .ri-name{
-  font-weight:800;
-  font-size:.88rem;
-  margin-bottom:6px;
+.rc-item:nth-child(even){
+  border-left-color:rgba(106,239,175,.2);
+  background:var(--s1);
+}
+.rc-item:hover{background:var(--s3)}
+.rc-body{
+  flex:1;min-width:0;
+  display:flex;flex-direction:column;
+  gap:10px;
+}
+.rc-h{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:10px;
+}
+.rc-name{
+  font-family:'Inter',sans-serif;
+  font-size:.9rem;
+  font-weight:700;
   color:var(--t1);
+  letter-spacing:-0.01em;
+  line-height:1.25;
+  flex:1;min-width:0;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.rc-kcal{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.66rem;
+  font-weight:700;
+  color:var(--acc);
+  background:var(--accG);
+  padding:3px 9px;
+  border-radius:999px;
+  letter-spacing:.02em;
+  font-variant-numeric:tabular-nums;
+  flex-shrink:0;
+}
+.rc-macs{
+  display:flex;
+  gap:18px;
+}
+.rc-m{
+  display:flex;flex-direction:column;
+  gap:2px;
+  min-width:0;
+}
+.rc-l{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.55rem;
+  font-weight:500;
+  color:rgba(188,202,191,.55);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+.rc-v{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.82rem;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
   letter-spacing:-0.01em;
 }
-.recipe-item .ri-macros{
-  font-size:.68rem;
-  color:var(--t2);
-  font-weight:500;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  font-family:'JetBrains Mono',monospace;
-}
-.recipe-item .ri-actions{display:flex;gap:8px;margin-top:12px}
-.recipe-item .ri-del{
-  color:var(--red);
-  cursor:pointer;
-  font-size:.66rem;
-  padding:7px 14px;
+.rc-v-p{color:var(--acc)}
+.rc-v-g{color:var(--m3-tertiary)}
+.rc-v-l{color:var(--m3-pnk)}
+.rc-v-f{color:var(--m3-org)}
+.rc-del{
+  width:36px;height:36px;
   border-radius:10px;
+  background:transparent;
   border:none;
-  background:var(--redG);
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.06em;
-  font-family:'JetBrains Mono',monospace;
+  color:rgba(188,202,191,.35);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  flex-shrink:0;
+  transition:background var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out);
 }
-.recipe-item .ri-del:active{background:var(--red);color:#fff}
+.rc-del:hover{
+  color:var(--red);
+  background:var(--redG);
+}
+.rc-del:active{transform:scale(.9)}
+.rc-del .material-symbols-outlined{
+  font-size:18px;
+  line-height:1;
+}
+
+/* Empty state */
+.rcp-empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:64px 20px 48px;
+  text-align:center;
+  gap:0;
+}
+.rcp-empty-ico{
+  width:64px;height:64px;
+  border-radius:50%;
+  background:var(--s3);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+}
+.rcp-empty-ico .material-symbols-outlined{
+  font-size:30px;
+  color:rgba(188,202,191,.4);
+}
+.rcp-empty h4{
+  font-family:'Inter',sans-serif;
+  font-size:.95rem;
+  font-weight:700;
+  color:var(--t1);
+  letter-spacing:-0.01em;
+  margin:0 0 8px;
+}
+.rcp-empty p{
+  font-family:'Inter',sans-serif;
+  font-size:.82rem;
+  color:var(--m3-on-surface-variant);
+  font-weight:500;
+  max-width:220px;
+  line-height:1.5;
+  margin:0;
+}
 
 /* ── SPORT ────────────────────────────────────────────── */
 .split-grid{
