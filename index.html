@@ -13,7 +13,8 @@
 <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Kripy&quot;,&quot;short_name&quot;:&quot;Kripy&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23121317&quot;,&quot;theme_color&quot;:&quot;%23121317&quot;}">
 <title>Kripy — Precision Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -54,48 +55,110 @@
 </div>
 
 <div class="hdr" id="hdr" style="display:none">
-  <div style="display:flex;align-items:baseline;gap:6px"><div class="logo brand brand-g">Kripy</div><div style="font-size:.5rem;color:var(--t3);font-weight:600;letter-spacing:.5px">v2.1</div></div>
-  <div class="hdr-r"><div class="theme-toggle" id="themeBtn" title="Mode clair/sombre">&#x1F319;</div><div class="ph-pill" id="phPill"><span class="d"></span><span id="phLbl">A</span></div><img class="u-ava" id="uAva" src="" alt=""></div>
+  <div class="hdr-l">
+    <div class="logo">KRIPY</div>
+    <div class="ph-pill" id="phPill"><span class="d"></span><span id="phLbl">Phase A</span></div>
+  </div>
+  <div class="hdr-r">
+    <button type="button" class="theme-toggle" id="themeBtn" title="Mode clair/sombre" aria-label="Theme"><span class="material-symbols-outlined">dark_mode</span></button>
+    <img class="u-ava" id="uAva" src="" alt="">
+  </div>
 </div>
 
 <div class="tc" id="mc" style="display:none">
 
 <!-- HOME -->
 <div class="tp active" id="tab-home">
-  <div class="home-head">
-    <div class="home-hi" id="hHi">Bonjour</div>
-    <div class="home-dt" id="hDt"></div>
+  <!-- Welcome -->
+  <section class="home-head">
+    <h1 class="home-hi" id="hHi">Bonjour</h1>
+    <p class="home-dt" id="hDt"></p>
+  </section>
+
+  <!-- Streak -->
+  <div class="streak-bar" id="skBar" style="display:none">
+    <div class="sk-l"><span class="sf">&#x1F525;</span><span><b class="sv" id="skV"></b> jours consecutifs</span></div>
+    <span class="material-symbols-outlined sk-i">trending_up</span>
   </div>
-  <div class="cal-hero"><div class="cal-ring"><canvas id="cRing" width="168" height="168"></canvas><div class="cal-ctr"><div class="cv mono" id="cV">0</div><div class="cl">restantes</div></div></div><div class="cal-sub mono" id="cSub">0 / 0 kcal</div></div>
-  <div class="macro-row">
-    <div class="mc"><div class="mc-l">Prot</div><div class="mc-bw"><div class="mc-b" id="hPb" style="background:#6AEFAF;color:#6AEFAF"></div></div><div class="mc-v mono"><span id="hP">0</span><span id="hPt"></span></div></div>
-    <div class="mc"><div class="mc-l">Gluc</div><div class="mc-bw"><div class="mc-b" id="hGb" style="background:#4DD0E1;color:#4DD0E1"></div></div><div class="mc-v mono"><span id="hG">0</span><span id="hGt"></span></div></div>
-    <div class="mc"><div class="mc-l">Lip</div><div class="mc-bw"><div class="mc-b" id="hLb" style="background:#FF6B9D;color:#FF6B9D"></div></div><div class="mc-v mono"><span id="hL">0</span><span id="hLt"></span></div></div>
-    <div class="mc"><div class="mc-l">Fib</div><div class="mc-bw"><div class="mc-b" id="hFb" style="background:#FFB347;color:#FFB347"></div></div><div class="mc-v mono"><span id="hF">0</span><span id="hFt"></span></div></div>
-  </div>
-  <div class="info-row">
-    <div class="info-card">
-      <div class="ic-i" style="background:linear-gradient(135deg,var(--cyan),#2E9FB5)">&#x1F4A7;</div>
-      <div class="ic-body"><div class="ic-v mono" id="wV">0L</div><div class="ic-l">Eau</div></div>
-      <div style="display:flex;gap:5px;flex-shrink:0">
-        <button type="button" class="btn btn-o btn-icon btn-sm" id="wMinus" aria-label="Moins d'eau">-</button>
-        <button type="button" class="btn btn-p btn-icon btn-sm" id="wPlus" aria-label="Plus d'eau">+</button>
+
+  <!-- Calorie Ring -->
+  <section class="cal-hero">
+    <div class="cal-ring">
+      <canvas id="cRing" width="260" height="260"></canvas>
+      <div class="cal-ctr">
+        <div class="cv" id="cV">0</div>
+        <div class="cl">Restantes (kcal)</div>
+        <div class="cs" id="cSub">0 / 0 kcal</div>
       </div>
     </div>
-    <div class="info-card" id="stepsCard" style="cursor:pointer">
-      <div class="ic-i" style="background:linear-gradient(135deg,var(--org),#E89830);color:#3a2810">&#x1F463;</div>
-      <div class="ic-body"><div class="ic-v mono" id="sV">0</div><div class="ic-l">Pas</div></div>
-      <span style="font-size:.7rem;color:var(--t3);flex-shrink:0">&#x270E;</span>
+  </section>
+
+  <!-- Macros -->
+  <section class="macro-row">
+    <div class="mc">
+      <div class="mc-h"><span class="mc-l">Proteines</span><span class="mc-v"><span class="mc-cur" id="hP">0</span><span class="mc-tgt" id="hPt"></span></span></div>
+      <div class="mc-bw"><div class="mc-b" id="hPb" style="background:#4AD295"></div></div>
     </div>
-  </div>
-  <div class="weight-home" id="wHome">
-    <div class="ic-i">&#x2696;&#xFE0F;</div>
-    <div class="wh-body"><div class="wh-v mono" id="wHv">--</div><div class="wh-l">Poids du jour</div></div>
-    <input type="text" inputmode="decimal" class="wh-in mono" id="wHIn" placeholder="kg">
-    <button type="button" class="btn btn-p btn-icon btn-sm" id="wHAdd" aria-label="Valider poids">&#x2713;</button>
-  </div>
-  <div class="streak-bar" id="skBar" style="display:none"><span class="sf">&#x1F525;</span><span><b class="sv" id="skV"></b> jours consecutifs</span></div>
-  <div id="hAlt"></div><div id="hAn"></div>
+    <div class="mc">
+      <div class="mc-h"><span class="mc-l">Glucides</span><span class="mc-v"><span class="mc-cur" id="hG" style="color:#28EFEA">0</span><span class="mc-tgt" id="hGt"></span></span></div>
+      <div class="mc-bw"><div class="mc-b" id="hGb" style="background:#28EFEA"></div></div>
+    </div>
+    <div class="mc">
+      <div class="mc-h"><span class="mc-l">Lipides</span><span class="mc-v"><span class="mc-cur" id="hL" style="color:#FF64B0">0</span><span class="mc-tgt" id="hLt"></span></span></div>
+      <div class="mc-bw"><div class="mc-b" id="hLb" style="background:#FF64B0"></div></div>
+    </div>
+    <div class="mc">
+      <div class="mc-h"><span class="mc-l">Fibres</span><span class="mc-v"><span class="mc-cur" id="hF" style="color:#FF9F64">0</span><span class="mc-tgt" id="hFt"></span></span></div>
+      <div class="mc-bw"><div class="mc-b" id="hFb" style="background:#FF9F64"></div></div>
+    </div>
+  </section>
+
+  <!-- Bento: Water + Steps -->
+  <section class="bento-row">
+    <div class="bento bento-water">
+      <div class="bn-h">
+        <span class="material-symbols-outlined bn-ico">water_drop</span>
+        <span class="bn-l">Hydratation</span>
+      </div>
+      <div class="bn-v"><span id="wV">0</span><span class="bn-u">L</span></div>
+      <div class="bn-acts">
+        <button type="button" class="bn-btn" id="wMinus" aria-label="Moins d'eau"><span class="material-symbols-outlined">remove</span></button>
+        <button type="button" class="bn-btn bn-btn-p" id="wPlus" aria-label="Plus d'eau"><span class="material-symbols-outlined">add</span></button>
+      </div>
+    </div>
+    <div class="bento bento-steps" id="stepsCard">
+      <div class="bn-h">
+        <span class="material-symbols-outlined bn-ico">directions_walk</span>
+        <span class="bn-l">Activite</span>
+      </div>
+      <div class="bn-v" id="sV">0</div>
+      <div class="bn-sub">Objectif : <span id="sGoal">10 000</span></div>
+      <div class="bn-bw"><div class="bn-bf" id="sBar"></div></div>
+    </div>
+  </section>
+
+  <!-- Weight -->
+  <section class="weight-home" id="wHome">
+    <div class="wh-h">
+      <div class="wh-hl">
+        <span class="material-symbols-outlined wh-ico">monitor_weight</span>
+        <span class="wh-l">Poids actuel</span>
+      </div>
+      <span class="wh-v" id="wHv">--</span>
+    </div>
+    <div class="wh-f">
+      <input type="text" inputmode="decimal" class="wh-in" id="wHIn" placeholder="Entrer nouveau poids...">
+      <button type="button" class="wh-btn" id="wHAdd" aria-label="Valider poids">Update</button>
+    </div>
+  </section>
+
+  <!-- Alert (dynamic) -->
+  <div id="hAlt"></div>
+
+  <!-- Analysis (dynamic) -->
+  <div id="hAn"></div>
+
+  <!-- Meals (dynamic) -->
   <div id="hMeals"></div>
 </div>
 
