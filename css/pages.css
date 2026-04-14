@@ -1216,9 +1216,7 @@
 
 /* Recipe card */
 #rcList{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+  display:block;
 }
 .rc-item{
   display:flex;align-items:center;justify-content:space-between;
@@ -1226,9 +1224,11 @@
   background:var(--s2);
   border-radius:14px;
   padding:16px 18px;
+  margin-bottom:14px;
   border-left:4px solid rgba(106,239,175,.4);
   transition:background var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out);
 }
+.rc-item:last-child{margin-bottom:0}
 .rc-item:nth-child(even){
   border-left-color:rgba(106,239,175,.2);
   background:var(--s1);
