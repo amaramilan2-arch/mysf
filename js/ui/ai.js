@@ -66,7 +66,7 @@ async function aiAnalyze(){
     r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-      body:JSON.stringify({model:'meta-llama/llama-4-scout-17b-16e-instruct',messages:[{role:'system',content:sysPrompt},{role:'user',content}],temperature:0.1,max_tokens:1024})
+      body:JSON.stringify({model:'meta-llama/llama-4-maverick-17b-128e-instruct',messages:[{role:'system',content:sysPrompt},{role:'user',content}],temperature:0.1,max_tokens:1024})
     });
   }catch(e){aiShowErr('network');return}
 
