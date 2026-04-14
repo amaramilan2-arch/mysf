@@ -31,6 +31,13 @@
   --red:#FF6B6B;                --redG:rgba(255,107,107,.10);
   --brn:#E17055;
 
+  /* ── Material 3 tokens (home v2 palette) ── */
+  --m3-tertiary:#28EFEA;            --m3-tertiary-G:rgba(40,239,234,.10);
+  --m3-primary-fixed-dim:#58DEA0;
+  --m3-pnk:#FF64B0;                 --m3-pnk-G:rgba(255,100,176,.12);
+  --m3-org:#FF9F64;                 --m3-org-G:rgba(255,159,100,.12);
+  --m3-on-surface-variant:#BCCABF;  /* greenish secondary text (Material 3) */
+
   /* ── Text (never pure white — halatuation kills readability) ── */
   --t1:#F5F7FA;
   --t2:#9AA0AB;
@@ -79,6 +86,11 @@
   --s3:#DFE2EA;
   --s4:#CFD3DD;
   --s0:#FDFDFE;
+  --m3-tertiary:#2E9FB5;            --m3-tertiary-G:rgba(46,159,181,.12);
+  --m3-primary-fixed-dim:#3DBE87;
+  --m3-pnk:#D9447A;                 --m3-pnk-G:rgba(217,68,122,.12);
+  --m3-org:#C46A24;                 --m3-org-G:rgba(196,106,36,.12);
+  --m3-on-surface-variant:#6B7A72;
   --acc:#2DB77B;
   --acc2:#1E9A64;
   --accG:rgba(45,183,123,.10);
@@ -130,9 +142,7 @@ body{
   letter-spacing:-0.005em;
 }
 
-@supports(padding:env(safe-area-inset-top)){
-  .hdr{padding-top:max(14px,env(safe-area-inset-top))}
-}
+/* Safe-area handling moved into .hdr rules directly (layout.css) */
 
 input,select,textarea,button{
   font-family:inherit;
