@@ -90,7 +90,7 @@
   --m3-primary-fixed-dim:#3DBE87;
   --m3-pnk:#D9447A;                 --m3-pnk-G:rgba(217,68,122,.12);
   --m3-org:#C46A24;                 --m3-org-G:rgba(196,106,36,.12);
-  --m3-on-surface-variant:#6B7A72;
+  --m3-on-surface-variant:#475B52;  /* darker greenish grey pour contraste WCAG AA */
   --acc:#2DB77B;
   --acc2:#1E9A64;
   --accG:rgba(45,183,123,.10);
