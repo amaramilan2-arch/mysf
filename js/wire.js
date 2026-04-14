@@ -81,7 +81,7 @@ function wire(){
     try{rec.start();aiMicRec=rec}catch(e){st.style.display='block';st.style.color='var(--red)';st.textContent='Impossible de demarrer la dictee';aiMicRec=null}
   });
   // AI key save
-  $('aiKey').addEventListener('change',()=>{sv('nt_aikey',$('aiKey').value.trim());$('aiKeyStatus').textContent=$('aiKey').value.trim()?'Cle sauvegardee':'Aucune cle configuree';if($('aiKey').value.trim())toast('Cle API sauvegardee','success')});
+  $('aiKey').addEventListener('change',()=>{const v=$('aiKey').value.trim();sv('nt_aikey',v);$('aiKeyStatus').innerHTML=v?'<span class="set-status-ok"><span class="material-symbols-outlined">check_circle</span>Cle sauvegardee</span>':'<span class="set-status-mute">Aucune cle configuree</span>';if(v)toast('Cle API sauvegardee','success')});
   // Settings
   $('sSave').addEventListener('click',()=>{sv("nt_targets",{kcal:+$('sK').value||2200,prot:+$('sP').value||150,gluc:+$('sG').value||250,lip:+$('sL').value||75,fib:+$('sFib').value||30});sv("nt_pw",parseFloat(($('sPW').value||'75').replace(',','.'))||75);sv("nt_height",+$('sH').value||175);sv("nt_sg",+$('sSt').value||10000);if($('tab-home').classList.contains('active'))renderHome();toast('Reglages sauvegardes','success')});
   $('sCalc').addEventListener('click',()=>{
@@ -151,7 +151,7 @@ function wire(){
   $('thDark').addEventListener('click',()=>{setTheme('dark');renderSettings()});
   $('thLight').addEventListener('click',()=>{setTheme('light');renderSettings()});
   // Cloud sync
-  $('cloudSaveBtn').addEventListener('click',async()=>{$('cloudSaveBtn').textContent='...';toast('Sauvegarde en cours...','info',1500);await cloudSave();$('cloudSaveBtn').textContent='\u2601 Sauvegarde !';showSyncStatus('\u2713 Donnees sauvegardees',true);setTimeout(()=>{$('cloudSaveBtn').textContent='\u2601 Sauvegarder cloud'},1500)});
-  $('cloudLoadBtn').addEventListener('click',async()=>{if(!confirm('Charger les donnees du cloud? (ecrase les donnees locales)'))return;$('cloudLoadBtn').textContent='...';toast('Chargement cloud...','info',2000);const ok=await cloudLoad();if(ok){showSyncStatus('\u2713 Donnees chargees',true);location.reload()}else{showSyncStatus('Aucune donnee cloud',false);$('cloudLoadBtn').textContent='\u2B07 Charger cloud'}});
+  $('cloudSaveBtn').addEventListener('click',async()=>{const btn=$('cloudSaveBtn'),orig=btn.innerHTML;btn.innerHTML='<span class="material-symbols-outlined">sync</span>Sauvegarde...';toast('Sauvegarde en cours...','info',1500);await cloudSave();btn.innerHTML='<span class="material-symbols-outlined">check_circle</span>Sauvegarde !';showSyncStatus('\u2713 Donnees sauvegardees',true);setTimeout(()=>{btn.innerHTML=orig},1500)});
+  $('cloudLoadBtn').addEventListener('click',async()=>{if(!confirm('Charger les donnees du cloud? (ecrase les donnees locales)'))return;const btn=$('cloudLoadBtn'),orig=btn.innerHTML;btn.innerHTML='<span class="material-symbols-outlined">sync</span>Chargement...';toast('Chargement cloud...','info',2000);const ok=await cloudLoad();if(ok){showSyncStatus('\u2713 Donnees chargees',true);location.reload()}else{showSyncStatus('Aucune donnee cloud',false);btn.innerHTML=orig}});
 }
 

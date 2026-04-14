@@ -310,101 +310,238 @@
 
 <!-- SETTINGS -->
 <div class="tp" id="tab-settings">
-  <div class="ss"><h3><span class="sd" style="background:var(--org)"></span>Profil &amp; TDEE</h3>
-    <div class="sg">
-      <div><label>Poids actuel (kg)</label><input type="text" inputmode="decimal" class="inp" id="sW"></div>
-      <div><label>Taille (cm)</label><input type="number" inputmode="numeric" class="inp" id="sH" placeholder="175"></div>
-      <div><label>Pas/jour</label><input type="number" inputmode="numeric" class="inp" id="sSt"></div>
-    </div>
-    <div class="stitle">Niveau d'activite</div>
-    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px" id="actLvl"></div>
-    <button class="btn btn-o" type="button" id="sCalc" style="width:100%">Calculer TDEE + Macros auto</button>
-    <div id="sCalcR"></div>
-  </div>
-  <div class="ss"><h3><span class="sd" style="background:var(--acc)"></span>Objectifs calories &amp; macros</h3>
-    <div class="sg">
-      <div class="full"><label>Calories (kcal/jour)</label><input type="number" inputmode="numeric" class="inp" id="sK"></div>
-    </div>
-    <div class="stitle">Presets macros</div>
-    <div class="preset-row" id="presets"></div>
-    <div class="sg" id="pctRow">
-      <div><label>% Prot</label><input type="number" inputmode="numeric" class="inp" id="pProt" placeholder="30"></div>
-      <div><label>% Gluc</label><input type="number" inputmode="numeric" class="inp" id="pGluc" placeholder="40"></div>
-      <div><label>% Lip</label><input type="number" inputmode="numeric" class="inp" id="pLip" placeholder="30"></div>
-      <div><button class="btn btn-o btn-sm" type="button" id="applyPct" style="width:100%;margin-top:14px">Appliquer %</button></div>
-    </div>
-    <div id="pctWarn" style="font-size:.65rem;margin-bottom:6px"></div>
-    <div class="sg">
-      <div><label>Prot (g)</label><input type="number" inputmode="numeric" class="inp" id="sP"></div>
-      <div><label>Gluc (g)</label><input type="number" inputmode="numeric" class="inp" id="sG"></div>
-      <div><label>Lip (g)</label><input type="number" inputmode="numeric" class="inp" id="sL"></div>
-      <div><label>Fibres (g)</label><input type="number" inputmode="numeric" class="inp" id="sFib"></div>
-    </div>
-    <div id="macroPreview" style="margin-bottom:10px"></div>
-    <div><label>Poids objectif (kg)</label><input type="text" inputmode="decimal" class="inp" id="sPW" style="margin-bottom:10px"></div>
-    <button class="btn btn-p" type="button" id="sSave" style="width:100%">Sauvegarder</button>
-  </div>
-  <div class="ss"><h3><span class="sd" style="background:var(--pur)"></span>Phase</h3><div class="ph-sel" id="phSel"></div><div id="phDet"></div></div>
-  <div class="ss"><h3><span class="sd" style="background:var(--yel)"></span>Apparence</h3>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-o" type="button" id="thDark" style="flex:1">&#x1F319; Sombre</button>
-      <button class="btn btn-o" type="button" id="thLight" style="flex:1">&#x2600;&#xFE0F; Clair</button>
-    </div>
-  </div>
-  <div class="ss"><h3><span class="sd" style="background:var(--cyan)"></span>IA — Analyse repas</h3>
-    <p style="font-size:.68rem;color:var(--t3);margin-bottom:8px;line-height:1.5">
-      Analyse un repas par photo + description grace a l'IA. Gratuit — cree un compte et une cle API sur <strong style="color:var(--t2)">console.groq.com</strong>
-    </p>
-    <input type="text" class="inp" id="aiKey" placeholder="Cle API Groq (gsk_...)" style="width:100%;font-size:.78rem" autocomplete="off">
-    <div id="aiKeyStatus" style="font-size:.62rem;margin-top:4px;color:var(--t3)"></div>
-  </div>
-  <div class="ss"><h3><span class="sd" style="background:var(--grn)"></span>Compte</h3>
-    <div id="sAcc"></div>
-    <div id="syncSt" style="font-size:.68rem;margin-top:6px"></div>
-    <div id="syncBtns" style="display:none;margin-top:8px">
-      <div style="display:flex;gap:6px">
-        <button class="btn btn-p" type="button" id="cloudSaveBtn" style="flex:1">&#x2601; Sauvegarder cloud</button>
-        <button class="btn btn-o" type="button" id="cloudLoadBtn" style="flex:1">&#x2B07; Charger cloud</button>
+  <!-- Page title -->
+  <section class="set-head">
+    <h1>Reglages</h1>
+    <p>Configuration de ton metabolisme et de ton interface.</p>
+  </section>
+
+  <!-- Profil & TDEE -->
+  <section class="set-sec">
+    <div class="set-sec-l"><span class="material-symbols-outlined">person</span>Profil &amp; TDEE</div>
+    <div class="set-card">
+      <div class="set-grid-3">
+        <div class="set-f">
+          <label for="sH">Taille (cm)</label>
+          <input type="number" inputmode="numeric" class="set-in set-in-num" id="sH" placeholder="175">
+        </div>
+        <div class="set-f">
+          <label for="sW">Poids (kg)</label>
+          <input type="text" inputmode="decimal" class="set-in set-in-num" id="sW" placeholder="75">
+        </div>
+        <div class="set-f">
+          <label for="sSt">Pas/jour</label>
+          <input type="number" inputmode="numeric" class="set-in set-in-num" id="sSt" placeholder="10000">
+        </div>
       </div>
-      <p style="font-size:.6rem;color:var(--t3);margin-top:4px">Sync auto toutes les 60s quand connecte</p>
-    </div>
-  </div>
-  <div class="ss"><h3><span class="sd" style="background:var(--cyan)"></span>Import donnees</h3>
-    <div style="display:flex;gap:6px;margin-bottom:8px">
-      <button class="btn btn-o btn-sm imp-tab sel" type="button" data-imp="weight" id="impTabW">Poids</button>
-      <button class="btn btn-o btn-sm imp-tab" type="button" data-imp="cal" id="impTabC">Calories</button>
-      <button class="btn btn-o btn-sm imp-tab" type="button" data-imp="json" id="impTabJ">JSON complet</button>
-    </div>
-    <div id="impWrap">
-      <div id="impWeight">
-        <p style="font-size:.68rem;color:var(--t3);margin-bottom:6px">Format: <code>date,poids</code> (une ligne par jour)</p>
-        <textarea class="import-a" id="impWT" rows="5" placeholder="2026-03-15,74.5&#10;2026-03-16,74.3&#10;2026-03-17,73.9" style="width:100%;font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:12px;border-radius:12px;border:none;background:var(--s3);color:var(--t1);resize:vertical;min-height:110px"></textarea>
+      <div class="set-f">
+        <label>Niveau d'activite</label>
+        <div class="set-pills" id="actLvl"></div>
       </div>
-      <div id="impCal" style="display:none">
-        <p style="font-size:.68rem;color:var(--t3);margin-bottom:6px">Format: <code>date,calories,prot,gluc,lip</code> (fibres optionnel)</p>
-        <textarea class="import-a" id="impCT" rows="5" placeholder="2026-03-15,2200,150,250,75&#10;2026-03-16,1950,140,220,70" style="width:100%;font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:12px;border-radius:12px;border:none;background:var(--s3);color:var(--t1);resize:vertical;min-height:110px"></textarea>
+      <button class="set-btn-ghost" type="button" id="sCalc">
+        <span class="material-symbols-outlined">calculate</span>
+        Calculer TDEE + Macros auto
+      </button>
+      <div id="sCalcR"></div>
+    </div>
+  </section>
+
+  <!-- Objectifs -->
+  <section class="set-sec">
+    <div class="set-sec-l"><span class="material-symbols-outlined">flag</span>Objectifs nutritifs</div>
+    <div class="set-card">
+      <div class="set-f">
+        <label for="sK">Calories cibles</label>
+        <div class="set-kcal-wrap">
+          <input type="number" inputmode="numeric" class="set-kcal-in" id="sK" placeholder="2200">
+          <span class="set-kcal-u">KCAL</span>
+        </div>
       </div>
-      <div id="impJson" style="display:none">
-        <p style="font-size:.68rem;color:var(--t3);margin-bottom:6px">Colle un fichier JSON exporte (<code>kripy_*.json</code>) ou selectionne un fichier</p>
-        <input type="file" accept=".json" id="impFile" style="font-size:.7rem;margin-bottom:6px;width:100%">
-        <textarea class="import-a" id="impJT" rows="5" placeholder='{"weights":[...],"log":{...},...}' style="width:100%;font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:12px;border-radius:12px;border:none;background:var(--s3);color:var(--t1);resize:vertical;min-height:110px"></textarea>
+      <div class="set-f">
+        <label>Presets macros</label>
+        <div class="set-presets" id="presets"></div>
+      </div>
+      <div class="set-f">
+        <label>Repartition manuelle (%)</label>
+        <div class="set-pct-row" id="pctRow">
+          <input type="number" inputmode="numeric" class="set-in set-in-num set-pct-in" id="pProt" placeholder="30">
+          <input type="number" inputmode="numeric" class="set-in set-in-num set-pct-in" id="pGluc" placeholder="40">
+          <input type="number" inputmode="numeric" class="set-in set-in-num set-pct-in" id="pLip" placeholder="30">
+          <button class="set-pct-apply" type="button" id="applyPct">OK</button>
+        </div>
+        <div class="set-pct-labels"><span>% P</span><span>% G</span><span>% L</span><span></span></div>
+        <div id="pctWarn" class="set-pct-warn"></div>
+      </div>
+      <div class="set-f">
+        <label>Macros cibles (g)</label>
+        <div class="set-grid-4">
+          <div class="set-macro-f">
+            <div class="set-macro-bar" style="--bar-color:#6AEFAF"><span></span></div>
+            <input type="number" inputmode="numeric" class="set-macro-in" id="sP" placeholder="0">
+            <p class="set-macro-l">Prot</p>
+          </div>
+          <div class="set-macro-f">
+            <div class="set-macro-bar" style="--bar-color:#4DD0E1"><span></span></div>
+            <input type="number" inputmode="numeric" class="set-macro-in" id="sG" placeholder="0">
+            <p class="set-macro-l">Gluc</p>
+          </div>
+          <div class="set-macro-f">
+            <div class="set-macro-bar" style="--bar-color:#FF6B9D"><span></span></div>
+            <input type="number" inputmode="numeric" class="set-macro-in" id="sL" placeholder="0">
+            <p class="set-macro-l">Lip</p>
+          </div>
+          <div class="set-macro-f">
+            <div class="set-macro-bar" style="--bar-color:#FFB347"><span></span></div>
+            <input type="number" inputmode="numeric" class="set-macro-in" id="sFib" placeholder="0">
+            <p class="set-macro-l">Fib</p>
+          </div>
+        </div>
+      </div>
+      <div id="macroPreview"></div>
+      <div class="set-f">
+        <label for="sPW">Poids objectif (kg)</label>
+        <input type="text" inputmode="decimal" class="set-in set-in-num" id="sPW" placeholder="70">
+      </div>
+      <button class="set-cta" type="button" id="sSave">
+        <span class="material-symbols-outlined">save</span>
+        Sauvegarder
+      </button>
+    </div>
+  </section>
+
+  <!-- Phase Nutritionnelle -->
+  <section class="set-sec">
+    <div class="set-sec-l"><span class="material-symbols-outlined">science</span>Phase nutritionnelle</div>
+    <div class="set-ph-grid" id="phSel"></div>
+    <div id="phDet"></div>
+  </section>
+
+  <!-- Apparence + Compte (2-col on wider) -->
+  <section class="set-sec">
+    <div class="set-sec-l"><span class="material-symbols-outlined">palette</span>Apparence</div>
+    <div class="set-card set-theme-card">
+      <button class="set-theme-btn" type="button" id="thDark">
+        <span class="material-symbols-outlined">dark_mode</span>
+        <span class="set-theme-l">Dark</span>
+      </button>
+      <button class="set-theme-btn" type="button" id="thLight">
+        <span class="material-symbols-outlined">light_mode</span>
+        <span class="set-theme-l">Light</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Compte -->
+  <section class="set-sec">
+    <div class="set-sec-l"><span class="material-symbols-outlined">account_circle</span>Compte</div>
+    <div class="set-card">
+      <div id="sAcc"></div>
+      <div id="syncSt" class="set-sync-status"></div>
+      <div id="syncBtns" class="set-sync-btns" style="display:none">
+        <button class="set-btn-ghost" type="button" id="cloudSaveBtn">
+          <span class="material-symbols-outlined">cloud_upload</span>
+          Sauvegarder cloud
+        </button>
+        <button class="set-btn-ghost" type="button" id="cloudLoadBtn">
+          <span class="material-symbols-outlined">cloud_download</span>
+          Charger cloud
+        </button>
+        <p class="set-sec-desc">Sync auto toutes les 60s quand connecte.</p>
       </div>
     </div>
-    <button class="btn btn-p" type="button" id="impB" style="width:100%;margin-top:6px">Importer</button>
-    <div id="impF" style="font-size:.72rem;margin-top:6px"></div>
-  </div>
-  <div class="ss"><h3><span class="sd" style="background:var(--red)"></span>Donnees</h3>
-    <button class="btn btn-o" type="button" id="sExp" style="width:100%;margin-bottom:6px">Exporter JSON</button>
-    <button class="btn btn-d" type="button" id="sRst" style="width:100%">Reinitialiser</button>
-  </div>
-  <div class="ss"><h3><span class="sd" style="background:var(--t2)"></span>Mentions legales</h3>
-    <p style="font-size:.68rem;color:var(--t3);margin-bottom:10px;line-height:1.5">Conditions d'utilisation et traitement de vos donnees personnelles (RGPD).</p>
-    <div style="display:flex;gap:6px">
-      <a class="btn btn-o" href="terms.html" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">CGU</a>
-      <a class="btn btn-o" href="privacy.html" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">Confidentialite</a>
+  </section>
+
+  <!-- IA -->
+  <section class="set-sec">
+    <div class="set-sec-l"><span class="material-symbols-outlined">auto_awesome</span>IA &mdash; analyse repas</div>
+    <div class="set-card">
+      <p class="set-sec-desc">Analyse un repas par photo + description grace a l'IA. Gratuit &mdash; cree un compte sur <strong>console.groq.com</strong>.</p>
+      <div class="set-f">
+        <label for="aiKey">Cle API Groq</label>
+        <input type="text" class="set-in" id="aiKey" placeholder="gsk_..." autocomplete="off">
+      </div>
+      <div id="aiKeyStatus" class="set-status"></div>
     </div>
-    <p style="font-size:.6rem;color:var(--t3);margin-top:8px;text-align:center">&copy; 2026 Kripy &middot; v2.1</p>
-  </div>
+  </section>
+
+  <!-- Import -->
+  <section class="set-sec">
+    <div class="set-sec-l"><span class="material-symbols-outlined">upload_file</span>Import donnees</div>
+    <div class="set-card">
+      <div class="set-pills set-imp-tabs">
+        <button type="button" class="set-pill imp-tab sel" data-imp="weight" id="impTabW">Poids</button>
+        <button type="button" class="set-pill imp-tab" data-imp="cal" id="impTabC">Calories</button>
+        <button type="button" class="set-pill imp-tab" data-imp="json" id="impTabJ">JSON</button>
+      </div>
+      <div id="impWrap">
+        <div id="impWeight">
+          <p class="set-sec-desc">Format : <code>date,poids</code> (une ligne par jour)</p>
+          <textarea class="set-textarea" id="impWT" rows="5" placeholder="2026-03-15,74.5&#10;2026-03-16,74.3&#10;2026-03-17,73.9"></textarea>
+        </div>
+        <div id="impCal" style="display:none">
+          <p class="set-sec-desc">Format : <code>date,calories,prot,gluc,lip</code> (fibres optionnel)</p>
+          <textarea class="set-textarea" id="impCT" rows="5" placeholder="2026-03-15,2200,150,250,75&#10;2026-03-16,1950,140,220,70"></textarea>
+        </div>
+        <div id="impJson" style="display:none">
+          <p class="set-sec-desc">Colle un fichier JSON exporte (<code>kripy_*.json</code>) ou selectionne un fichier</p>
+          <input type="file" accept=".json" id="impFile" class="set-file">
+          <textarea class="set-textarea" id="impJT" rows="5" placeholder='{"weights":[...],"log":{...},...}'></textarea>
+        </div>
+      </div>
+      <button class="set-cta" type="button" id="impB">
+        <span class="material-symbols-outlined">file_download</span>
+        Importer
+      </button>
+      <div id="impF" class="set-status"></div>
+    </div>
+  </section>
+
+  <!-- Données & Système -->
+  <section class="set-sec">
+    <div class="set-sec-l"><span class="material-symbols-outlined">database</span>Donnees &amp; systeme</div>
+    <div class="set-list">
+      <button class="set-row" type="button" id="sExp">
+        <div class="set-row-l">
+          <span class="material-symbols-outlined">download</span>
+          <span>Exporter mes donnees (JSON)</span>
+        </div>
+      </button>
+      <button class="set-row set-row-danger" type="button" id="sRst">
+        <div class="set-row-l">
+          <span class="material-symbols-outlined">delete_forever</span>
+          <span>Reinitialiser l'application</span>
+        </div>
+        <span class="material-symbols-outlined set-row-warn">warning</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Mentions légales -->
+  <section class="set-sec">
+    <div class="set-sec-l"><span class="material-symbols-outlined">gavel</span>Mentions legales</div>
+    <div class="set-list">
+      <a class="set-row" href="terms.html" target="_blank" rel="noopener">
+        <div class="set-row-l">
+          <span class="material-symbols-outlined">description</span>
+          <span>Conditions generales d'utilisation</span>
+        </div>
+        <span class="material-symbols-outlined set-row-chev">chevron_right</span>
+      </a>
+      <a class="set-row" href="privacy.html" target="_blank" rel="noopener">
+        <div class="set-row-l">
+          <span class="material-symbols-outlined">privacy_tip</span>
+          <span>Politique de confidentialite</span>
+        </div>
+        <span class="material-symbols-outlined set-row-chev">chevron_right</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="set-footer">
+    <p class="set-footer-b">Kripy Engineered Systems v2.1</p>
+    <p>Built for high performance</p>
+  </footer>
 </div>
 </div>
 
