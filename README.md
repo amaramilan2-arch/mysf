@@ -11,6 +11,7 @@ Application web **mobile-first** de suivi nutritionnel, pondéral et sportif, pe
 - [C'est quoi Kripy ?](#cest-quoi-kripy-)
 - [Quel problème ça résout ?](#quel-problème-ça-résout-)
 - [Fonctionnalités](#fonctionnalités)
+- [Design System — Kinetic Lab](#design-system--kinetic-lab)
 - [Architecture technique](#architecture-technique)
 - [Installation & lancement en local](#installation--lancement-en-local)
 - [Déploiement](#déploiement)
@@ -130,6 +131,64 @@ Plutôt que de te montrer ton poids brut (qui fluctue de ±1 kg par jour selon l
 
 ---
 
+## Design System — Kinetic Lab
+
+Kripy rejette l'esthétique "lifestyle" des applis fitness génériques au profit d'un **Deep Tech** inspiré des outils dev haut de gamme (Linear, Raycast). L'interface doit ressembler à un **terminal d'ingénierie pour le corps humain**, pas à un carnet de coach.
+
+### Principes
+
+1. **Intentional Asymmetry** — layouts éditoriaux alignés à gauche, pas de centrage automatique.
+2. **Tonal Depth** — la profondeur vient du shift de surface, pas des shadows noires.
+3. **High-Precision Data** — les chiffres sont des composants, toujours en JetBrains Mono `tabular-nums`.
+4. **No-Line Rule** — les bordures 1px classiques sont bannies. Le sectionnement se fait par background shift.
+
+### Tonal Architecture
+
+Le palette est stratifié comme un empilement de matériaux semi-conducteurs :
+
+| Niveau | Token | Hex | Usage |
+|--------|-------|-----|-------|
+| 0 | `--bg` | `#121317` | Base obsidienne — fond absolu |
+| 1 | `--s1` | `#1A1B20` | Sections, groupement de contenu |
+| 2 | `--s2` | `#1F1F24` | Cartes interactives standard |
+| 3 | `--s3` | `#2A2B31` | Inputs, chips, surfaces cliquables |
+| 4 | `--s4` | `#343439` | États focus / hover / sélection |
+
+Pour séparer deux blocs dans une liste, alterner `--s2` et `--s0` (`#0E0F12`) sur les rangées paires. **Pas de divider horizontal.**
+
+### Primary & LED accents
+
+- **Primary** : `#6AEFAF` → `#4AD295` en gradient 135°, jamais en flat fill. Effet "machined".
+- **LED accents** : Cyan `#4DD0E1`, Pink `#FF6B9D`, Purple `#9F9BFF`, Orange `#FFB347`, Yellow `#FFD93D`, Red `#FF6B6B`.
+- Les dots/indicateurs ont un `box-shadow:0 0 8px currentColor` pour le rendu voyant sur serveur rack.
+- **Halos** (`--accG`, `--grnG`…) à 10% d'opacité pour les fills d'alerte.
+
+### Typographie duale
+
+- **Inter** — UI labels, headlines, body (neutre, invisible). Headlines en `letter-spacing:-0.02em`.
+- **JetBrains Mono / Space Grotesk** — **TOUS** les chiffres, timestamps, métriques, labels uppercase. Règle stricte : un chiffre = mono + `tabular-nums`.
+- **Jamais `#FFFFFF` pur** — utiliser `--t1 #F5F7FA` pour éviter l'halation sur fond sombre.
+
+### Élévation & Glass
+
+- **Tonal layering** pour lever un élément : shift son token d'un niveau, ne pas ajouter de shadow.
+- **Glow ambiant** pour les overlays : `0 0 32px rgba(88,222,160,.06)` au lieu d'une shadow noire.
+- **Glassmorphism** sur nav flottante et modals : `backdrop-filter:blur(12px) saturate(160%)` avec un fond à 80% d'opacité.
+
+### Data-First Hierarchy
+
+La métrique principale (kcal restantes, poids, pace…) doit faire **3x la taille de son label**. Exemple : le ring calorique affiche `3rem` pour le chiffre et `.52rem` pour "RESTANTES".
+
+### Règles "Do / Don't" en une phrase
+
+**Do** : tonal shifts, gradient primary sur CTAs, chiffres mono `tabular-nums`, underline focus `inset 0 -1px`, safe-area gutter 24px, `letter-spacing` tracking serré sur headlines (-0.02em) et large sur labels uppercase (.16em→.22em).
+
+**Don't** : `#FFFFFF`, `border:1px solid` en séparateur, `box-shadow:0 x y rgba(0,0,0,.x)` pour élever, fill coloré sur les tabs actifs (utiliser underline glow), chiffres en Inter, modals centrés sans shift de surface.
+
+**Pour les détails d'implémentation, voir la section "Design System" dans [`AGENTS.md`](./AGENTS.md).**
+
+---
+
 ## Architecture technique
 
 **Stack** : HTML5 + CSS3 + JavaScript vanilla. **Aucun build step**, **aucun `node_modules`**, **aucun transpileur**. Les libs externes (Chart.js, ZXing, Firebase compat) sont chargées par CDN.
@@ -139,10 +198,11 @@ Plutôt que de te montrer ton poids brut (qui fluctue de ±1 kg par jour selon l
 ```
 index.html              shell HTML, ordre des <script> critique
 css/
-  base.css              reset, variables CSS, thèmes, typographie
-  layout.css            auth, onboarding, header, tabs, navigation
-  pages.css             home, meals, favs, recipes, sport, alertes, charts
-  components.css        settings, modals, sélecteur de phase
+  base.css              tokens Kinetic Lab, thèmes, typographie duale
+  layout.css            auth, onboarding, header, tabs, nav glassmorphism
+  pages.css             home (data-first), meals, recipes, sport, charts
+  components.css        settings, modals glass, chips, phase selector
+  legal.css             pages CGU & Politique de Confidentialité
 js/
   data/
     foods.js            base d'aliments embarquée
