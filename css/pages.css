@@ -76,7 +76,7 @@
 .ch{background:var(--s1);border-radius:20px;padding:18px;margin-bottom:12px;border:none;box-shadow:var(--shadow)}
 .ch h3{font-size:.78rem;font-weight:800;margin-bottom:12px;color:var(--t1);letter-spacing:-.1px;display:flex;align-items:center;gap:6px}
 .ch h3 .cd{display:none}
-.chw{position:relative;height:200px}
+.chw{position:relative;height:200px;min-width:0}
 .ws{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
 .ws>div{text-align:center;background:var(--s2);border-radius:14px;padding:12px 8px}
 .ws .wl{font-size:.58rem;color:var(--t2);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:4px}
