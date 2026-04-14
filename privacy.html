@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d0f14">
+<title>Politique de Confidentialite — MYSF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/legal.css">
+</head>
+<body class="legal">
+<div class="legal-wrap">
+  <a class="legal-back" href="index.html">&#x2190; Retour</a>
+  <h1 class="brand brand-g">MYSF</h1>
+  <div class="legal-sub">Politique de Confidentialite</div>
+  <div class="legal-date">Derniere mise a jour : 14 avril 2026</div>
+
+  <section>
+    <h2>1. Introduction</h2>
+    <p>La presente Politique de Confidentialite decrit comment l'application <strong>MYSF — My Systeme Fluide</strong> (ci-apres &laquo; l'Application &raquo;) collecte, utilise et protege les donnees personnelles de ses utilisateurs, conformement au Reglement (UE) 2016/679 du 27 avril 2016 relatif a la protection des donnees a caractere personnel (RGPD) et a la loi Informatique et Libertes modifiee.</p>
+    <p>En utilisant l'Application, vous reconnaissez avoir pris connaissance de la presente politique et accepter le traitement de vos donnees dans les conditions decrites ci-dessous.</p>
+  </section>
+
+  <section>
+    <h2>2. Responsable du traitement</h2>
+    <p>Le responsable du traitement des donnees collectees via l'Application est l'editeur du projet MYSF. Pour toute question relative a la protection de vos donnees, vous pouvez nous contacter via le depot public du projet.</p>
+  </section>
+
+  <section>
+    <h2>3. Donnees collectees</h2>
+    <p>L'Application est concue selon le principe de <strong>minimisation des donnees</strong>. Les donnees traitees sont uniquement celles que vous saisissez volontairement :</p>
+    <ul>
+      <li><strong>Donnees de profil</strong> : taille, poids, poids cible, niveau d'activite, phase nutritionnelle en cours.</li>
+      <li><strong>Donnees de suivi</strong> : historique de poids, repas et aliments consommes, seances sportives, pas quotidiens, consommation d'eau.</li>
+      <li><strong>Donnees de compte (optionnel)</strong> : si vous choisissez de vous connecter via Google, nous recevons votre adresse e-mail, votre nom affiche et votre photo de profil publique via Firebase Authentication.</li>
+      <li><strong>Parametres techniques</strong> : preferences de theme (sombre/clair), cle API Groq (si vous l'avez renseignee pour l'analyse par photo).</li>
+    </ul>
+    <p>L'Application <strong>ne collecte aucune donnee de geolocalisation, aucun identifiant publicitaire, et n'utilise aucun tracker tiers</strong>.</p>
+  </section>
+
+  <section>
+    <h2>4. Stockage des donnees</h2>
+    <p>Par defaut, <strong>toutes vos donnees sont stockees localement</strong> dans le <code>localStorage</code> de votre navigateur, sur votre appareil. Aucune donnee ne quitte votre terminal tant que vous n'activez pas explicitement la synchronisation cloud.</p>
+    <p>Si vous choisissez de vous connecter avec un compte Google :</p>
+    <ul>
+      <li>L'authentification est geree par <strong>Google Firebase Authentication</strong>.</li>
+      <li>Vos donnees d'application sont sauvegardees dans <strong>Google Cloud Firestore</strong>, sous un identifiant unique (UID) lie a votre compte Google.</li>
+      <li>Les serveurs Firebase sont heberges par Google LLC dans l'Union europeenne (region europe-west).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>5. Finalites et bases legales du traitement</h2>
+    <p>Les donnees sont traitees pour les finalites suivantes :</p>
+    <ul>
+      <li><strong>Fourniture du service</strong> de suivi nutritionnel et sportif — base legale : execution du contrat (article 6.1.b du RGPD).</li>
+      <li><strong>Synchronisation multi-appareils</strong> via Firebase (optionnelle) — base legale : consentement (article 6.1.a du RGPD).</li>
+      <li><strong>Analyse de repas par intelligence artificielle</strong> via l'API Groq (optionnelle) — base legale : consentement explicite.</li>
+      <li><strong>Recherche de produits</strong> via l'API OpenFoodFacts lors du scan de code-barres — base legale : consentement.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>6. Destinataires et sous-traitants</h2>
+    <p>Vos donnees ne sont jamais vendues, louees ou cedees a des tiers a des fins commerciales. Les seuls destinataires techniques sont les sous-traitants suivants, uniquement si vous activez les fonctionnalites concernees :</p>
+    <ul>
+      <li><strong>Google Firebase</strong> (Google Ireland Limited) — authentification et stockage cloud, uniquement si vous vous connectez avec un compte Google.</li>
+      <li><strong>Groq, Inc.</strong> (Etats-Unis) — analyse d'image par IA, uniquement si vous utilisez la fonctionnalite &laquo; analyse photo &raquo; avec votre propre cle API. Un transfert hors UE est encadre par les Clauses Contractuelles Types de la Commission europeenne.</li>
+      <li><strong>OpenFoodFacts</strong> (association francaise a but non lucratif) — recherche de produits alimentaires lors du scan de code-barres.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>7. Duree de conservation</h2>
+    <p>Vos donnees sont conservees tant que vous utilisez l'Application. Vous pouvez a tout moment :</p>
+    <ul>
+      <li>Effacer l'ensemble de vos donnees locales via le bouton <strong>&laquo; Reinitialiser &raquo;</strong> dans l'onglet Reglages.</li>
+      <li>Vider le <code>localStorage</code> de votre navigateur pour supprimer toute trace locale.</li>
+      <li>Demander la suppression de vos donnees cloud en nous contactant (voir section 9).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>8. Securite</h2>
+    <p>Les communications avec les serveurs Firebase et les API tierces sont chiffrees via HTTPS/TLS. Les donnees stockees dans Firestore sont protegees par les regles de securite Firebase, qui limitent l'acces a votre seul compte authentifie. Toutefois, aucune methode de transmission ou de stockage n'est totalement infaillible ; nous ne pouvons garantir une securite absolue.</p>
+  </section>
+
+  <section>
+    <h2>9. Vos droits RGPD</h2>
+    <p>Conformement au RGPD, vous disposez des droits suivants sur vos donnees personnelles :</p>
+    <ul>
+      <li><strong>Droit d'acces</strong> : obtenir une copie de vos donnees.</li>
+      <li><strong>Droit de rectification</strong> : corriger des donnees inexactes (directement dans l'Application).</li>
+      <li><strong>Droit a l'effacement</strong> (droit a l'oubli) : supprimer vos donnees.</li>
+      <li><strong>Droit a la portabilite</strong> : exporter vos donnees au format JSON via le bouton &laquo; Exporter JSON &raquo;.</li>
+      <li><strong>Droit d'opposition</strong> : vous opposer au traitement de vos donnees.</li>
+      <li><strong>Droit de limitation</strong> du traitement.</li>
+      <li><strong>Droit de retirer votre consentement</strong> a tout moment, sans affecter la licite du traitement anterieur.</li>
+    </ul>
+    <p>Vous pouvez exercer ces droits directement depuis l'application (export JSON, reinitialisation) ou en ouvrant une issue sur le depot public du projet. Si vous estimez que vos droits ne sont pas respectes, vous avez le droit d'introduire une reclamation aupres de la <strong>CNIL</strong> (Commission Nationale de l'Informatique et des Libertes) — <a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>.</p>
+  </section>
+
+  <section>
+    <h2>10. Cookies et technologies similaires</h2>
+    <p>L'Application <strong>n'utilise aucun cookie publicitaire ni traceur</strong>. Elle utilise uniquement le <code>localStorage</code> du navigateur, qui est un mecanisme de stockage technique indispensable au fonctionnement du service et ne necessite pas de consentement prealable (article 82 de la loi Informatique et Libertes).</p>
+  </section>
+
+  <section>
+    <h2>11. Mineurs</h2>
+    <p>L'Application n'est pas destinee aux personnes de moins de 15 ans. Si vous avez moins de 15 ans, vous devez obtenir l'accord d'un parent ou titulaire de l'autorite parentale avant d'utiliser le service.</p>
+  </section>
+
+  <section>
+    <h2>12. Modifications</h2>
+    <p>La presente politique peut etre mise a jour a tout moment. La date de derniere mise a jour figure en haut de ce document. Les modifications substantielles seront signalees dans l'Application.</p>
+  </section>
+
+  <div class="legal-footer">
+    <a href="terms.html">Conditions Generales d'Utilisation</a>
+    <span class="sep">&middot;</span>
+    <a href="index.html">Retour a l'application</a>
+  </div>
+</div>
+<script>(function(){try{var t=localStorage.getItem('u_theme');if(t==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}})();</script>
+</body>
+</html>

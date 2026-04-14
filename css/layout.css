@@ -13,6 +13,9 @@
 .auth-skip:active{border-color:var(--acc);color:var(--t2)}
 .auth-err{margin-top:16px;font-size:.72rem;color:var(--red);max-width:300px;display:none}
 .auth-err.show{display:block}
+.auth-legal{position:absolute;bottom:max(20px,env(safe-area-inset-bottom));left:0;right:0;text-align:center;font-size:.62rem;color:var(--t3);padding:0 24px;line-height:1.6;letter-spacing:.2px}
+.auth-legal a{color:var(--t2);font-weight:600;text-decoration:none;border-bottom:1px solid var(--s3);padding-bottom:1px;transition:.15s}
+.auth-legal a:active,.auth-legal a:hover{color:var(--acc);border-color:var(--acc)}
 
 /* Onboarding */
 .ob{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
