@@ -1,4 +1,4 @@
-# MYSF — My Systeme Fluide
+# Kripy — Precision Lab
 
 Application web **mobile-first** de suivi nutritionnel, pondéral et sportif, pensée pour les personnes qui gèrent leur poids sur la durée et qui enchaînent plusieurs phases (sèche, prise de masse, reverse diet, reset…). 100 % statique, aucune installation, aucune dépendance à builder.
 
@@ -8,9 +8,10 @@ Application web **mobile-first** de suivi nutritionnel, pondéral et sportif, pe
 
 ## Sommaire
 
-- [C'est quoi MYSF ?](#cest-quoi-mysf-)
+- [C'est quoi Kripy ?](#cest-quoi-kripy-)
 - [Quel problème ça résout ?](#quel-problème-ça-résout-)
 - [Fonctionnalités](#fonctionnalités)
+- [Design System — Kinetic Lab](#design-system--kinetic-lab)
 - [Architecture technique](#architecture-technique)
 - [Installation & lancement en local](#installation--lancement-en-local)
 - [Déploiement](#déploiement)
@@ -20,9 +21,9 @@ Application web **mobile-first** de suivi nutritionnel, pondéral et sportif, pe
 
 ---
 
-## C'est quoi MYSF ?
+## C'est quoi Kripy ?
 
-MYSF est une **webapp autonome** (HTML + CSS + JS vanilla, zéro bundler) qui tient dans une seule page `index.html` et fonctionne aussi bien depuis un navigateur mobile que comme application installée (PWA standalone). Elle se décompose en 6 onglets :
+Kripy est une **webapp autonome** (HTML + CSS + JS vanilla, zéro bundler) qui tient dans une seule page `index.html` et fonctionne aussi bien depuis un navigateur mobile que comme application installée (PWA standalone). Elle se décompose en 6 onglets :
 
 1. **Accueil** — tableau de bord du jour (calories restantes, macros, eau, pas, alertes tendance)
 2. **Repas** — ajout d'aliments par recherche, photo IA, dictée vocale ou code-barres
@@ -44,7 +45,7 @@ Les applis de tracking classiques (MyFitnessPal & co) ont quatre limites récurr
 3. **Elles enferment les données** dans leur cloud, avec pub et abonnement premium.
 4. **Elles sont lourdes** : écrans chargés, temps de chargement, formulaires à rallonge sur mobile.
 
-MYSF répond à ça par quatre partis pris :
+Kripy répond à ça par quatre partis pris :
 
 ### 1. Notion de **palier** (kcal + phase + date de démarrage)
 
@@ -63,7 +64,7 @@ Phases disponibles :
 
 ### 2. **Analyse de tendance adaptative** (régression linéaire 72 j)
 
-Plutôt que de te montrer ton poids brut (qui fluctue de ±1 kg par jour selon l'eau, le sel, le cycle, etc.), MYSF calcule une **tendance** via régression linéaire sur une fenêtre glissante, et la compare à l'évolution *attendue* pour ta phase. Le module `analysis/trend.js` produit :
+Plutôt que de te montrer ton poids brut (qui fluctue de ±1 kg par jour selon l'eau, le sel, le cycle, etc.), Kripy calcule une **tendance** via régression linéaire sur une fenêtre glissante, et la compare à l'évolution *attendue* pour ta phase. Le module `analysis/trend.js` produit :
 
 - la pente pondérale réelle (kg/semaine)
 - l'écart avec l'objectif théorique de la phase
@@ -130,6 +131,64 @@ Plutôt que de te montrer ton poids brut (qui fluctue de ±1 kg par jour selon l
 
 ---
 
+## Design System — Kinetic Lab
+
+Kripy rejette l'esthétique "lifestyle" des applis fitness génériques au profit d'un **Deep Tech** inspiré des outils dev haut de gamme (Linear, Raycast). L'interface doit ressembler à un **terminal d'ingénierie pour le corps humain**, pas à un carnet de coach.
+
+### Principes
+
+1. **Intentional Asymmetry** — layouts éditoriaux alignés à gauche, pas de centrage automatique.
+2. **Tonal Depth** — la profondeur vient du shift de surface, pas des shadows noires.
+3. **High-Precision Data** — les chiffres sont des composants, toujours en JetBrains Mono `tabular-nums`.
+4. **No-Line Rule** — les bordures 1px classiques sont bannies. Le sectionnement se fait par background shift.
+
+### Tonal Architecture
+
+Le palette est stratifié comme un empilement de matériaux semi-conducteurs :
+
+| Niveau | Token | Hex | Usage |
+|--------|-------|-----|-------|
+| 0 | `--bg` | `#121317` | Base obsidienne — fond absolu |
+| 1 | `--s1` | `#1A1B20` | Sections, groupement de contenu |
+| 2 | `--s2` | `#1F1F24` | Cartes interactives standard |
+| 3 | `--s3` | `#2A2B31` | Inputs, chips, surfaces cliquables |
+| 4 | `--s4` | `#343439` | États focus / hover / sélection |
+
+Pour séparer deux blocs dans une liste, alterner `--s2` et `--s0` (`#0E0F12`) sur les rangées paires. **Pas de divider horizontal.**
+
+### Primary & LED accents
+
+- **Primary** : `#6AEFAF` → `#4AD295` en gradient 135°, jamais en flat fill. Effet "machined".
+- **LED accents** : Cyan `#4DD0E1`, Pink `#FF6B9D`, Purple `#9F9BFF`, Orange `#FFB347`, Yellow `#FFD93D`, Red `#FF6B6B`.
+- Les dots/indicateurs ont un `box-shadow:0 0 8px currentColor` pour le rendu voyant sur serveur rack.
+- **Halos** (`--accG`, `--grnG`…) à 10% d'opacité pour les fills d'alerte.
+
+### Typographie duale
+
+- **Inter** — UI labels, headlines, body (neutre, invisible). Headlines en `letter-spacing:-0.02em`.
+- **JetBrains Mono / Space Grotesk** — **TOUS** les chiffres, timestamps, métriques, labels uppercase. Règle stricte : un chiffre = mono + `tabular-nums`.
+- **Jamais `#FFFFFF` pur** — utiliser `--t1 #F5F7FA` pour éviter l'halation sur fond sombre.
+
+### Élévation & Glass
+
+- **Tonal layering** pour lever un élément : shift son token d'un niveau, ne pas ajouter de shadow.
+- **Glow ambiant** pour les overlays : `0 0 32px rgba(88,222,160,.06)` au lieu d'une shadow noire.
+- **Glassmorphism** sur nav flottante et modals : `backdrop-filter:blur(12px) saturate(160%)` avec un fond à 80% d'opacité.
+
+### Data-First Hierarchy
+
+La métrique principale (kcal restantes, poids, pace…) doit faire **3x la taille de son label**. Exemple : le ring calorique affiche `3rem` pour le chiffre et `.52rem` pour "RESTANTES".
+
+### Règles "Do / Don't" en une phrase
+
+**Do** : tonal shifts, gradient primary sur CTAs, chiffres mono `tabular-nums`, underline focus `inset 0 -1px`, safe-area gutter 24px, `letter-spacing` tracking serré sur headlines (-0.02em) et large sur labels uppercase (.16em→.22em).
+
+**Don't** : `#FFFFFF`, `border:1px solid` en séparateur, `box-shadow:0 x y rgba(0,0,0,.x)` pour élever, fill coloré sur les tabs actifs (utiliser underline glow), chiffres en Inter, modals centrés sans shift de surface.
+
+**Pour les détails d'implémentation, voir la section "Design System" dans [`AGENTS.md`](./AGENTS.md).**
+
+---
+
 ## Architecture technique
 
 **Stack** : HTML5 + CSS3 + JavaScript vanilla. **Aucun build step**, **aucun `node_modules`**, **aucun transpileur**. Les libs externes (Chart.js, ZXing, Firebase compat) sont chargées par CDN.
@@ -139,10 +198,11 @@ Plutôt que de te montrer ton poids brut (qui fluctue de ±1 kg par jour selon l
 ```
 index.html              shell HTML, ordre des <script> critique
 css/
-  base.css              reset, variables CSS, thèmes, typographie
-  layout.css            auth, onboarding, header, tabs, navigation
-  pages.css             home, meals, favs, recipes, sport, alertes, charts
-  components.css        settings, modals, sélecteur de phase
+  base.css              tokens Kinetic Lab, thèmes, typographie duale
+  layout.css            auth, onboarding, header, tabs, nav glassmorphism
+  pages.css             home (data-first), meals, recipes, sport, charts
+  components.css        settings, modals glass, chips, phase selector
+  legal.css             pages CGU & Politique de Confidentialité
 js/
   data/
     foods.js            base d'aliments embarquée
@@ -189,8 +249,8 @@ Aucune installation de dépendances n'est nécessaire. Il suffit de servir le do
 ### Avec Python
 
 ```bash
-git clone https://github.com/amaramilan2-arch/mysf.git
-cd mysf
+git clone https://github.com/amaramilan2-arch/mysf.git kripy
+cd kripy
 python3 -m http.server 8765
 ```
 
@@ -255,6 +315,6 @@ En cas de doute, ouvre une issue avant de merger.
 
 ## Licence
 
-**Tous droits réservés — © 2026 MYSF — My Systeme Fluide.**
+**Tous droits réservés — © 2026 Kripy — Precision Lab.**
 
 Ce projet n'est distribué sous aucune licence open source. Aucune autorisation d'utilisation, de copie, de modification, de fusion, de publication, de distribution, de sous-licence ou de vente n'est accordée. Toute utilisation du code, en tout ou en partie, est strictement interdite sans l'accord écrit préalable de l'auteur.

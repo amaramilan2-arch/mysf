@@ -6,12 +6,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0d0f14">
+<meta name="theme-color" content="#121317">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;MYSF&quot;,&quot;short_name&quot;:&quot;MYSF&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%230d0f14&quot;,&quot;theme_color&quot;:&quot;%230d0f14&quot;}">
-<title>MYSF — My Systeme Fluide</title>
+<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Kripy&quot;,&quot;short_name&quot;:&quot;Kripy&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23121317&quot;,&quot;theme_color&quot;:&quot;%23121317&quot;}">
+<title>Kripy — Precision Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -26,8 +26,8 @@
 <body>
 
 <div class="auth" id="auth">
-  <div class="auth-title brand brand-g">MYSF</div>
-  <div class="auth-sub">My Systeme Fluide</div>
+  <div class="auth-title brand brand-g">Kripy</div>
+  <div class="auth-sub">Precision Lab</div>
   <button class="auth-btn" type="button" id="gSign"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Continuer avec Google</button>
   <div class="auth-or">ou</div>
   <div class="auth-skip" id="aSkip">Continuer sans compte</div>
@@ -41,7 +41,7 @@
 </div>
 
 <div class="ob hidden" id="ob">
-  <div class="brand brand-g" style="font-size:1.8rem;margin-bottom:4px">MYSF</div>
+  <div class="brand brand-g" style="font-size:1.8rem;margin-bottom:4px">Kripy</div>
   <p>Configure tes objectifs</p>
   <div class="ob-f">
     <label>Poids (kg)</label><input type="text" inputmode="decimal" class="inp" id="obW" placeholder="75">
@@ -54,7 +54,7 @@
 </div>
 
 <div class="hdr" id="hdr" style="display:none">
-  <div style="display:flex;align-items:baseline;gap:6px"><div class="logo brand brand-g">MYSF</div><div style="font-size:.5rem;color:var(--t3);font-weight:600;letter-spacing:.5px">v2.1</div></div>
+  <div style="display:flex;align-items:baseline;gap:6px"><div class="logo brand brand-g">Kripy</div><div style="font-size:.5rem;color:var(--t3);font-weight:600;letter-spacing:.5px">v2.1</div></div>
   <div class="hdr-r"><div class="theme-toggle" id="themeBtn" title="Mode clair/sombre">&#x1F319;</div><div class="ph-pill" id="phPill"><span class="d"></span><span id="phLbl">A</span></div><img class="u-ava" id="uAva" src="" alt=""></div>
 </div>
 
@@ -68,14 +68,14 @@
   </div>
   <div class="cal-hero"><div class="cal-ring"><canvas id="cRing" width="168" height="168"></canvas><div class="cal-ctr"><div class="cv mono" id="cV">0</div><div class="cl">restantes</div></div></div><div class="cal-sub mono" id="cSub">0 / 0 kcal</div></div>
   <div class="macro-row">
-    <div class="mc"><div class="mc-l">Proteines</div><div class="mc-bw"><div class="mc-b" id="hPb" style="background:#4AD295"></div></div><div class="mc-v mono"><span id="hP">0</span><span id="hPt"></span></div></div>
-    <div class="mc"><div class="mc-l">Glucides</div><div class="mc-bw"><div class="mc-b" id="hGb" style="background:#6EC6FF"></div></div><div class="mc-v mono"><span id="hG">0</span><span id="hGt"></span></div></div>
-    <div class="mc"><div class="mc-l">Lipides</div><div class="mc-bw"><div class="mc-b" id="hLb" style="background:#FD79A8"></div></div><div class="mc-v mono"><span id="hL">0</span><span id="hLt"></span></div></div>
-    <div class="mc"><div class="mc-l">Fibres</div><div class="mc-bw"><div class="mc-b" id="hFb" style="background:#FFB347"></div></div><div class="mc-v mono"><span id="hF">0</span><span id="hFt"></span></div></div>
+    <div class="mc"><div class="mc-l">Prot</div><div class="mc-bw"><div class="mc-b" id="hPb" style="background:#6AEFAF;color:#6AEFAF"></div></div><div class="mc-v mono"><span id="hP">0</span><span id="hPt"></span></div></div>
+    <div class="mc"><div class="mc-l">Gluc</div><div class="mc-bw"><div class="mc-b" id="hGb" style="background:#4DD0E1;color:#4DD0E1"></div></div><div class="mc-v mono"><span id="hG">0</span><span id="hGt"></span></div></div>
+    <div class="mc"><div class="mc-l">Lip</div><div class="mc-bw"><div class="mc-b" id="hLb" style="background:#FF6B9D;color:#FF6B9D"></div></div><div class="mc-v mono"><span id="hL">0</span><span id="hLt"></span></div></div>
+    <div class="mc"><div class="mc-l">Fib</div><div class="mc-bw"><div class="mc-b" id="hFb" style="background:#FFB347;color:#FFB347"></div></div><div class="mc-v mono"><span id="hF">0</span><span id="hFt"></span></div></div>
   </div>
   <div class="info-row">
     <div class="info-card">
-      <div class="ic-i" style="background:linear-gradient(135deg,var(--cyan),#3DB8A8)">&#x1F4A7;</div>
+      <div class="ic-i" style="background:linear-gradient(135deg,var(--cyan),#2E9FB5)">&#x1F4A7;</div>
       <div class="ic-body"><div class="ic-v mono" id="wV">0L</div><div class="ic-l">Eau</div></div>
       <div style="display:flex;gap:5px;flex-shrink:0">
         <button type="button" class="btn btn-o btn-icon btn-sm" id="wMinus" aria-label="Moins d'eau">-</button>
@@ -83,7 +83,7 @@
       </div>
     </div>
     <div class="info-card" id="stepsCard" style="cursor:pointer">
-      <div class="ic-i" style="background:linear-gradient(135deg,var(--org),#E89830)">&#x1F463;</div>
+      <div class="ic-i" style="background:linear-gradient(135deg,var(--org),#E89830);color:#3a2810">&#x1F463;</div>
       <div class="ic-body"><div class="ic-v mono" id="sV">0</div><div class="ic-l">Pas</div></div>
       <span style="font-size:.7rem;color:var(--t3);flex-shrink:0">&#x270E;</span>
     </div>
@@ -145,7 +145,7 @@
 <div class="tp" id="tab-meals">
   <div class="dn"><button type="button" id="dP">&#x276E;</button><span class="dd" id="cDt">Aujourd'hui</span><button type="button" id="dN">&#x276F;</button></div>
   <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px">
-    <button type="button" class="btn btn-icon btn-sm" id="aiBtn" title="Analyser avec IA" style="background:linear-gradient(135deg,var(--cyan),var(--acc));color:#fff;font-size:.82rem">&#x2728;</button>
+    <button type="button" class="btn btn-icon btn-sm" id="aiBtn" title="Analyser avec IA" style="background:linear-gradient(135deg,var(--cyan),var(--acc));color:#062028;font-size:.82rem">&#x2728;</button>
     <button type="button" class="btn btn-s btn-icon btn-sm" id="scanBtn" title="Scanner code-barres">&#x1F4F7;</button>
     <button type="button" class="btn btn-p btn-icon btn-sm" id="manualBtn" title="Saisie manuelle">+</button>
     <button type="button" class="btn btn-o btn-icon btn-sm" id="smBtn" title="Repas sauvegardes">&#x2B50;</button>
@@ -283,16 +283,16 @@
     <div id="impWrap">
       <div id="impWeight">
         <p style="font-size:.68rem;color:var(--t3);margin-bottom:6px">Format: <code>date,poids</code> (une ligne par jour)</p>
-        <textarea class="import-a" id="impWT" rows="5" placeholder="2026-03-15,74.5&#10;2026-03-16,74.3&#10;2026-03-17,73.9" style="width:100%;font-family:var(--mono);font-size:.72rem;padding:8px;border-radius:8px;border:1px solid var(--s3);background:var(--s1);color:var(--t1);resize:vertical"></textarea>
+        <textarea class="import-a" id="impWT" rows="5" placeholder="2026-03-15,74.5&#10;2026-03-16,74.3&#10;2026-03-17,73.9" style="width:100%;font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:12px;border-radius:12px;border:none;background:var(--s3);color:var(--t1);resize:vertical;min-height:110px"></textarea>
       </div>
       <div id="impCal" style="display:none">
         <p style="font-size:.68rem;color:var(--t3);margin-bottom:6px">Format: <code>date,calories,prot,gluc,lip</code> (fibres optionnel)</p>
-        <textarea class="import-a" id="impCT" rows="5" placeholder="2026-03-15,2200,150,250,75&#10;2026-03-16,1950,140,220,70" style="width:100%;font-family:var(--mono);font-size:.72rem;padding:8px;border-radius:8px;border:1px solid var(--s3);background:var(--s1);color:var(--t1);resize:vertical"></textarea>
+        <textarea class="import-a" id="impCT" rows="5" placeholder="2026-03-15,2200,150,250,75&#10;2026-03-16,1950,140,220,70" style="width:100%;font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:12px;border-radius:12px;border:none;background:var(--s3);color:var(--t1);resize:vertical;min-height:110px"></textarea>
       </div>
       <div id="impJson" style="display:none">
-        <p style="font-size:.68rem;color:var(--t3);margin-bottom:6px">Colle un fichier JSON exporte (<code>mysf_*.json</code>) ou selectionne un fichier</p>
+        <p style="font-size:.68rem;color:var(--t3);margin-bottom:6px">Colle un fichier JSON exporte (<code>kripy_*.json</code>) ou selectionne un fichier</p>
         <input type="file" accept=".json" id="impFile" style="font-size:.7rem;margin-bottom:6px;width:100%">
-        <textarea class="import-a" id="impJT" rows="5" placeholder='{"weights":[...],"log":{...},...}' style="width:100%;font-family:var(--mono);font-size:.72rem;padding:8px;border-radius:8px;border:1px solid var(--s3);background:var(--s1);color:var(--t1);resize:vertical"></textarea>
+        <textarea class="import-a" id="impJT" rows="5" placeholder='{"weights":[...],"log":{...},...}' style="width:100%;font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:12px;border-radius:12px;border:none;background:var(--s3);color:var(--t1);resize:vertical;min-height:110px"></textarea>
       </div>
     </div>
     <button class="btn btn-p" type="button" id="impB" style="width:100%;margin-top:6px">Importer</button>
@@ -308,7 +308,7 @@
       <a class="btn btn-o" href="terms.html" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">CGU</a>
       <a class="btn btn-o" href="privacy.html" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">Confidentialite</a>
     </div>
-    <p style="font-size:.6rem;color:var(--t3);margin-top:8px;text-align:center">&copy; 2026 MYSF &middot; v2.1</p>
+    <p style="font-size:.6rem;color:var(--t3);margin-top:8px;text-align:center">&copy; 2026 Kripy &middot; v2.1</p>
   </div>
 </div>
 </div>
@@ -327,11 +327,11 @@
 <details style="font-size:.66rem;color:var(--t2);margin-bottom:10px;line-height:1.5"><summary style="cursor:pointer;color:var(--acc)">&#x2699;&#xFE0F; Sync automatique</summary>
 <div style="margin-top:6px;padding:8px;background:var(--s2);border-radius:8px">
 <strong style="color:var(--t1)">iOS (Raccourcis)</strong> : cree un raccourci qui recupere le nombre de pas du jour depuis Sante, puis ouvre l'URL :<br>
-<code style="color:var(--acc);font-size:.62rem;word-break:break-all">mysf.app/?steps=[Pas]</code><br>
+<code style="color:var(--acc);font-size:.62rem;word-break:break-all">kripy.app/?steps=[Pas]</code><br>
 <strong style="color:var(--t1)">Android</strong> : utilise Tasker ou une automatisation similaire avec la meme URL.
 </div></details>
 <div class="acts"><button class="btn btn-o" type="button" id="stepNo">Annuler</button><button class="btn btn-s" type="button" id="stepOk">Valider</button></div></div></div>
-<div class="phm" id="phM"><div class="phm-c"><div class="brand brand-g" style="font-size:1.2rem;margin-bottom:12px">MYSF</div>
+<div class="phm" id="phM"><div class="phm-c"><div class="brand brand-g" style="font-size:1.2rem;margin-bottom:12px">Kripy</div>
   <div class="ph-det" style="border-color:var(--phA)"><strong style="color:var(--phA)">A — Pre-prep (x1.0)</strong><br>Baisse: rien. Stagne 72h: +200kcal. Monte: arret.</div>
   <div class="ph-det" style="border-color:var(--phB)"><strong style="color:var(--phB)">B — Deficit (x0.85)</strong><br>Stagne: -200kcal. Remontee: verifier.</div>
   <div class="ph-det" style="border-color:var(--phC)"><strong style="color:var(--phC)">C — Reverse (x0.90)</strong><br>Baisse = +200kcal. Stable: rien.</div>
