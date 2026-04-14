@@ -224,20 +224,52 @@
 
 <!-- RECIPES -->
 <div class="tp" id="tab-recipes">
-  <div class="stitle">Creer une recette</div>
-  <div class="card">
-    <div class="irow"><input type="text" class="inp" id="rcName" placeholder="Nom de la recette"></div>
-    <div class="sg">
-      <div><label>Kcal /100g</label><input type="number" inputmode="numeric" class="inp" id="rcKcal"></div>
-      <div><label>Prot (g)</label><input type="number" inputmode="decimal" class="inp" id="rcProt"></div>
-      <div><label>Gluc (g)</label><input type="number" inputmode="decimal" class="inp" id="rcGluc"></div>
-      <div><label>Lip (g)</label><input type="number" inputmode="decimal" class="inp" id="rcLip"></div>
-      <div class="full"><label>Fibres (g)</label><input type="number" inputmode="decimal" class="inp" id="rcFib"></div>
+  <!-- Page header -->
+  <section class="rcp-head">
+    <h1 class="rcp-title">Mes Recettes</h1>
+    <p class="rcp-sub">Gere ta bibliotheque nutritionnelle de precision.</p>
+  </section>
+
+  <!-- Create form -->
+  <section class="rcp-form">
+    <h2 class="rcp-form-l">Nouvelle recette</h2>
+    <div class="rcp-f">
+      <label class="rcp-label" for="rcName">Nom de la recette</label>
+      <input type="text" class="rcp-in" id="rcName" placeholder="ex: Poulet Curry Keto">
     </div>
-    <button class="btn btn-p" type="button" id="rcAdd" style="width:100%">Ajouter la recette</button>
-  </div>
-  <div class="stitle" style="margin-top:12px">Mes recettes</div>
-  <div id="rcList"></div>
+    <div class="rcp-f">
+      <label class="rcp-label" for="rcKcal">Kcal / 100g</label>
+      <input type="number" inputmode="numeric" class="rcp-in rcp-in-mono" id="rcKcal" placeholder="0">
+    </div>
+    <div class="rcp-grid">
+      <div class="rcp-f">
+        <label class="rcp-label" for="rcProt">P (g)</label>
+        <input type="number" inputmode="decimal" class="rcp-in rcp-in-mono" id="rcProt" placeholder="0.0">
+      </div>
+      <div class="rcp-f">
+        <label class="rcp-label" for="rcGluc">G (g)</label>
+        <input type="number" inputmode="decimal" class="rcp-in rcp-in-mono" id="rcGluc" placeholder="0.0">
+      </div>
+      <div class="rcp-f">
+        <label class="rcp-label" for="rcLip">L (g)</label>
+        <input type="number" inputmode="decimal" class="rcp-in rcp-in-mono" id="rcLip" placeholder="0.0">
+      </div>
+      <div class="rcp-f">
+        <label class="rcp-label" for="rcFib">F (g)</label>
+        <input type="number" inputmode="decimal" class="rcp-in rcp-in-mono" id="rcFib" placeholder="0.0">
+      </div>
+    </div>
+    <button type="button" class="rcp-cta" id="rcAdd">Ajouter a la bibliotheque</button>
+  </section>
+
+  <!-- Recipe list -->
+  <section class="rcp-list-wrap">
+    <div class="rcp-list-head">
+      <h3 class="rcp-list-l">Vos creations</h3>
+      <span class="rcp-list-count" id="rcCount">0 RECETTES</span>
+    </div>
+    <div id="rcList"></div>
+  </section>
 </div>
 
 <!-- SPORT -->
